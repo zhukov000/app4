@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Body>
+    <ReportItems>
+      <Tablix Name="Tablix1">
+        <TablixCorner>
+          <TablixCornerRows>
+            <TablixCornerRow>
+              <TablixCornerCell>
+                <CellContents>
+                  <Textbox Name="Textbox3">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>Номер, Название</Value>
+                            <Style>
+                              <FontFamily>Tahoma</FontFamily>
+                              <FontSize>11pt</FontSize>
+                              <FontWeight>Bold</FontWeight>
+                              <Color>White</Color>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style />
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox3</rd:DefaultName>
+                    <Style>
+                      <Border>
+                        <Color>#7292cc</Color>
+                        <Style>Solid</Style>
+                      </Border>
+                      <BackgroundColor>#4c68a2</BackgroundColor>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                </CellContents>
+              </TablixCornerCell>
+            </TablixCornerRow>
+          </TablixCornerRows>
+        </TablixCorner>
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>4.48438cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.5cm</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.6cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="val">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=sum(Fields!val.Value) \ 24*60*60 &amp; "д. " &amp; 
+((sum(Fields!val.Value) mod 24*60*60) \ 60*60) &amp; ":" &amp;
+((sum(Fields!val.Value) mod 60*60) \ 60) &amp; ":" &amp;
+(sum(Fields!val.Value) mod 60)</Value>
+                              <Style>
+                                <FontFamily>Tahoma</FontFamily>
+                                <Color>#4d4d4d</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>val</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>#e5e5e5</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox26">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=(CInt(fields!value.Value) - sum(fields!val.Value)) \ 24*60*60 &amp; "д. " &amp; 
+(((CInt(fields!value.Value) - sum(fields!val.Value)) mod 24*60*60) \ 60*60) &amp; ":" &amp;
+(((CInt(fields!value.Value) - sum(fields!val.Value)) mod 60*60) \ 60) &amp; ":" &amp;
+((CInt(fields!value.Value) - sum(fields!val.Value)) mod 60)</Value>
+                              <Style>
+                                <FontFamily>Tahoma</FontFamily>
+                                <Color>#4d4d4d</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox26</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>#e5e5e5</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                    <rd:Selected>true</rd:Selected>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="status">
+                <GroupExpressions>
+                  <GroupExpression>=Fields!status.Value</GroupExpression>
+                </GroupExpressions>
+              </Group>
+              <SortExpressions>
+                <SortExpression>
+                  <Value>=Fields!status.Value</Value>
+                </SortExpression>
+              </SortExpressions>
+              <TablixMembers>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>0.6cm</Size>
+                    <CellContents>
+                      <Textbox Name="status">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!status.Value</Value>
+                                <Style>
+                                  <FontFamily>Tahoma</FontFamily>
+                                  <FontWeight>Bold</FontWeight>
+                                  <Color>#465678</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>status</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>#c6daf8</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>#9eb6e4</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixMember>
+            <TablixMember>
+              <TablixHeader>
+                <Size>0.6cm</Size>
+                <CellContents>
+                  <Textbox Name="Textbox25">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>Не на связи</Value>
+                            <Style>
+                              <FontFamily>Tahoma</FontFamily>
+                              <FontWeight>Bold</FontWeight>
+                              <Color>#465678</Color>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style />
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox25</rd:DefaultName>
+                    <Style>
+                      <Border>
+                        <Color>#c6daf8</Color>
+                        <Style>Solid</Style>
+                      </Border>
+                      <BackgroundColor>Orange</BackgroundColor>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                </CellContents>
+              </TablixHeader>
+            </TablixMember>
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="name">
+                <GroupExpressions>
+                  <GroupExpression>=Fields!name.Value</GroupExpression>
+                </GroupExpressions>
+              </Group>
+              <SortExpressions>
+                <SortExpression>
+                  <Value>=Fields!name.Value</Value>
+                </SortExpression>
+              </SortExpressions>
+              <TablixHeader>
+                <Size>7.58cm</Size>
+                <CellContents>
+                  <Textbox Name="name">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>=Fields!name.Value</Value>
+                            <Style>
+                              <FontFamily>Tahoma</FontFamily>
+                              <FontWeight>Bold</FontWeight>
+                              <Color>#465678</Color>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style />
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>name</rd:DefaultName>
+                    <Style>
+                      <Border>
+                        <Color>#c6daf8</Color>
+                        <Style>Solid</Style>
+                      </Border>
+                      <BackgroundColor>#9eb6e4</BackgroundColor>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                </CellContents>
+              </TablixHeader>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>DataSet1</DataSetName>
+        <Top>1.05833cm</Top>
+        <Left>0.71438cm</Left>
+        <Height>1.2cm</Height>
+        <Width>14.56438cm</Width>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
+      <Textbox Name="Textbox4">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Состояние объектов мониторинга за период</Value>
+                <Style>
+                  <FontSize>14pt</FontSize>
+                  <Color>DarkGreen</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox3</rd:DefaultName>
+        <Top>0.05264cm</Top>
+        <Left>0.71438cm</Left>
+        <Height>0.86458cm</Height>
+        <Width>14.93479cm</Width>
+        <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <Height>2in</Height>
+    <Style />
+  </Body>
+  <Width>6.99951in</Width>
+  <Page>
+    <PageHeight>29.7cm</PageHeight>
+    <PageWidth>21cm</PageWidth>
+    <LeftMargin>2cm</LeftMargin>
+    <RightMargin>2cm</RightMargin>
+    <TopMargin>2cm</TopMargin>
+    <BottomMargin>2cm</BottomMargin>
+    <ColumnSpacing>0.13cm</ColumnSpacing>
+    <Style />
+  </Page>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="gisDataReports">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>d08f2456-6e75-43a5-b1f0-44df9077330c</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>gisDataReports</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="osm_id">
+          <DataField>osm_id</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="start">
+          <DataField>start</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="state_id">
+          <DataField>state_id</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="finish">
+          <DataField>finish</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="status">
+          <DataField>status</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="number">
+          <DataField>number</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="name">
+          <DataField>name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="val">
+          <DataField>val</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="value">
+          <DataField>value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>gisDataReports</rd:DataSetName>
+        <rd:SchemaPath>C:\Users\user\Documents\Visual Studio 2013\Projects\OKO\App3\gisDataReports.xsd</rd:SchemaPath>
+        <rd:TableName>report_all_events</rd:TableName>
+        <rd:TableAdapterFillMethod>Fill</rd:TableAdapterFillMethod>
+        <rd:TableAdapterGetDataMethod>GetData</rd:TableAdapterGetDataMethod>
+        <rd:TableAdapterName>report_all_eventsTableAdapter</rd:TableAdapterName>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>2a2df8cd-92f0-4641-8f8d-a057f898b016</rd:ReportID>
+</Report>
