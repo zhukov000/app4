@@ -38,6 +38,8 @@ namespace App3.Class
             int PartNumber = SStr.StrToInt(msg.Get("Part").ToString());
             int ZoneUserNumber = SStr.StrToInt(msg.Get("Zone").ToString());
             int Class = SStr.StrToInt(msg.Get("Class").ToString());
+            // int Oko = SStr.StrToInt(msg.Get("Version").ToString());
+
             string Address = msg.Address;
 
             if (!Utils.ListenIP(Address))
@@ -48,41 +50,40 @@ namespace App3.Class
             if (UnpackError == 0)
             {
                 TypeNumber = SStr.StrToInt(msg.Get("TypeNumber").ToString());
+                // Logger.Instance.WriteToLog(msg.Type);
+                // Logger.Instance.WriteToLog(Encoding.Default.GetString(msg.Content));
                 if (TypeNumber == 0) TypeNumber = 1; // ?
             }
             bool f = true;
             int eventId = 0;
+            AKObject obj = new AKObject(ObjectNumber, Region);
+
+
+            /* string req = DataBase.Help4Select(
+                "oko.event",
+                new Dictionary<string, object>(),
+                new Dictionary<string, object>
+                {
+                    {"objectnumber", ObjectNumber},
+                    {"alarmgroupid", AlarmGroupId},
+                    {"code", Code},
+                    {"typenumber", TypeNumber},
+                    {"partnumber", PartNumber},
+                    {"zoneusernumber", ZoneUserNumber},
+                    {"class", Class},
+                    {"address", Address.Q()},
+                    {"region_id", Region}
+                }
+            );
+
+            req = req.Substring(9); // отрезаем сначала "select *"
+            object t = DataBase.First(string.Format("SELECT max(datetime) as mx {0} ", req), "mx"); */
+            MessageGroupId mgroup_id = (MessageGroupId)Utils.MessageGroup(Class, Code);
+            DateTime lt = EventDispatcher.Instance[obj.Id, mgroup_id];
+                // DateTime tt = DateTime.Today;
+
             try
             {
-                string req = DataBase.Help4Select(
-                    "oko.event",
-                    new Dictionary<string, object>(),
-                    new Dictionary<string, object>
-                    {
-                        {"objectnumber", ObjectNumber},
-                        {"alarmgroupid", AlarmGroupId},
-                        {"code", Code},
-                        {"typenumber", TypeNumber},
-                        {"partnumber", PartNumber},
-                        {"zoneusernumber", ZoneUserNumber},
-                        {"class", Class},
-                        {"address", Address.Q()},
-                        {"region_id", Region}
-                    }
-                );
-
-                req = req.Substring(9);
-                object t = DataBase.First(string.Format("SELECT max(datetime) as mx {0} ", req), "mx");
-                DateTime tt = DateTime.Today;
-
-                if (DateTime.TryParse(t.ToString(), out tt))
-                {
-                    if (TimeStamp.Subtract(tt).TotalSeconds < DBDict.Settings["TIMEOUT_MESSAGE_INTERVAL"].ToInt())
-                    {
-                        f = false;
-                    }
-                }
-
                 object[] pResult = new object[0];
 
                 DataBase.RunCommandInsert(
@@ -113,15 +114,19 @@ namespace App3.Class
                 ret = false;
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
-            AKObject obj = new AKObject(ObjectNumber, Region);
-            string MessText = Utils.GetMessageText(Class, Code);
-            f = true;
+
+            if (TimeStamp.Subtract(lt).TotalSeconds < DBDict.Settings["TIMEOUT_MESSAGE_INTERVAL"].ToInt())
+            {
+                f = false;
+            }
             if (f && obj.IsExists())
             {
+                EventDispatcher.Instance[obj.Id, mgroup_id] = DateTime.Now;
+                string MessText = Utils.GetMessageText(Class, Code);
                 MessText = string.Format("Объект расположенный по адресу:{0}, \r\nсообщает:{1}", obj.AddressStr, MessText);
                 if (GetMessageEvent != null)
                 {
-                    GetMessageEvent(eventId, (MessageGroupId)Utils.MessageGroup(Class, Code, 2), obj, MessText, string.Join(", ", obj.GetContacts()), TimeStamp.ToString());
+                    GetMessageEvent(eventId, mgroup_id, obj, MessText, string.Join(", ", obj.GetContacts()), TimeStamp.ToString());
                 }
                 ret = true;
             }

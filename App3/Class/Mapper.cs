@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -188,6 +189,12 @@ namespace App3.Class
             layLabel.LabelColumn = col;
             
             layLabel.Style = new SharpMap.Styles.LabelStyle();
+            string[] namesLinesLabels = new string[] { "HighwayLabelLayer" };
+            if (namesLinesLabels.Contains(name))
+            {
+                layLabel.Style.IsTextOnPath = true;
+            }
+
             layLabel.Style.ForeColor = Color.Black;
             layLabel.Style.Font = new Font(FontFamily.GenericSerif, 16);
             layLabel.Style.Offset = new PointF(3, 3);
@@ -240,16 +247,17 @@ namespace App3.Class
             MainLayer.Style.Outline = new Pen(Color.FromArgb(167, 232, 232), 2);
             MainLayer.Style.Fill = new SolidBrush(Color.FromArgb(206, 246, 236));
             pMap.Layers.Add(MainLayer);
+            
             SharpMap.Layers.VectorLayer[] PlgLayer = new SharpMap.Layers.VectorLayer[3];
             SharpMap.Layers.VectorLayer HighwayLayer = null;
             SharpMap.Layers.VectorLayer BuildingsLayer = null;
             // Полигоны
             if (layers[0])
             {
-                /*PlgLayer = CreateVLayer(LayerType.POLYGON, "Polygon");
-                PlgLayer.Style.EnableOutline = true;
-                PlgLayer.Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
-                pMap.Layers.Add(PlgLayer);*/
+                // PlgLayer = CreateVLayer(LayerType.POLYGON, "Polygon");
+                // PlgLayer.Style.EnableOutline = true;
+                // PlgLayer.Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
+                // pMap.Layers.Add(PlgLayer);
                 
                 PlgLayer[0] = CreateVLayer(LayerType.BIG_POLYGON, "Polygon_BIG");
                 PlgLayer[0].Style.EnableOutline = true;
@@ -312,8 +320,14 @@ namespace App3.Class
             if (layers[1])
             {
                 SharpMap.Layers.LabelLayer HighwayLabelLayer = CreateLabelLayer(HighwayLayer, "HighwayLabelLayer");
-                HighwayLabelLayer.MaxVisible = 25e3 - 1;
+                HighwayLabelLayer.MaxVisible = 15e3 - 1;
                 pMap.Layers.Add(HighwayLabelLayer);
+
+                // SharpMap.Layers.LabelLayer HighwayLabelLayer = new SharpMap.Layers.LabelLayer("HighwayLabelLayer");
+
+                // layLabel.MultipartGeometryBehaviour = SharpMap.Layers.LabelLayer.MultipartGeometryBehaviourEnum.Largest;
+                // layLabel.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
+                // layLabel.LabelFilter = SharpMap.Rendering.LabelCollisionDetection.ThoroughCollisionDetection;
             }
             if (layers[2])
             {

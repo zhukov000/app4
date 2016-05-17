@@ -35,6 +35,7 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.синхронизацияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.фиксацияЖурналаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.справочникиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.районыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +91,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.фиксацияЖурналаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -119,6 +120,7 @@
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.синхронизацияToolStripMenuItem,
+            this.logToolStripMenuItem,
             this.фиксацияЖурналаToolStripMenuItem,
             this.выходToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
@@ -132,6 +134,13 @@
             this.синхронизацияToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.синхронизацияToolStripMenuItem.Text = "Синхронизация";
             this.синхронизацияToolStripMenuItem.Click += new System.EventHandler(this.синхронизацияToolStripMenuItem_Click);
+            // 
+            // фиксацияЖурналаToolStripMenuItem
+            // 
+            this.фиксацияЖурналаToolStripMenuItem.Name = "фиксацияЖурналаToolStripMenuItem";
+            this.фиксацияЖурналаToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.фиксацияЖурналаToolStripMenuItem.Text = "Фиксация журнала";
+            this.фиксацияЖурналаToolStripMenuItem.Click += new System.EventHandler(this.фиксацияЖурналаToolStripMenuItem_Click);
             // 
             // выходToolStripMenuItem
             // 
@@ -609,12 +618,12 @@
             this.timer1.Interval = 60000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // фиксацияЖурналаToolStripMenuItem
+            // logToolStripMenuItem
             // 
-            this.фиксацияЖурналаToolStripMenuItem.Name = "фиксацияЖурналаToolStripMenuItem";
-            this.фиксацияЖурналаToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.фиксацияЖурналаToolStripMenuItem.Text = "Фиксация журнала";
-            this.фиксацияЖурналаToolStripMenuItem.Click += new System.EventHandler(this.фиксацияЖурналаToolStripMenuItem_Click);
+            this.logToolStripMenuItem.Name = "logToolStripMenuItem";
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.logToolStripMenuItem.Text = "Журнал событий";
+            this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -716,6 +725,7 @@
         private System.Windows.Forms.ToolStripMenuItem синхронизацияToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem входToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem фиксацияЖурналаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem logToolStripMenuItem;
     }
 }
 

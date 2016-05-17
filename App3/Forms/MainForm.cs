@@ -49,6 +49,7 @@ namespace App3.Forms
         private WarningForm oWarnMonitor;
         private GlobalStat oGlobalStatistic;
         private Objects oObjectList;
+        private LogForm oLogForm;
 
         private bool isShowEventForm = false;
 
@@ -68,7 +69,7 @@ namespace App3.Forms
             // OkoConnection.CleanCounters();
             
             oModule = new Module();
-            oModule.LogLevel = Tracer.eLogLevel.DEBUG;
+            oModule.LogLevel = Tracer.eLogLevel.ERROR;
             oModule.Protocol = Module.PROTOCOL.XML_GUARD;
 
             oModule.RemotePort = Config.Get("ModuleRemotePort").ToInt();
@@ -79,6 +80,9 @@ namespace App3.Forms
 
             oModule.RestoreConnectionTime = 5;
             oModule.GetModuleMessageEvent += ReciveMessage;
+            
+            OKOGate.Tracer.LogFileName = Logger.LogDirectory() +  "OKOGate.log";
+
             oModule.StartModule();
             oModule.StartReceive();
 
@@ -147,7 +151,7 @@ namespace App3.Forms
         private void ReciveMessage(object arg)
         {
             OKOGate.Message msg = (OKOGate.Message)arg;
-            Logger.Instance.WriteToLog(string.Format("{0}.{1}: Message.Text: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, msg.Text));
+            // Logger.Instance.WriteToLog(string.Format("{0}.{1}: Message.Text: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, msg.Text));
             if (msg.Text.IndexOf("?xml") > 0)
             {
                 if (msg.Content == null)
@@ -321,23 +325,32 @@ namespace App3.Forms
             if (!f)
             {
                 // Close();
+                Logger.Instance.WriteToLog("Соединение с БД не было установлено");
             }
             else
             {
+                Logger.Instance.WriteToLog("Соединение с БД было установлено");
                 // справочники
-                DBDict.Update();
+                try
+                {
+                    DBDict.Update();
+                }catch(Exception ex)
+                {
+                    Logger.Instance.WriteToLog("При обновлении справочников произошла ошибка: " + ex.Message);
+                    Logger.Instance.FlushLog();
+                }
+
                 // окно событий
                 oEventsForm = new MessForm(this);
                 // oEventsForm.Show();
                 SetChildFormsPosition();
-
                 oConfigForm = new ConfigForm(this);
                 oDBEvents = new DBEvents(this);
                 oSynchronizeForm = new SynchronizeForm(this);
+                oLogForm = new LogForm(this);
                 // oMap = new MapForm(this);
                 oMessagesText = new TableEditForm(this, "oko.message_text", "Справочник сообщений");
                 oWarnMonitor = new WarningForm(this);
-
                 // окошко статистики
                 oGlobalStatistic = new GlobalStat();
                 //
@@ -346,16 +359,17 @@ namespace App3.Forms
                 if (DBDict.Settings["START_XML_GUARD"].ToBool())
                 {
                     StartOkoGate();
+                    Logger.Instance.WriteToLog("Модуль ОКО запущен, подробности в OKOGate.log");
+                    Logger.Instance.FlushLog();
                 }
                 // включить карту
                 mapToolStrip.Checked = DBDict.Settings["ENABLE_MAP"].ToBool();
                 soundToolStrip.Checked = DBDict.Settings["ENABLE_MUSIC"].ToBool();
-
+                
                 this.Text = this.Text + " версия " + Config.APPVERSION;
-
+                Logger.Instance.WriteToLog(this.Text);
                 // обновление статусов регионов
                 DataBase.RunCommand("select oko.update_district_statuses()");
-
                 // Старт web-серсиса
                 StartWeb.Start();
                 // Старт сервиса обновления
@@ -363,6 +377,7 @@ namespace App3.Forms
                 // Старт сервиса синхронизации
                 // TODO
             }
+            Logger.Instance.FlushLog();
         }
 
         public void LoadStat()
@@ -449,6 +464,7 @@ namespace App3.Forms
             MdiClient ctlMDI;
             foreach (Control ctl in this.Controls)
             {
+                if (ctl.GetType() == typeof(System.Windows.Forms.MdiClient))
                 try
                 {
                     ctlMDI = (MdiClient)ctl;
@@ -971,6 +987,7 @@ namespace App3.Forms
                     if (PermissionControl.auth(frm.Result))
                     {
                         AutoClosingMessageBox.Show("Добро пожаловать, " + PermissionControl.UserName, "Приветствие", 1500);
+                        Logger.Instance.WriteToLog("Login user: " + PermissionControl.UserName);
                         Login();
                     }
                 }
@@ -998,6 +1015,7 @@ namespace App3.Forms
             архивацияСобытийToolStripMenuItem.Enabled = f;
             optionsToolStripMenuItem.Enabled = f;
             toolStripButton1.Visible = f;
+            logToolStripMenuItem.Enabled = f;
         }
 
         private void фиксацияЖурналаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1005,5 +1023,10 @@ namespace App3.Forms
             Logger.Instance.FlushLog();
         }
 
+        private void logToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            oLogForm.UpdateView();
+            oLogForm.Show();
+        }
     }
 }

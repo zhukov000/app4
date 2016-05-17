@@ -14,7 +14,7 @@ using App3.Class.Static;
 using System.Net;
 using System.IO;
 using App3.Class.Singleton;
-
+using System.Security.Cryptography;
 
 namespace App3.Class
 {
@@ -98,9 +98,9 @@ namespace App3.Class
                 ).ToInt() ;
         }
 
-        public static int MessageGroup(int Class, int Code, int Oko)
+        public static int MessageGroup(int Class, int Code)
         {
-            object o = DataBase.First(String.Format("SELECT * FROM oko.message_text WHERE class = {0} and code = {1} and \"OKO\" = {2}", Class, Code, Oko), "mgroup_id");
+            object o = DataBase.First(String.Format("SELECT * FROM oko.message_text WHERE class = {0} and code = {1}", Class, Code), "mgroup_id");
             return o.ToInt();
         }
 
@@ -286,8 +286,7 @@ namespace App3.Class
         {
             string s = "Неизвестное сообщение";
             object[] o = DataBase.FirstRow(
-                string.Format("SELECT message, notes, mgroup_id FROM oko.message_text WHERE code = {0} and class = {1}", Code, Class), 
-                0
+                string.Format("SELECT message, notes, mgroup_id FROM oko.message_text WHERE code = {0} and class = {1}", Code, Class), 0
             );
             if (o != null && o.Count() > 0)
             {
@@ -460,6 +459,7 @@ namespace App3.Class
                     wd.ShowDialog();
                 }
             ));
+            backgroundThread.IsBackground = true;
             backgroundThread.Start();
             return wd;
         }
@@ -473,6 +473,7 @@ namespace App3.Class
                     wd.Invoke(new Action(() => { wd.Close(); }));
                 }
             ));
+            backgroundThread.IsBackground = true;
             backgroundThread.Start();
         }
 
@@ -495,6 +496,7 @@ namespace App3.Class
                     wd.ShowDialog();
                 }
             ));
+            backgroundThread.IsBackground = true;
             backgroundThread.Start();
             return wd;
         }
@@ -508,6 +510,7 @@ namespace App3.Class
                     wd.Invoke(new Action(() => { wd.Close(); }));
                 }
             ));
+            backgroundThread.IsBackground = true;
             backgroundThread.Start();
         }
 
@@ -651,6 +654,33 @@ namespace App3.Class
             if (S != null)
                 bool.TryParse(S.ToString(), out b);
             return b;
+        }
+
+        public static string Crypt(this string text)
+        {
+            return Convert.ToBase64String(
+                ProtectedData.Protect(
+                        Encoding.Unicode.GetBytes(text),
+                        Encoding.Unicode.GetBytes(Config.Get("Entropy")),
+                        DataProtectionScope.LocalMachine
+                    ));
+        }
+
+        public static string Derypt(this string text)
+        {
+            string str = "--- ошибочное значение ---";
+            try
+            {
+                str = Encoding.Unicode.GetString(
+                    ProtectedData.Unprotect(
+                         Convert.FromBase64String(text),
+                         Encoding.Unicode.GetBytes(Config.Get("Entropy")),
+                         DataProtectionScope.LocalMachine
+                    )
+                );
+            }
+            catch { } 
+            return str;
         }
 
         #endregion

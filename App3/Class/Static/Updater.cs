@@ -27,6 +27,7 @@ namespace App3.Class.Static
                     }
                 }
             ));
+            backgroundThread.IsBackground = true;
             backgroundThread.Start();
         }
 

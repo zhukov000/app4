@@ -62,24 +62,27 @@ namespace App3
                         {
                             DataBase.CloseConnection();
                         }
-                    }
 
-                    if (!f)
-                    {
-                        string mess = "Ошибка обновления";
-                        Logger.Instance.WriteToLog(mess);
-                        MessageBox.Show(mess);
-                    }
-                    else
-                    {
-                        FileInfo fi = new FileInfo("update.sql");
-                        string str = fi.FullName.Substring(0, fi.FullName.Length - 3) + Utils.DateTimeToString(DateTime.Now) + ".sql";
-                        File.Move(fi.FullName, str);
-                    }
+                        if (!f)
+                        {
+                            string mess = "Ошибка обновления";
+                            Logger.Instance.WriteToLog(mess);
+                            MessageBox.Show(mess);
+                        }
+                        else
+                        {
+                            FileInfo fi = new FileInfo("update.sql");
+                            string str = fi.FullName.Substring(0, fi.FullName.Length - 3) + Utils.DateTimeToString(DateTime.Now) + ".sql";
+                            File.Move(fi.FullName, str);
+                        }
+                    }                   
                     
                     // если обновление БД упешно пройдено или не нужно
-                    if (mutex.WaitOne(TimeSpan.FromSeconds(5)))
+                    if (mutex.WaitOne(TimeSpan.FromSeconds(5)) && f)
                     {
+                        /*Application.ThreadException += new ThreadExceptionEventHandler(ThreadException);
+                        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                        AppDomain.CurrentDomain.UnhandledException += ReportAndRestart;*/
                         Application.Run(new App3.Forms.MainForm());
                     }
                     else
@@ -94,6 +97,22 @@ namespace App3
             {
                 MessageBox.Show("Прямой запуск приложения нежелателен. Используйте launcher.exe", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private static void ThreadException(object sender, ThreadExceptionEventArgs t)
+        {
+            string info = t.Exception.ToString();
+            Logger.Instance.WriteToLog("Необработанное исключение: " + info);
+        }
+
+        static void ReportAndRestart(object sender, UnhandledExceptionEventArgs e)
+        {
+            string info = e.ExceptionObject.ToString();
+            Logger.Instance.WriteToLog("Необработанное исключение: " + info);
+            /*System.Diagnostics.Process.Start(
+                System.Reflection.Assembly.GetEntryAssembly().Location,
+                string.Join(" ", Environment.GetCommandLineArgs()));
+            Environment.Exit(1);*/
         }
     }
 }

@@ -37,6 +37,11 @@ namespace App3.Class.Singleton
             return FileSave;
         }
 
+        public static string LogDirectory()
+        {
+            return logDir;
+        }
+
         public void WriteToLog(string message)
         {
             lock (logQueue)
@@ -82,7 +87,7 @@ namespace App3.Class.Singleton
                     {
                         using (StreamWriter log = new StreamWriter(fs))
                         {
-                            log.WriteLine(string.Format("{0}\t{1}", entry.LogTime, entry.Message));
+                            log.WriteLine( Utils.Crypt(string.Format("{0}\t{1}", entry.LogTime, entry.Message)) );
                         }
                     }
                 }

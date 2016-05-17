@@ -66,6 +66,7 @@ namespace App3.Class.Static
                     }
                 }
             ));
+            backgroundThread.IsBackground = true;
             backgroundThread.Start();
         }
 
@@ -241,17 +242,19 @@ namespace App3.Class.Static
                         if (last2 != null)
                             last = DateTime.Parse(last2.ToString());
                         s.Add("соединяюсь с " + node[1] + "...");
-                        Logger.Instance.WriteToLog("соединение с " + node[1]);
-                        string content = Utils.getHtmlContent(String.Format("http://{0}:{3}/get_new/{1}/{2}", node[1], Utils.DateTimeToString(last), node[0], node[2]));
+                        string url = String.Format("http://{0}:{3}/get_new/{1}/{2}", node[1], Utils.DateTimeToString(last), node[0], node[2]);
+                        Logger.Instance.WriteToLog(string.Format("соединение с {0}: {1}",node[1], url));
+                        string content = Utils.getHtmlContent(url);
                         if (content.Length > 0)
                         {
-                            s.Add("успех");
+                            s.Add("успех: " + content.Length + " байт");
                             JavaScriptSerializer js = new JavaScriptSerializer();
                             js.MaxJsonLength = int.MaxValue;
                             JsonNewObject[] objects = js.Deserialize<JsonNewObject[]>(content);
                             bool fromServer = (node[1].ToString() == DBDict.Settings["SERVER_ADDRESS"].ToString());
                             foreach (JsonNewObject obj in objects)
                             {
+                                s.Add(obj.objectname);
                                 if (!fromServer && obj.objectname != "event")
                                     continue;
                                 int[] a = SyncObject(obj);

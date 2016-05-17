@@ -39,13 +39,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -89,6 +90,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BruTile, Version=0.7.4.4, Culture=neutral, processorArchitecture=MSIL">
@@ -255,6 +257,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Design" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
@@ -269,6 +272,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\Singleton\EventDispatcher.cs" />
     <Compile Include="Class\Singleton\Logger.cs" />
     <Compile Include="Class\Static\PermissionControl.cs" />
     <Compile Include="Class\Depricated\SingleInstance.cs" />
@@ -364,6 +368,12 @@
     </Compile>
     <Compile Include="Forms\GlobalStat.Designer.cs">
       <DependentUpon>GlobalStat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LogForm.Designer.cs">
+      <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Map\PointSelect.cs">
       <SubType>Form</SubType>
@@ -565,6 +575,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Dialog\LoginDialog.resx">
       <DependentUpon>LoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LogForm.resx">
+      <DependentUpon>LogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SynchronizeForm.resx">
       <DependentUpon>SynchronizeForm.cs</DependentUpon>

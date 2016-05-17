@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,6 +37,7 @@ namespace App3.Class.Static
             return style;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public static SharpMap.Styles.LabelStyle ThemeLabel(SharpMap.Data.FeatureDataRow row)
         {
             string s = row["name"].ToString();

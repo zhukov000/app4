@@ -1,0 +1,1 @@
+ALTER TABLE synchronize ADD CONSTRAINT synchronize_node_id_fkey FOREIGN KEY (node_id) REFERENCES public.syn_nodes (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE;

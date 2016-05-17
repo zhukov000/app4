@@ -287,6 +287,7 @@ namespace App3.Forms
                         InitObjects();
                     }
                 ));
+                backgroundThread.IsBackground = true;
                 backgroundThread.Start();
             }
         }

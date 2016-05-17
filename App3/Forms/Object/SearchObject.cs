@@ -99,6 +99,7 @@ namespace App3.Forms
                             OnSelectObject(selectedItem.Id);
                         }
                     ));
+                    backgroundThread.IsBackground = true;
                     backgroundThread.Start();
                     Close();
                 }
