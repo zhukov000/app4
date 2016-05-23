@@ -20,6 +20,8 @@ using App3.Forms.Dialog;
 using App3.Forms.Object;
 using App3.Web;
 using App3.Class.Singleton;
+using System.IO.Ports;
+using App4;
 
 namespace App3.Forms
 {
@@ -34,7 +36,8 @@ namespace App3.Forms
         public delegate int NodeConnected(string sIpAddress);
         public NodeConnected NodeConnectedHandle = null;
 
-        private Module oModule;
+        private Module oModuleXML;
+        private GuardAgent2.Module oModuleCOM;
 
         private int ChildFormNumber = 0;
         // Формы
@@ -66,28 +69,62 @@ namespace App3.Forms
 
         private void StartOkoGate()
         {
-            // OkoConnection.CleanCounters();
-            
-            oModule = new Module();
-            oModule.LogLevel = Tracer.eLogLevel.ERROR;
-            oModule.Protocol = Module.PROTOCOL.XML_GUARD;
+            // XMLGuard
+            if (Config.Get("XMLGuard") == "1")
+            {
+                oModuleXML = new Module();
+                oModuleXML.LogLevel = Tracer.eLogLevel.ERROR;
+                oModuleXML.Protocol = Module.PROTOCOL.XML_GUARD;
 
-            oModule.RemotePort = Config.Get("ModuleRemotePort").ToInt();
-            oModule.LocalServerIP = Config.Get("ModuleLocalServerIP");
-            oModule.LocalServerPort = Config.Get("ModuleLocalServerPort").ToInt();
-            oModule.LocalGUID = Config.Get("ModuleLocalGUID");
-            oModule.ModuleId = Config.Get("ModuleModuleId").ToInt();
+                oModuleXML.RemotePort = Config.Get("ModuleRemotePort").ToInt();
+                oModuleXML.LocalServerIP = Config.Get("ModuleLocalServerIP");
+                oModuleXML.LocalServerPort = Config.Get("ModuleLocalServerPort").ToInt();
+                oModuleXML.LocalGUID = Config.Get("ModuleLocalGUID");
+                oModuleXML.ModuleId = Config.Get("ModuleModuleId").ToInt();
 
-            oModule.RestoreConnectionTime = 5;
-            oModule.GetModuleMessageEvent += ReciveMessage;
-            
-            OKOGate.Tracer.LogFileName = Logger.LogDirectory() +  "OKOGate.log";
+                oModuleXML.RestoreConnectionTime = 5;
+                oModuleXML.GetModuleMessageEvent += ReciveMessage;
 
-            oModule.StartModule();
-            oModule.StartReceive();
+                oModuleXML.StartModule();
+                oModuleXML.StartReceive();
 
+                OKOGate.Tracer.LogFileName = Logger.LogDirectory() + "OKOGate.log";
+                Logger.Instance.WriteToLog("XML Guard start");
+            }
+            // COM
+            if (Config.Get("COMConn") == "1")
+            {
+                oModuleCOM = new GuardAgent2.Module();
+                oModuleCOM.LocalAddress = "11";
+                oModuleCOM.ModuleId = 11;
+
+                string[] l = SerialPort.GetPortNames();
+                string ComPort = Config.Get("COMPortName").ToString();
+                foreach (string str in l)
+                {
+                    if (ComPort == str)
+                    {
+                        oModuleCOM.Close();
+                        uint ui = oModuleCOM.Init(str, Config.Get("COMBaudrate").ToInt());
+                        if (ui == OKO_Messages.MODULE_RUN)
+                        {
+                            oModuleCOM.GetModuleMessageEvent += new GuardAgent2.EventDelegate(Handling.ProcessingComEvent);
+                            oModuleCOM.ClearRetrAddrList(); //	очистка списка ретрансляции
+                            oModuleCOM.SetRetrType(Config.Get("COMRetrType").ToByte()); //,	где type – тип ретрансляции
+                            oModuleCOM.AddRetrAddr(Config.Get("COMRetrAddr").ToUShort()); //	где addr1 – 1й адрес ретрансляции
+                            oModuleCOM.SetChannelsMask(Config.Get("COMChannelsMask").ToByte()); //	где mask – маска каналов
+                            oModuleCOM.SendAskForState(1, 0, Config.Get("RemoteAddress").ToUShort()); //
+                            Logger.Instance.WriteToLog("COM connector start, port: " + str);
+                            break;
+                        }
+                        else
+                        {
+                            oModuleCOM.Close();
+                        }
+                    }
+                }                
+            }
             Handling.GetMessageEvent += OnGetMessage;
-
             Handling.onObjectCardOpen += OnObjectCardOpen;
             Handling.onObjectListOpen += OnObjectListOpen;
         }
@@ -137,14 +174,21 @@ namespace App3.Forms
 
         private void StopOkoGate()
         {
-            try
+            if (Config.Get("XMLGuard") == "1")
             {
-                oModule.StopReceive();
-                oModule.StopModule();
-            } 
-            catch(Exception ex)
+                try
+                {
+                    oModuleXML.StopReceive();
+                    oModuleXML.StopModule();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                }
+            }
+            if (Config.Get("COMConn") == "1")
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                oModuleCOM.Close();
             }
         }
 
@@ -184,7 +228,7 @@ namespace App3.Forms
                             OkoConnection.FixCounterError(msg.Text);
                             break;
                         case "MESSAGE_PULT_OKOGATE": // пришло событие
-                            Handling.ProcessingEvent(msg);
+                            Handling.ProcessingXmlEvent(msg);
                             break;
                         case "ADD_OBJECT_XGUARD_OKOGATE": // добавление/изменение карточки объекта
                             MessageBox.Show("добавление/изменение карточки объекта");

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -25,17 +26,9 @@ namespace App4
 
         private void Log(string s)
         {
-            listBox1.Items.Add(s);
-        }
-
-        private void ModuleEvents_GetModuleMessageEvent(GuardAgent2.Message msg)
-        {
-            Log(msg.Type);
-        }
-
-        public void asd(object arg)
-        {
-            Log("1");
+            // listBox1.Items.Add(s);
+            // .Invoke(new Action(() => { oObjectList.SetFilter(Filter); }));
+            listBox1.BeginInvoke(new Action(() => { listBox1.Items.Add(s); }));
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -43,32 +36,16 @@ namespace App4
             moduleGuard = new GuardAgent2.Module();
             moduleGuard.LocalAddress = "11";
             moduleGuard.ModuleId = 11;
-            
-            // moduleEvents = new MessageModuleEventHandler(); // new GuardAgent2.EventDelegate(asd);
-            moduleGuard.GetModuleMessageEvent += new GuardAgent2.EventDelegate(GetModuleMessageEvent); //...guardTask.MessageReceived += new GUARDTASK.MessageReceivedDelegate(this.ReceiveMessage);
 
-            uint ui = moduleGuard.Init("COM3", 19200);
-            Log(ui.ToString());
-            /*while (!moduleGuard.TestConnection())
+            string [] l = SerialPort.GetPortNames();
+            foreach(string s in l)
             {
-                Thread.Sleep(1000);
-                if (ui == 4146) break;
-            } */
-            // uint ui = moduleGuard.Init("COM3", 9600);
-            // moduleGuard.SendTestConnect();
-            string s = moduleGuard.GetModemAddress();
-            Log("Adress " + s);
-            
-            moduleGuard.ClearRetrAddrList(); //	очистка списка ретрансляции
-            moduleGuard.SetRetrType(0); //,	где type – тип ретрансляции
-            moduleGuard.AddRetrAddr(32); //	где addr1 – 1й адрес ретрансляции
-            // moduleGuard.AddRetrAddr(addr2); //	где addr2 – 2й адрес ретрансляции
-            moduleGuard.SetChannelsMask(255); //	где mask – маска каналов
-            moduleGuard.SendAskForState(1, 0, 6910); //
-            // moduleGuard.TestConnection();
-            // moduleGuard.SendGuardTestConnect(32);
-            
-
+                comboBox1.Items.Add(s);
+            }
+            if (comboBox1.Items.Count > 1)
+                comboBox1.SelectedIndex = 1;
+            else if (comboBox1.Items.Count > 0)
+                comboBox1.SelectedIndex = 0;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -80,18 +57,26 @@ namespace App4
         {
             bool b = moduleGuard.TestConnection();
             Log(b.ToString());
-            // Log(moduleEvents.LastType());
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            /*bool false;
+            moduleGuard.Close();
+
+            moduleGuard.GetModuleMessageEvent += new GuardAgent2.EventDelegate(GetModuleMessageEvent); 
+
+            string pname = comboBox1.Items[comboBox1.SelectedIndex].ToString();
+            Log("Connect to " + pname);
+            uint ui = moduleGuard.Init(pname, 19200);
+            Log(OKO_Messages.Message(ui));
+            string s = moduleGuard.GetModemAddress();
+            Log("Adress " + s);
+
             moduleGuard.ClearRetrAddrList(); //	очистка списка ретрансляции
             moduleGuard.SetRetrType(0); //,	где type – тип ретрансляции
-            moduleGuard.AddRetrAddr(0); //	где addr1 – 1й адрес ретрансляции
-            // moduleGuard.AddRetrAddr(addr2); //	где addr2 – 2й адрес ретрансляции
-            moduleGuard.SetChannelsMask(1); //	где mask – маска каналов
-            moduleGuard.SendAskForState(0, 0, 32); //*/
+            moduleGuard.AddRetrAddr(32); //	где addr1 – 1й адрес ретрансляции
+            moduleGuard.SetChannelsMask(255); //	где mask – маска каналов
+            moduleGuard.SendAskForState(1, 0, 6910); //
         }
 
         public void GetModuleMessageEvent(object Message)
@@ -144,8 +129,7 @@ namespace App4
                     break;
             }
             string s = Var1 + ": =" + Var2 + "= : " + string.Join(",", Var);
-            Logger.Instance.WriteToLog(s);
-            Log(s);
+            Log( msg.Type + ": " + s);
         }
     }
 

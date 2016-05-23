@@ -26,61 +26,15 @@ namespace App3.Class
         public delegate void GetMessageHandler(int pEventId, MessageGroupId pMsgGrId, AKObject pObject, string pMsgTxt, string pPhone, string pTime);
         public static GetMessageHandler GetMessageEvent = null;
 
-        public static bool ProcessingEvent(OKOGate.Message msg)
+        private static bool ProcessingEvent(int OkoVersion, int RegionId, int ObjectNumber, int RetrNumber, int Class, int Code, int Part, int Zone, int ChnlMask, int Idx, DateTime TimeStamp, int AlarmGroupId = 0, string Address = "")
         {
             bool ret = true;
-            int ObjectNumber = SStr.StrToInt(msg.Get("Object").ToString());
-            DateTime TimeStamp = msg.TimeStamp;
-            int AlarmGroupId = msg.Get("AlarmGroupId").ToInt();
-            int UnpackError = SStr.StrToInt(msg.Get("UnpackError").ToString());
-            int Code = SStr.StrToInt(msg.Get("Code").ToString());
-            int TypeNumber = 1;
-            int PartNumber = SStr.StrToInt(msg.Get("Part").ToString());
-            int ZoneUserNumber = SStr.StrToInt(msg.Get("Zone").ToString());
-            int Class = SStr.StrToInt(msg.Get("Class").ToString());
-            // int Oko = SStr.StrToInt(msg.Get("Version").ToString());
 
-            string Address = msg.Address;
-
-            if (!Utils.ListenIP(Address))
-            {
-                return false;
-            }
-            int Region = Utils.RegionByIP(Address);
-            if (UnpackError == 0)
-            {
-                TypeNumber = SStr.StrToInt(msg.Get("TypeNumber").ToString());
-                // Logger.Instance.WriteToLog(msg.Type);
-                // Logger.Instance.WriteToLog(Encoding.Default.GetString(msg.Content));
-                if (TypeNumber == 0) TypeNumber = 1; // ?
-            }
-            bool f = true;
             int eventId = 0;
-            AKObject obj = new AKObject(ObjectNumber, Region);
+            AKObject obj = new AKObject(ObjectNumber, RegionId);
 
-
-            /* string req = DataBase.Help4Select(
-                "oko.event",
-                new Dictionary<string, object>(),
-                new Dictionary<string, object>
-                {
-                    {"objectnumber", ObjectNumber},
-                    {"alarmgroupid", AlarmGroupId},
-                    {"code", Code},
-                    {"typenumber", TypeNumber},
-                    {"partnumber", PartNumber},
-                    {"zoneusernumber", ZoneUserNumber},
-                    {"class", Class},
-                    {"address", Address.Q()},
-                    {"region_id", Region}
-                }
-            );
-
-            req = req.Substring(9); // отрезаем сначала "select *"
-            object t = DataBase.First(string.Format("SELECT max(datetime) as mx {0} ", req), "mx"); */
             MessageGroupId mgroup_id = (MessageGroupId)Utils.MessageGroup(Class, Code);
             DateTime lt = EventDispatcher.Instance[obj.Id, mgroup_id];
-                // DateTime tt = DateTime.Today;
 
             try
             {
@@ -94,12 +48,15 @@ namespace App3.Class
                         {"alarmgroupid", AlarmGroupId},
                         {"datetime", TimeStamp.Q()},
                         {"code", Code},
-                        {"typenumber", TypeNumber},
-                        {"partnumber", PartNumber},
-                        {"zoneusernumber", ZoneUserNumber},
+                        {"typenumber", Idx},
+                        {"partnumber", Part},
+                        {"zoneusernumber", Zone},
                         {"class", Class},
                         {"address", Address.Q()},
-                        {"region_id", Region}
+                        {"region_id", RegionId},
+                        {"channelnumber", ChnlMask},
+                        {"oko_version",  OkoVersion},
+                        {"retrnumber", RetrNumber }
                     },
                     "id", 
                     out pResult
@@ -117,12 +74,12 @@ namespace App3.Class
 
             if (TimeStamp.Subtract(lt).TotalSeconds < DBDict.Settings["TIMEOUT_MESSAGE_INTERVAL"].ToInt())
             {
-                f = false;
+                ret = false;
             }
-            if (f && obj.IsExists())
+            if (ret && obj.IsExists())
             {
                 EventDispatcher.Instance[obj.Id, mgroup_id] = DateTime.Now;
-                string MessText = Utils.GetMessageText(Class, Code);
+                string MessText = Utils.GetMessageText(Class, Code, OkoVersion);
                 MessText = string.Format("Объект расположенный по адресу:{0}, \r\nсообщает:{1}", obj.AddressStr, MessText);
                 if (GetMessageEvent != null)
                 {
@@ -130,8 +87,109 @@ namespace App3.Class
                 }
                 ret = true;
             }
-            
+
+
             return ret;
+        }
+
+        public static void ProcessingComEvent(object Message)
+        {
+            // throw new NotImplementedException();
+            GuardAgent2.Message msg = (GuardAgent2.Message)Message;
+            string Var1 = msg.Address;
+            DateTime Var2 = msg.TimeStamp;
+            object[] Var = new object[9];
+            int ObjectNumber = 0;
+            int RegionId = Config.Get("CurrenRegion").ToInt();
+            int OkoVersion = 0;
+            int RetrNumber = 0;
+            int Class = 0;
+            int Code = 0;
+            int Part = 0;
+            int Zone = 0;
+            int Idx = 0;
+            int ChnlMask = 1;
+            bool f = true;
+
+            switch (msg.Type)
+            {
+                case "MESSAGE_OKO2_RM":
+                    f = false;
+                    OkoVersion = 2;
+                    RetrNumber = msg.Get("RadioRetr").ToInt();
+                    ObjectNumber = msg.Get("Object").ToInt();
+                    Class = msg.Get("Class").ToInt();
+                    Code = msg.Get("Code").ToInt();
+                    Part = msg.Get("Part").ToInt();
+                    Zone = msg.Get("Zone").ToInt();
+                    Idx = msg.Get("Number").ToInt();
+                    ChnlMask = msg.Get("ChannelsMask").ToInt();
+                    break;
+                case "MESSAGE_OKO1_RM":
+                    f = false;
+                    OkoVersion = 1;
+                    RetrNumber = msg.Get("RetrNumber").ToInt();
+                    Code = msg.Get("Code").ToInt();
+                    ObjectNumber = msg.Get("Object").ToInt();
+                    ChnlMask = msg.Get("ChannelsMask").ToInt();
+                    break;
+                case "MESSAGE_GUARD_RM":
+                    Var[0] = msg.Get("Result");
+                    Var[1] = msg.Get("Part");
+                    Var[2] = msg.Get("Status");
+                    Var[3] = msg.Get("Code");
+                    Var[4] = msg.Get("User");
+                    Var[5] = msg.Get("ChannelsMask");
+                    break;
+                case "MESSAGE_SYSTEM_RM":
+                    Var[0] = msg.Get("Command");
+                    switch ((int)Var[0])
+                    {
+                        case 128:
+                            Var[1] = msg.Get("Result");
+                            break;
+                        case 186:
+                            Var[1] = msg.Get("Result");
+                            Var[2] = msg.Get("Text");
+                            break;
+                    }
+                    break;
+            }
+            if (f)
+            {
+                string s = Var1 + ": =" + Var2 + "= : " + string.Join(",", Var);
+                Logger.Instance.WriteToLog(s);
+            }
+            else
+            {
+                ProcessingEvent(OkoVersion, RegionId, ObjectNumber, RetrNumber, Class, Code, Part, Zone, ChnlMask, Idx, DateTime.Now);
+            }
+        }
+
+        public static bool ProcessingXmlEvent(OKOGate.Message msg)
+        {
+            int ObjectNumber = SStr.StrToInt(msg.Get("Object").ToString());
+            DateTime TimeStamp = msg.TimeStamp;
+            int AlarmGroupId = msg.Get("AlarmGroupId").ToInt();
+            int UnpackError = SStr.StrToInt(msg.Get("UnpackError").ToString());
+            int Code = SStr.StrToInt(msg.Get("Code").ToString());
+            int TypeNumber = 1;
+            int PartNumber = SStr.StrToInt(msg.Get("Part").ToString());
+            int ZoneUserNumber = SStr.StrToInt(msg.Get("Zone").ToString());
+            int Class = SStr.StrToInt(msg.Get("Class").ToString());
+            string Address = msg.Address;
+
+            if (!Utils.ListenIP(Address))
+            {
+                return false;
+            }
+            int Region = Utils.RegionByIP(Address);
+            if (UnpackError == 0)
+            {
+                TypeNumber = SStr.StrToInt(msg.Get("TypeNumber").ToString());
+                if (TypeNumber == 0) TypeNumber = 1;
+            }            
+            return ProcessingEvent(2, Region, ObjectNumber, 0, Class, Code, PartNumber, ZoneUserNumber, 1, TypeNumber, TimeStamp, AlarmGroupId, Address); ;
         }
 
         public static void AcceptAlarm(long ObjectId)

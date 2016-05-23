@@ -282,11 +282,11 @@ namespace App3.Class
                 );
         }*/
 
-        public static string GetMessageText(int Class, int Code)
+        public static string GetMessageText(int Class, int Code, int OkoVersion)
         {
             string s = "Неизвестное сообщение";
             object[] o = DataBase.FirstRow(
-                string.Format("SELECT message, notes, mgroup_id FROM oko.message_text WHERE code = {0} and class = {1}", Code, Class), 0
+                string.Format("SELECT message, notes, mgroup_id FROM oko.message_text WHERE code = {0} and class = {1} and \"OKO\" = {2}", Code, Class, OkoVersion), 0
             );
             if (o != null && o.Count() > 0)
             {
@@ -630,6 +630,22 @@ namespace App3.Class
             if (S != null)
                 int.TryParse(S.ToString(), out i);
             return i;
+        }
+
+        public static byte ToByte(this object B)
+        {
+            byte b = 0;
+            if (B != null)
+                byte.TryParse(B.ToString(), out b);
+            return b;
+        }
+
+        public static ushort ToUShort(this object B)
+        {
+            ushort b = 0;
+            if (B != null)
+                ushort.TryParse(B.ToString(), out b);
+            return b;
         }
 
         public static Double ToDouble(this object S)

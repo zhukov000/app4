@@ -250,7 +250,16 @@ namespace App3.Controls
         public void SaveChange()
         {
             if (bindingSource1.DataSource != null)
+            {
+                NpgsqlCommandBuilder builder = new NpgsqlCommandBuilder(daResult);
+
+                builder.SetAllValues = false;
+                daResult.InsertCommand = builder.GetInsertCommand();                
+                daResult.UpdateCommand = builder.GetUpdateCommand();
+                daResult.DeleteCommand = builder.GetDeleteCommand(); 
+
                 daResult.Update((DataTable)bindingSource1.DataSource);
+            }
         }
 
         public void CancelChange()

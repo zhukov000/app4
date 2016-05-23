@@ -274,6 +274,7 @@
   <ItemGroup>
     <Compile Include="Class\Singleton\EventDispatcher.cs" />
     <Compile Include="Class\Singleton\Logger.cs" />
+    <Compile Include="Class\Static\OKO_Messages.cs" />
     <Compile Include="Class\Static\PermissionControl.cs" />
     <Compile Include="Class\Depricated\SingleInstance.cs" />
     <Compile Include="Class\Synchronization\SyncAddresses.cs" />
