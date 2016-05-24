@@ -98,12 +98,20 @@ namespace App3.Class
                 ).ToInt() ;
         }
 
-        public static int MessageGroup(int Class, int Code)
+        /// Depricated
+        /*
+        public static int MessageGroup(int Class, int Code, int Oko)
         {
-            object o = DataBase.First(String.Format("SELECT * FROM oko.message_text WHERE class = {0} and code = {1}", Class, Code), "mgroup_id");
+            object o = DataBase.First(String.Format("SELECT * FROM oko.message_text WHERE class = {0} and code = {1} and \"OKO\" = {2}", Class, Code, Oko), "mgroup_id");
             return o.ToInt();
         }
 
+        public static int MessageGroupWithoutCode(int Class, int Oko)
+        {
+            object o = DataBase.First(String.Format("SELECT * FROM oko.message_text WHERE class = {0} and \"OKO\" = {1}", Class, Oko), "mgroup_id");
+            return o.ToInt();
+        }
+        */
         public static List<object[]> RegionStatus()
         {
             return DataBase.RowSelect("SELECT color, min_norma, max_norma FROM oko.region_status ORDER BY min_norma DESC");
@@ -282,6 +290,8 @@ namespace App3.Class
                 );
         }*/
 
+        /// Depricated
+        /*
         public static string GetMessageText(int Class, int Code, int OkoVersion)
         {
             string s = "Неизвестное сообщение";
@@ -294,7 +304,7 @@ namespace App3.Class
             }
             return s;
         }
-
+        */
         public static object[] GetMessageGroup(int GroupId)
         {
             return DataBase.FirstRow("SELECT * FROM oko.tstate WHERE id = " + GroupId, 0);

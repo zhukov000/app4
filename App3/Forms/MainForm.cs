@@ -106,7 +106,7 @@ namespace App3.Forms
                     {
                         oModuleCOM.Close();
                         uint ui = oModuleCOM.Init(str, Config.Get("COMBaudrate").ToInt());
-                        if (ui == OKO_Messages.MODULE_RUN)
+                        if (ui == OKO_Messages.Module_Started)
                         {
                             oModuleCOM.GetModuleMessageEvent += new GuardAgent2.EventDelegate(Handling.ProcessingComEvent);
                             oModuleCOM.ClearRetrAddrList(); //	очистка списка ретрансляции
@@ -690,11 +690,13 @@ namespace App3.Forms
             {
                 if (!isShowEventForm)
                 {
+                    oEventsForm.Show();
                     oEventsForm.Focus();
                     oDistricts.Height = oDistricts.Height - oEventsForm.Height;
                 }
                 else
                 {
+                    oEventsForm.Hide();
                     oDistricts.Height = oDistricts.Height + oEventsForm.Height;
                     oDistricts.Focus();
                     oDistricts.FocusOneDistrictForm();

@@ -31,7 +31,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            // this.videoViewerWF1 = new Ozeki.Controls.VideoViewerWF();
             this.panel1 = new System.Windows.Forms.Panel();
             this.button9 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
@@ -73,11 +72,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel7 = new System.Windows.Forms.Panel();
             this.eventTable = new System.Windows.Forms.DataGridView();
-            this.datetime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.message = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.notes = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.status = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -106,6 +100,13 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.datetime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.message = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.notes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.idx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.siglevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.repeat = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -121,22 +122,7 @@
             this.tabPage3.SuspendLayout();
             this.panel3.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // videoViewerWF1
-            // 
-            /*this.videoViewerWF1.BackColor = System.Drawing.Color.Black;
-            this.videoViewerWF1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.videoViewerWF1.FlipMode = Ozeki.Controls.FlipMode.None;
-            this.videoViewerWF1.FrameStretch = Ozeki.Controls.FrameStretch.Uniform;
-            this.videoViewerWF1.FullScreenEnabled = true;
-            this.videoViewerWF1.Location = new System.Drawing.Point(0, 0);
-            this.videoViewerWF1.Name = "videoViewerWF1";
-            this.videoViewerWF1.RotateAngle = 0;
-            this.videoViewerWF1.Size = new System.Drawing.Size(417, 364);
-            this.videoViewerWF1.TabIndex = 2;
-            this.videoViewerWF1.Text = "videoViewerWF1";*/
             // 
             // panel1
             // 
@@ -237,7 +223,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(131, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(425, 393);
+            this.panel2.Size = new System.Drawing.Size(618, 393);
             this.panel2.TabIndex = 1;
             // 
             // tabControl1
@@ -251,7 +237,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(425, 393);
+            this.tabControl1.Size = new System.Drawing.Size(618, 393);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -278,7 +264,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(417, 364);
+            this.tabPage1.Size = new System.Drawing.Size(610, 364);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Общее";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -349,7 +335,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(3, 218);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(411, 143);
+            this.groupBox2.Size = new System.Drawing.Size(604, 143);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Контактные данные";
@@ -360,7 +346,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(3, 16);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(323, 124);
+            this.panel5.Size = new System.Drawing.Size(516, 124);
             this.panel5.TabIndex = 1;
             // 
             // contactTable
@@ -401,7 +387,7 @@
             this.contactTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.contactTable.RowHeadersWidth = 30;
             this.contactTable.RowTemplate.Height = 50;
-            this.contactTable.Size = new System.Drawing.Size(323, 124);
+            this.contactTable.Size = new System.Drawing.Size(516, 124);
             this.contactTable.TabIndex = 0;
             // 
             // type
@@ -430,7 +416,7 @@
             this.panel6.Controls.Add(this.button13);
             this.panel6.Controls.Add(this.button6);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel6.Location = new System.Drawing.Point(326, 16);
+            this.panel6.Location = new System.Drawing.Point(519, 16);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(82, 124);
             this.panel6.TabIndex = 2;
@@ -562,7 +548,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(417, 364);
+            this.tabPage2.Size = new System.Drawing.Size(610, 364);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "События";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -573,7 +559,7 @@
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel7.Location = new System.Drawing.Point(3, 3);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(411, 358);
+            this.panel7.Size = new System.Drawing.Size(604, 358);
             this.panel7.TabIndex = 0;
             // 
             // eventTable
@@ -586,44 +572,16 @@
             this.message,
             this.notes,
             this.status,
-            this.address});
+            this.idx,
+            this.siglevel,
+            this.repeat});
             this.eventTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.eventTable.Location = new System.Drawing.Point(0, 0);
             this.eventTable.Name = "eventTable";
             this.eventTable.ReadOnly = true;
             this.eventTable.RowHeadersVisible = false;
-            this.eventTable.Size = new System.Drawing.Size(411, 358);
+            this.eventTable.Size = new System.Drawing.Size(604, 358);
             this.eventTable.TabIndex = 0;
-            // 
-            // datetime
-            // 
-            this.datetime.HeaderText = "время";
-            this.datetime.Name = "datetime";
-            this.datetime.ReadOnly = true;
-            // 
-            // message
-            // 
-            this.message.HeaderText = "сообщение";
-            this.message.Name = "message";
-            this.message.ReadOnly = true;
-            // 
-            // notes
-            // 
-            this.notes.HeaderText = "примечание";
-            this.notes.Name = "notes";
-            this.notes.ReadOnly = true;
-            // 
-            // status
-            // 
-            this.status.HeaderText = "статус";
-            this.status.Name = "status";
-            this.status.ReadOnly = true;
-            // 
-            // address
-            // 
-            this.address.HeaderText = "адрес";
-            this.address.Name = "address";
-            this.address.ReadOnly = true;
             // 
             // tabPage3
             // 
@@ -888,7 +846,6 @@
             // 
             // tabPage4
             // 
-            // this.tabPage4.Controls.Add(this.videoViewerWF1);
             this.tabPage4.Location = new System.Drawing.Point(4, 25);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(417, 364);
@@ -896,11 +853,56 @@
             this.tabPage4.Text = "Видео";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // datetime
+            // 
+            this.datetime.HeaderText = "время";
+            this.datetime.Name = "datetime";
+            this.datetime.ReadOnly = true;
+            // 
+            // message
+            // 
+            this.message.HeaderText = "сообщение";
+            this.message.Name = "message";
+            this.message.ReadOnly = true;
+            // 
+            // notes
+            // 
+            this.notes.HeaderText = "примечание";
+            this.notes.Name = "notes";
+            this.notes.ReadOnly = true;
+            // 
+            // status
+            // 
+            this.status.HeaderText = "статус";
+            this.status.Name = "status";
+            this.status.ReadOnly = true;
+            // 
+            // idx
+            // 
+            this.idx.HeaderText = "индекс";
+            this.idx.Name = "idx";
+            this.idx.ReadOnly = true;
+            this.idx.Width = 60;
+            // 
+            // siglevel
+            // 
+            this.siglevel.HeaderText = "уровень";
+            this.siglevel.Name = "siglevel";
+            this.siglevel.ReadOnly = true;
+            this.siglevel.Width = 70;
+            // 
+            // repeat
+            // 
+            this.repeat.HeaderText = "повтор";
+            this.repeat.Name = "repeat";
+            this.repeat.ReadOnly = true;
+            this.repeat.Width = 60;
+            // 
             // ObjectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(556, 393);
+            this.ClientSize = new System.Drawing.Size(749, 393);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -927,7 +929,6 @@
             this.panel3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.tabPage4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1009,6 +1010,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn message;
         private System.Windows.Forms.DataGridViewTextBoxColumn notes;
         private System.Windows.Forms.DataGridViewTextBoxColumn status;
-        private System.Windows.Forms.DataGridViewTextBoxColumn address;
+        private System.Windows.Forms.DataGridViewTextBoxColumn idx;
+        private System.Windows.Forms.DataGridViewTextBoxColumn siglevel;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn repeat;
     }
 }

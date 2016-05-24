@@ -243,5 +243,23 @@ namespace App3
             long id = dataGridView1.Rows[e.RowIndex].Cells["id"].Value.ToInt64();
             Handling.onObjectCardOpen(id);
         }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(tabControl1.SelectedIndex == 1)
+            {
+                if (WindowState == FormWindowState.Maximized)
+                {
+                    WindowState = FormWindowState.Normal;
+                    tabControl1.TabPages[1].Text = "Развернуть";
+                }
+                else
+                {
+                    WindowState = FormWindowState.Maximized;
+                    tabControl1.TabPages[1].Text = "Свернуть";
+                }
+                tabControl1.SelectTab(0);
+            }
+        }
     }
 }

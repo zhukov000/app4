@@ -6,8 +6,57 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using MessageGroupId = App3.Class.Utils.MessageGroupId;
+
 namespace App3.Class.Static
 {
+    class TMessageDict
+    {
+        private IDictionary<int, IDictionary<int, IDictionary<int, Tuple<MessageGroupId, string, string>>>> data;
+
+        public TMessageDict()
+        {
+            data = new Dictionary<int, IDictionary<int, IDictionary<int, Tuple<MessageGroupId, string, string>>>>();
+            List<object[]> l = DataBase.RowSelect("select \"OKO\", class, code, mgroup_id, message, notes from oko.message_text");
+            foreach(object[] row in l)
+            {
+                int Oko = row[0].ToInt();
+                int Class = row[1].ToInt();
+                int Code = row[2].ToInt();
+                MessageGroupId MGrId = (MessageGroupId)row[3].ToInt();
+                string Message = row[4].ToString();
+                string Notes = row[5].ToString();
+
+                if (!data.ContainsKey(Oko))
+                    data[Oko] = new Dictionary<int, IDictionary<int, Tuple<MessageGroupId, string, string>>>();
+                if (!data[Oko].ContainsKey(Class))
+                    data[Oko][Class] = new Dictionary<int, Tuple<MessageGroupId, string, string>>();
+                if (!data[Oko][Class].ContainsKey(Code))
+                    data[Oko][Class][Code] = new Tuple<MessageGroupId, string, string>(MGrId, Message, Notes);
+            }
+        }
+
+        public Tuple<MessageGroupId, string, string> this[int Oko, int Class, int Code]
+        {
+            get
+            {
+                Tuple<MessageGroupId, string, string> r = new Tuple<MessageGroupId, string, string> (MessageGroupId.UNDEFINED, "", "");
+                do
+                {
+                    if (!data.ContainsKey(Oko)) break;
+                    if (!data[Oko].ContainsKey(Class)) break;
+                    if (!data[Oko][Class].ContainsKey(Code))
+                    {
+                        if (data[Oko][Class].ContainsKey(0)) r = data[Oko][Class][0];
+                        break;
+                    }
+                    r = data[Oko][Class][Code];
+                } while (false);
+                return r;
+            }
+        }
+    }
+
     static class DBDict
     {
         public static IDictionary<int, string> TContact;
@@ -24,6 +73,7 @@ namespace App3.Class.Static
         public static IDictionary<int, Tuple<int,int,string,string>> TClassify;
         public static IDictionary<int, string> TRealObject;
         public static IDictionary<int, string> TCustomer;
+        public static TMessageDict TMessage;
 
         public static void UpdateDictionary(string name)
         {
@@ -43,6 +93,9 @@ namespace App3.Class.Static
                             x => x[0].ToInt(),
                             x => new Tuple<string, int>(x[1].ToString(), x[2].ToInt())
                         );
+                    break;
+                case "TMessage":
+                    TMessage = new TMessageDict();
                     break;
             }
         }
@@ -142,6 +195,7 @@ namespace App3.Class.Static
                     }
                 }
             }
+            TMessage = new TMessageDict();
         }
 
         static public void Load2Combobox(ref ComboBox combo, List<ComboboxItem> items, object match)

@@ -606,10 +606,10 @@ namespace App3.Forms
             eventTable.Rows.Clear();
             List<object[]> data = DataBase.RowSelect(
                 String.Format(
-                    @"select ev.datetime, mt.message, mt.notes, ts.status, ev.address
+                    @"select to_char(ev.datetime, 'HH24:MI:SS DD/MM') as datetime, mt.message, mt.notes, ts.status, ev.typenumber, ev.siglevel, ev.isrepeat
                     from oko.event ev
 	                    inner join oko.object ob on ob.number = ev.objectnumber and ob.region_id = ev.region_id " +
-	                    "inner join oko.message_text mt on mt.\"OKO\" = ev.oko_version and mt.code = ev.code and mt.class = ev.class " +
+                        "inner join oko.message_text mt on mt.\"OKO\" = ev.oko_version and (mt.code = ev.code or mt.code = 0) and mt.class = ev.class " +
                         @"inner join oko.tstate ts on ts.id = mt.mgroup_id
                     where ob.osm_id = {0}
                     order by datetime desc",

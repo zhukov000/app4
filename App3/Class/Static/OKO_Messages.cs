@@ -8,17 +8,17 @@ namespace App4
 {
     static class OKO_Messages
     {
-        public const uint MODULE_RUN = 4146;
-        public const uint MODULE_ALREADY_RUN = 1073745970;
-        public const uint MODULE_ERROR_RUN = 3221291059;
-        public const uint COMPORT_ERROR_OPEN = 3221291009;
+        public const uint Module_Started = 4146;
+        public const uint Module_AlreadyStarted = 1073745970;
+        public const uint Module_StartError = 3221291059;
+        public const uint Module_CanNotOpenPort = 3221291009;
 
         static private IDictionary<uint, string> dict = new Dictionary<uint, string>()
         {
-            { MODULE_RUN, "Модуль запущен" },
-            { MODULE_ALREADY_RUN, "Модуль уже запущен" },
-            { MODULE_ERROR_RUN, "Ошибка запуска модуля" },
-            { COMPORT_ERROR_OPEN, "Ошибка открытия COM порта" }
+            { Module_Started, "Модуль запущен" },
+            { Module_AlreadyStarted, "Модуль уже запущен" },
+            { Module_StartError, "Ошибка запуска модуля" },
+            { Module_CanNotOpenPort, "Ошибка открытия COM порта" }
         };
 
         static public string Message(uint code)

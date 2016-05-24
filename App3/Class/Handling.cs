@@ -26,15 +26,20 @@ namespace App3.Class
         public delegate void GetMessageHandler(int pEventId, MessageGroupId pMsgGrId, AKObject pObject, string pMsgTxt, string pPhone, string pTime);
         public static GetMessageHandler GetMessageEvent = null;
 
-        private static bool ProcessingEvent(int OkoVersion, int RegionId, int ObjectNumber, int RetrNumber, int Class, int Code, int Part, int Zone, int ChnlMask, int Idx, DateTime TimeStamp, int AlarmGroupId = 0, string Address = "")
+        private static bool ProcessingEvent(int OkoVersion, int RegionId, int ObjectNumber, int RetrNumber, int Class, int Code, int Part, int Zone, int ChnlMask, int Idx, DateTime TimeStamp, int SignalLevel, int AlarmGroupId = 0, string Address = "")
         {
             bool ret = true;
 
             int eventId = 0;
             AKObject obj = new AKObject(ObjectNumber, RegionId);
 
-            MessageGroupId mgroup_id = (MessageGroupId)Utils.MessageGroup(Class, Code);
-            DateTime lt = EventDispatcher.Instance[obj.Id, mgroup_id];
+            MessageGroupId mgroup_id = DBDict.TMessage[OkoVersion, Class, Code].Item1;
+            Tuple<DateTime, int> lt = EventDispatcher.Instance[obj.Id, mgroup_id, Idx];
+
+            if (TimeStamp.Subtract(lt.Item1).TotalSeconds < DBDict.Settings["TIMEOUT_MESSAGE_INTERVAL"].ToInt() || lt.Item2 == Idx)
+            {
+                ret = false;
+            }
 
             try
             {
@@ -56,7 +61,9 @@ namespace App3.Class
                         {"region_id", RegionId},
                         {"channelnumber", ChnlMask},
                         {"oko_version",  OkoVersion},
-                        {"retrnumber", RetrNumber }
+                        {"retrnumber", RetrNumber },
+                        { "isrepeat", !ret },
+                        { "siglevel", SignalLevel }
                     },
                     "id", 
                     out pResult
@@ -72,14 +79,11 @@ namespace App3.Class
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
 
-            if (TimeStamp.Subtract(lt).TotalSeconds < DBDict.Settings["TIMEOUT_MESSAGE_INTERVAL"].ToInt())
-            {
-                ret = false;
-            }
+
             if (ret && obj.IsExists())
             {
-                EventDispatcher.Instance[obj.Id, mgroup_id] = DateTime.Now;
-                string MessText = Utils.GetMessageText(Class, Code, OkoVersion);
+                EventDispatcher.Instance[obj.Id, mgroup_id, Idx] = new Tuple<DateTime, int>(DateTime.Now, Idx);
+                string MessText = string.Format("{0}({1})", DBDict.TMessage[OkoVersion, Class, Code].Item2, DBDict.TMessage[OkoVersion, Class, Code].Item3) ;
                 MessText = string.Format("Объект расположенный по адресу:{0}, \r\nсообщает:{1}", obj.AddressStr, MessText);
                 if (GetMessageEvent != null)
                 {
@@ -109,8 +113,9 @@ namespace App3.Class
             int Zone = 0;
             int Idx = 0;
             int ChnlMask = 1;
+            int SignalLevel = 0;
             bool f = true;
-
+            Logger.Instance.WriteToLog(msg.Type);
             switch (msg.Type)
             {
                 case "MESSAGE_OKO2_RM":
@@ -124,6 +129,7 @@ namespace App3.Class
                     Zone = msg.Get("Zone").ToInt();
                     Idx = msg.Get("Number").ToInt();
                     ChnlMask = msg.Get("ChannelsMask").ToInt();
+                    SignalLevel = msg.Get("Attributes").ToInt();
                     break;
                 case "MESSAGE_OKO1_RM":
                     f = false;
@@ -155,14 +161,15 @@ namespace App3.Class
                     }
                     break;
             }
+            string s = Var1 + ": =" + Var2 + "= : " + string.Join(",", Var);
+            Logger.Instance.WriteToLog(s);
             if (f)
             {
-                string s = Var1 + ": =" + Var2 + "= : " + string.Join(",", Var);
-                Logger.Instance.WriteToLog(s);
+               
             }
             else
             {
-                ProcessingEvent(OkoVersion, RegionId, ObjectNumber, RetrNumber, Class, Code, Part, Zone, ChnlMask, Idx, DateTime.Now);
+                ProcessingEvent(OkoVersion, RegionId, ObjectNumber, RetrNumber, Class, Code, Part, Zone, ChnlMask, Idx, DateTime.Now, SignalLevel, 0, msg.Address);
             }
         }
 
@@ -189,7 +196,7 @@ namespace App3.Class
                 TypeNumber = SStr.StrToInt(msg.Get("TypeNumber").ToString());
                 if (TypeNumber == 0) TypeNumber = 1;
             }            
-            return ProcessingEvent(2, Region, ObjectNumber, 0, Class, Code, PartNumber, ZoneUserNumber, 1, TypeNumber, TimeStamp, AlarmGroupId, Address); ;
+            return ProcessingEvent(2, Region, ObjectNumber, 0, Class, Code, PartNumber, ZoneUserNumber, 1, TypeNumber, TimeStamp, 0, AlarmGroupId, Address); ;
         }
 
         public static void AcceptAlarm(long ObjectId)
