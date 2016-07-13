@@ -305,6 +305,16 @@ namespace App3.Class
             return s;
         }
         */
+
+        public static List<object[]> GetListenIp()
+        {
+            return DataBase.RowSelect(
+                @"select distinct rm.fullname, rm.num, rm.color, rm.name 
+                    from public.regions2map rm
+                      inner join oko.ipaddresses ip on rm.num = ip.id_region
+                    where ip.listen
+                    order by name");
+        }
         public static object[] GetMessageGroup(int GroupId)
         {
             return DataBase.FirstRow("SELECT * FROM oko.tstate WHERE id = " + GroupId, 0);

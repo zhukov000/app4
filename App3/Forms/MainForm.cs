@@ -22,6 +22,7 @@ using App3.Web;
 using App3.Class.Singleton;
 using System.IO.Ports;
 using App4;
+using App3.Class.Map;
 
 namespace App3.Forms
 {
@@ -420,6 +421,11 @@ namespace App3.Forms
                 Updater.Start();
                 // Старт сервиса синхронизации
                 // TODO
+                // Обновление кэша БД
+                int curRegion = Config.Get("CurrenRegion").ToInt();
+                LayerCache.Init(curRegion);
+                LayerCache.UpdateLayer("regions");
+                LayerCache.UpdateLayers(curRegion);
             }
             Logger.Instance.FlushLog();
         }

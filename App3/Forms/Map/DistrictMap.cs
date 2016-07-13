@@ -412,12 +412,7 @@ namespace App3.Forms
 
         private void BuildTreeView()
         {
-            List<object[]> regions = DataBase.RowSelect(
-                @"select distinct rm.fullname, rm.num, rm.color, rm.name 
-                    from public.regions2map rm
-                      inner join oko.ipaddresses ip on rm.num = ip.id_region
-                    where ip.listen
-                    order by name");
+            List<object[]> regions = Utils.GetListenIp();
             if (treeView1.InvokeRequired)
                 treeView1.BeginInvoke(new Action(() => { BuildTreeViewThreadSafe(regions); }));
             else
@@ -581,7 +576,7 @@ namespace App3.Forms
 
         private void DistrictMap_FormClosing(object sender, FormClosingEventArgs e)
         {
-            oMapper.ClearCache();
+            // oMapper.ClearCache();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)

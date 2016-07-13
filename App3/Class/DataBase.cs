@@ -8,6 +8,7 @@ using Npgsql;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using App3.Class.Singleton;
+using System.Data.Odbc;
 
 namespace App3
 {
@@ -523,6 +524,54 @@ namespace App3
         public static bool IsOpen()
         {
             return isOpen;
+        }
+
+        public static bool TableExist(string tableName)
+        {
+            bool exists = false;
+
+            string[] ss = { "public", "" };
+            string[] s2 = tableName.Split(".".ToCharArray());
+            if (s2.Length == 1)
+                ss[1] = s2[0];
+            else if (s2.Length == 2)
+            {
+                ss[0] = s2[0];
+                ss[1] = s2[1];
+            }
+            string req = string.Format(
+                  "select case when exists((select * from information_schema.tables where table_schema = '{0}' and table_name = '{1}')) then 1 else 0 end as v", ss[0], ss[1]);
+            try
+            {
+                int v = (int)DataBase.First(req, "v");
+                if (v == 1) exists = true;
+            }
+            catch
+            {}
+            /*try
+            {
+                // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.  
+                var cmd = new OdbcCommand(
+                    string.Format(
+                  "select case when exists((select * from information_schema.tables where table_schema = '{0}' and table_name = '{1}')) then 1 else 0 end", ss[0], ss[1]),  );
+
+                exists = (int)cmd.ExecuteScalar() == 1;
+            }
+            catch
+            {
+                try
+                {
+                    // Other RDBMS.  Graceful degradation
+                    exists = true;
+                    var cmdOthers = new OdbcCommand("select 1 from " + tableName + " where 1 = 0");
+                    cmdOthers.ExecuteNonQuery();
+                }
+                catch
+                {
+                    exists = false;
+                }
+            }*/
+            return exists;
         }
     }
 }

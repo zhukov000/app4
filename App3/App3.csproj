@@ -113,6 +113,14 @@
       <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0-alpha3\lib\net40\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0-alpha3\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="gdalconst_csharp, Version=1.0.4704.32537, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
       <HintPath>..\packages\GDAL.1.9.2\lib\net40\gdalconst_csharp.dll</HintPath>
       <Private>True</Private>
@@ -272,6 +280,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\Map\BigPoly.cs" />
+    <Compile Include="Class\Map\Build.cs" />
+    <Compile Include="Class\Map\BuildBorder.cs" />
+    <Compile Include="Class\Map\HighWay.cs" />
+    <Compile Include="Class\Map\Layer.cs" />
+    <Compile Include="Class\Map\LayerCache.cs" />
+    <Compile Include="Class\Map\MidPoly.cs" />
+    <Compile Include="Class\Map\Object.cs" />
+    <Compile Include="Class\Map\Place.cs" />
+    <Compile Include="Class\Map\Point.cs" />
+    <Compile Include="Class\Map\Polygon.cs" />
+    <Compile Include="Class\Map\Region.cs" />
+    <Compile Include="Class\Map\Road.cs" />
+    <Compile Include="Class\Map\SmlPoly.cs" />
     <Compile Include="Class\Singleton\EventDispatcher.cs" />
     <Compile Include="Class\Singleton\Logger.cs" />
     <Compile Include="Class\Static\OKO_Messages.cs" />

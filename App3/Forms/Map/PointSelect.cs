@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LayerType = App3.Class.GeoDataCache.LayerType;
 
 namespace App3.Forms.Map
 {
@@ -59,7 +58,7 @@ namespace App3.Forms.Map
         public void SelectRegion(string pName)
         {
             // загрузить карту региона
-            oMapper.Clear();
+            // oMapper.Clear();
             oMapper.DistrictName = pName;
             UpdateDistrictMap();
             panel2.Visible = true;
@@ -85,7 +84,7 @@ namespace App3.Forms.Map
 
         private void PointSelect_FormClosing(object sender, FormClosingEventArgs e)
         {
-            oMapper.ClearCache();
+            // oMapper.ClearCache();
         }
 
         private void districtBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -110,9 +109,9 @@ namespace App3.Forms.Map
 
         private Stopwatch stopWatch = new Stopwatch();
 
-        private void UpdateDistrictMap()
+        private void UpdateDistrictMap(/*int RegionId*/)
         {
-            mapBox.Map = oMapper.InitializeDistrictMap(
+            mapBox.Map = oMapper.InitializeDistrictMap(/*RegionId,*/ 
                         new bool[] { 
                             plgBox.Checked, roadBox.Checked, buildBox.Checked
                         }

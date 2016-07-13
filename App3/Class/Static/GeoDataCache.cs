@@ -45,7 +45,23 @@ namespace App3.Class
 
         #endregion
 
-        static public int OpenSession(string name = "")
+        static public int BuildCacheForListened()
+        {
+            ClearCache();
+            List<object[]> rows = Utils.GetListenIp();
+            int id = OpenSession();
+            foreach(object[] row in rows)
+            {
+                int num = row[1].ToInt();
+                foreach (var pType in tableName.Keys)
+                {
+                    UpdateDataTable(id, pType/*, num*/, new object[] { });
+                }
+            }
+            return id;
+        }
+
+        static private int OpenSession(string name = "")
         {
             object [] res = null;
             int id_session = 0;
@@ -66,26 +82,33 @@ namespace App3.Class
 
         static public void CloseSession(int pSessionId)
         {
-            foreach (var pType in tableName.Keys)
+            List<object[]> rows = Utils.GetListenIp();
+            int id = OpenSession();
+            foreach (object[] row in rows)
             {
-                string req = "DROP TABLE IF EXISTS {0}";
-                if (pType == LayerType.OBJECT)
+                int num = row[1].ToInt();
+
+                foreach (var pType in tableName.Keys)
                 {
-                    req = "DROP VIEW IF EXISTS {0}";
+                    string req = "DROP TABLE IF EXISTS {0}";
+                    if (pType == LayerType.OBJECT)
+                    {
+                        req = "DROP VIEW IF EXISTS {0}";
+                    }
+                    string sTableName = TableName(pSessionId, pType/*, num*/);
+                    DataBase.RunCommand(string.Format(req, sTableName));
                 }
-                string sTableName = TableName(pSessionId, pType);
-                DataBase.RunCommand(string.Format(req, sTableName));
             }
         }
 
-        static public string TableName(int pSessionId, LayerType pType)
+        static public string TableName(int pSessionId, LayerType pType/*, int RegionId*/)
         {
-            return "cache." + tableName[pType] + pSessionId;
+            return "cache." + tableName[pType] + pSessionId /*+ "_" + RegionId*/;
         }
 
-        static public string UpdateDataTable(int pSessionId, LayerType pType, object[] Params)
+        static public string UpdateDataTable(int pSessionId, LayerType pType/*, int RegionId*/, object[] Params)
         {
-            string sTableName = TableName(pSessionId, pType);
+            string sTableName = TableName(pSessionId, pType/*, RegionId*/);
             string reqCreate = "CREATE TABLE {0} AS ";
             string reqDrop = "DROP TABLE IF EXISTS {0}";
 
@@ -127,10 +150,10 @@ namespace App3.Class
                     reqCreate += string.Format("(SELECT osm_id, way, COALESCE(name, \"addr:housenumber\") as name FROM oko.district_weigth_polygons({0}, 0, 100000) WHERE building is not null)", Params[0]);
                     break;
                 case LayerType.HIGHWAY:
-                    reqCreate += string.Format("(SELECT osm_id, way, name FROM {0} WHERE highway is not null)", TableName(pSessionId, LayerType.ROAD));
+                    reqCreate += string.Format("(SELECT osm_id, way, name FROM {0} WHERE highway is not null)", TableName(pSessionId, LayerType.ROAD/*, RegionId*/));
                     break;
                 case LayerType.PLACES:
-                    reqCreate += string.Format("(SELECT osm_id, way, name FROM {0} WHERE place is not null)", TableName(pSessionId, LayerType.POLYGON));
+                    reqCreate += string.Format("(SELECT osm_id, way, name FROM {0} WHERE place is not null)", TableName(pSessionId, LayerType.POLYGON/*, RegionId*/));
                     break;
 
                 case LayerType.OBJECT:

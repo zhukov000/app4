@@ -1,4 +1,5 @@
 ﻿using App3.Class;
+using App3.Class.Map;
 using App3.Class.Static;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,71 @@ namespace App3.Class
 {
     class Mapper
     {
+        private string districtName = null;
+        private int districtId = 0;
+
+        public int DistrictId
+        {
+            get
+            {
+                return districtId;
+            }
+            set
+            {
+                districtId = value;
+                districtName = DBDict.TRegion[districtId].Item2;
+            }
+        }
+
+        public string DistrictName
+        {
+            get
+            {
+                return districtName;
+            }
+            set
+            {
+                districtName = value;
+                districtId = DBDict.TDistrict[districtName].Item1;
+            }
+        }
+
+        public SharpMap.Map InitializeRegionMap()
+        {
+            // throw new Exception("TODO");
+
+            SharpMap.Map pMap = new SharpMap.Map();
+            pMap.BackColor = Color.FromArgb(167, 232, 232);
+            // слой с регионами
+            SharpMap.Layers.VectorLayer Regions = LayerCache.GetVLayer("regions"); // regions2map
+            // SharpMap.Layers.VectorLayer Regions = CreateVLayer("cache.region0", "Regions"); // cache.region0
+            Regions.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+            Regions.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeRegion);
+            // слой с подписями
+
+            SharpMap.Layers.LabelLayer layLabel = LayerCache.GetLLayer("regions"); // CreateLabelLayer(Regions, "RegionLabel", "name");
+            layLabel.MultipartGeometryBehaviour = SharpMap.Layers.LabelLayer.MultipartGeometryBehaviourEnum.Largest;
+            layLabel.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
+            layLabel.LabelFilter = SharpMap.Rendering.LabelCollisionDetection.ThoroughCollisionDetection;
+            layLabel.MaxVisible = 7e5;
+
+            // добавление слоев и подготовка карты
+            pMap.Layers.Add(Regions);
+            pMap.Layers.Add(layLabel);
+            return pMap;
+        }
+
+        public SharpMap.Map InitializeDistrictMap(bool[] layers = null)
+        {
+            throw new Exception("TODO");
+        }
+
+        public string TableName(string pType, int RegionId)
+        {
+            throw new Exception("TODO");
+        }
+
+        /*
         #region Поля и свойства
 
         private Mutex session_mtx = new Mutex();
@@ -22,7 +88,7 @@ namespace App3.Class
         private Int64 osm_id = 0;
         private NTree<LayerType> depends;
         private IDictionary<LayerType, bool> updated;
-        private string districtName = null;
+
 
         public object[] Params
         {
@@ -36,19 +102,7 @@ namespace App3.Class
             }
         }
 
-        public string DistrictName
-        {
-            get
-            {
-                return districtName;
-            }
-            set
-            {
-                districtName = value;
-                updated[LayerType.REGION] = false;
-            }
-        }
-
+        
         public int SessionId
         {
             get 
@@ -56,7 +110,7 @@ namespace App3.Class
                 session_mtx.WaitOne();
                 if (session_id == 0)
                 {
-                    session_id = GeoDataCache.OpenSession();
+                    session_id = GeoDataCache.BuildCacheForListened();
                     if (session_id == 0) throw new Exception("Не удалось открыть сессию для просмотра карт");
                 }
                 session_mtx.ReleaseMutex();
@@ -107,10 +161,56 @@ namespace App3.Class
             session_mtx.ReleaseMutex();
         }
 
-        public string TableName(LayerType pType)
+        public string TableName(LayerType pType, int RegionId)
         {
             return GeoDataCache.TableName(SessionId, pType);
         }
+        
+        public SharpMap.Layers.VectorLayer CreateVLayer(String table, String name)
+        {
+            SharpMap.Layers.VectorLayer Layer = new SharpMap.Layers.VectorLayer(name);
+            Layer.DataSource = new SharpMap.Data.Providers.PostGIS(
+                DataBase.ConnectionString,
+                table,
+                "way",
+                "osm_id"
+            );
+            return Layer;
+        }
+                */
+        /// <summary>
+        /// Обновление с соблюдением зависимостей
+        /// </summary>
+        /// <param name="pType"></param>
+        /// <returns></returns>
+        public string UpdateDataTable(LayerType pType, bool force = false)
+        {
+            throw new Exception("Deprecated");
+            /*List<LayerType> deps = new List<LayerType>();
+            depends.RSearch(pType, ref deps);
+            string sTableName = "";
+
+            foreach(LayerType lType in deps)
+            {
+                if (!updated[lType] || force)
+                {
+                    sTableName = GeoDataCache.UpdateDataTable(SessionId, lType, Params);
+                    updated[lType] = true;
+                    force = true; // если обновится таблица верхнего уровня, то обновить и всех детей
+                    if (lType == LayerType.REGION) updateOsmId(sTableName);
+                }
+            }
+            sTableName = GeoDataCache.UpdateDataTable(SessionId, pType, Params);
+            updated[pType] = true;
+            return sTableName;*/
+        }
+
+        private void updateOsmId(string table)
+        {
+            throw new Exception("Deprecated");
+            // osm_id = Convert.ToInt64(DataBase.First("SELECT osm_id FROM " + table, "osm_id"));
+        }
+
 
         public SharpMap.Layers.VectorLayer CreateVLayer(String table, String name)
         {
@@ -129,37 +229,6 @@ namespace App3.Class
             SharpMap.Layers.VectorLayer Layer = new SharpMap.Layers.VectorLayer(name);
             Layer.DataSource = GetProvider(type);
             return Layer;
-        }
-
-        /// <summary>
-        /// Обновление с соблюдением зависимостей
-        /// </summary>
-        /// <param name="pType"></param>
-        /// <returns></returns>
-        public string UpdateDataTable(LayerType pType, bool force = false)
-        {
-            List<LayerType> deps = new List<LayerType>();
-            depends.RSearch(pType, ref deps);
-            string sTableName = "";
-
-            foreach(LayerType lType in deps)
-            {
-                if (!updated[lType] || force)
-                {
-                    sTableName = GeoDataCache.UpdateDataTable(SessionId, lType, Params);
-                    updated[lType] = true;
-                    force = true; // если обновится таблица верхнего уровня, то обновить и всех детей
-                    if (lType == LayerType.REGION) updateOsmId(sTableName);
-                }
-            }
-            sTableName = GeoDataCache.UpdateDataTable(SessionId, pType, Params);
-            updated[pType] = true;
-            return sTableName;
-        }
-
-        private void updateOsmId(string table)
-        {
-            osm_id = Convert.ToInt64(DataBase.First("SELECT osm_id FROM " + table, "osm_id"));
         }
 
         public SharpMap.Data.Providers.IProvider GetProvider(LayerType pType)
@@ -207,12 +276,14 @@ namespace App3.Class
             return layLabel;
         }
 
-        public SharpMap.Map InitializeRegionMap()
+        public SharpMap.Map InitializeRegionMap_Depricated()
         {
+            throw new Exception("Deprecated");
+
             SharpMap.Map pMap = new SharpMap.Map();
             pMap.BackColor = Color.FromArgb(167, 232, 232);
             // слой с регионами
-            SharpMap.Layers.VectorLayer Regions = CreateVLayer("regions2map", "Regions");
+            SharpMap.Layers.VectorLayer Regions = CreateVLayer(LayerType.REGION, "Regions"); // regions2map
             Regions.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
             Regions.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeRegion);
             // Regions.DataSource
@@ -234,15 +305,17 @@ namespace App3.Class
         /// </summary>
         /// <param name="layers">Полигоны, дороги, здания</param>
         /// <returns></returns>
-        public SharpMap.Map InitializeDistrictMap(bool[] layers = null)
+        public SharpMap.Map InitializeDistrictMap_Depricated(bool[] layers = null)
         {
+            throw new Exception("Deprecated");
+
             if (layers == null)
             {
                 layers = new bool[] { true, true, true };
             }
             SharpMap.Map pMap = new SharpMap.Map();
             // Главный слой
-            SharpMap.Layers.VectorLayer MainLayer = CreateVLayer(LayerType.REGION, "Region");
+            SharpMap.Layers.VectorLayer MainLayer = CreateVLayer(LayerType.REGION/*, RegionId*/, "Region");
             MainLayer.Style.EnableOutline = true;
             MainLayer.Style.Outline = new Pen(Color.FromArgb(167, 232, 232), 2);
             MainLayer.Style.Fill = new SolidBrush(Color.FromArgb(206, 246, 236));
@@ -259,18 +332,18 @@ namespace App3.Class
                 // PlgLayer.Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 // pMap.Layers.Add(PlgLayer);
                 
-                PlgLayer[0] = CreateVLayer(LayerType.BIG_POLYGON, "Polygon_BIG");
+                PlgLayer[0] = CreateVLayer(LayerType.BIG_POLYGON/*, RegionId*/, "Polygon_BIG");
                 PlgLayer[0].Style.EnableOutline = true;
                 PlgLayer[0].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 pMap.Layers.Add(PlgLayer[0]);
 
-                PlgLayer[1] = CreateVLayer(LayerType.MID_POLYGON, "Polygon_MID");
+                PlgLayer[1] = CreateVLayer(LayerType.MID_POLYGON/*, RegionId*/, "Polygon_MID");
                 PlgLayer[1].Style.EnableOutline = true;
                 PlgLayer[1].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 PlgLayer[1].MaxVisible = 25e3 - 1;
                 pMap.Layers.Add(PlgLayer[1]);
 
-                PlgLayer[2] = CreateVLayer(LayerType.SML_POLYGON, "Polygon_SML");
+                PlgLayer[2] = CreateVLayer(LayerType.SML_POLYGON/*, RegionId*/, "Polygon_SML");
                 PlgLayer[2].Style.EnableOutline = true;
                 PlgLayer[2].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 PlgLayer[2].MaxVisible = 10e3;
@@ -279,7 +352,7 @@ namespace App3.Class
             if (layers[1])
             {
                 // Дороги
-                HighwayLayer = CreateVLayer(LayerType.HIGHWAY, "Highway");
+                HighwayLayer = CreateVLayer(LayerType.HIGHWAY/*, RegionId*/, "Highway");
                 HighwayLayer.Style.Line = new Pen(Color.SandyBrown, 2);
                 HighwayLayer.Style.Outline = new Pen(Color.Black);
                 HighwayLayer.Style.EnableOutline = true;
@@ -288,7 +361,7 @@ namespace App3.Class
             if (layers[2])
             {
                 // Здания
-                BuildingsLayer = CreateVLayer(LayerType.BUILD, "Buildings");
+                BuildingsLayer = CreateVLayer(LayerType.BUILD/*, RegionId*/, "Buildings");
                 BuildingsLayer.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
                 BuildingsLayer.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeBuilding);
                 BuildingsLayer.MaxVisible = 10e3;

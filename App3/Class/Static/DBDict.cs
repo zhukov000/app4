@@ -64,7 +64,10 @@ namespace App3.Class.Static
         public static IDictionary<int, string> TStatus;
         public static IDictionary<int, ObjectState> TState;
         // public static IDictionary<int, Tuple<string, int>> TClass;
+
         public static IDictionary<int, Tuple<string, string, string>> TRegion;
+        public static IDictionary<string, Tuple<int, string, string>> TDistrict;
+
         public static IDictionary<string, int> IPAddress;
         public static IDictionary<string, string> Settings;
         // public static IDictionary<int, Tuple<string, string, string>> TMinistry;
@@ -122,11 +125,19 @@ namespace App3.Class.Static
                     x => x[0].ToInt(),
                     x => new ObjectState(x)
                 );
-            
-            TRegion = DataBase.RowSelect("select num, fullname, name, color from regions2map order by fullname")
+
+            List<object[]> tmpRegions = DataBase.RowSelect("select num, fullname, name, color from regions2map order by fullname");
+
+            TRegion = tmpRegions
                 .ToDictionary(
                     x => x[0].ToInt(),
                     x => new Tuple<string, string, string>(x[1].ToString(), x[2].ToString(), x[3].ToString())
+                );
+
+            TDistrict = tmpRegions
+                .ToDictionary(
+                    x => x[2].ToString(),
+                    x => new Tuple<int, string, string>(x[0].ToInt(), x[1].ToString(), x[3].ToString())
                 );
 
             try
