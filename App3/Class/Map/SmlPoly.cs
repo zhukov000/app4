@@ -7,11 +7,11 @@ namespace App3.Class.Map
 {
     class SmlPoly : Layer
     {
-        public SmlPoly(): base("smlpoint") { region = new Region(); }
+        public SmlPoly(): base(LayerType.SmlPoly) { region = new Region(); }
 
-        public SmlPoly(int pRegionId) : base(pRegionId, "smlpoint") { region = new Region(pRegionId); }
+        public SmlPoly(int pRegionId) : base(pRegionId, LayerType.SmlPoly) { region = new Region(pRegionId); }
 
-        public SmlPoly(Region pregion) : base(pregion.RegionId, "smlpoint") { region = pregion; }
+        public SmlPoly(Region pregion) : base(pregion.RegionId, LayerType.SmlPoly) { region = pregion; }
 
         public override void CreateTable()
         {

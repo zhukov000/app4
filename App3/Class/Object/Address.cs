@@ -181,10 +181,10 @@ namespace App3.Class
                 if (value != "")
                 {
                     code = "";
-                    hCode = DataBase.First(
+                    hCode = (DataBase.First(
                         string.Format("select distinct code from kladr.house where fullname = '{0}'", house),
                         "code"
-                    ).ToString();
+                    ) ?? "").ToString();
                 }
             }
         }

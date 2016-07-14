@@ -38,7 +38,7 @@ namespace App3.Class.Map
                 string reqInsert = "INSERT INTO {0} ";
                 if (RegionId != 0)
                 {
-                    reqInsert += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 0, 100000) WHERE building = 'yes')", region.GetValue("osm_id"));
+                    reqInsert += string.Format("(SELECT odo.way, odo.name as name, odo.number, os.* FROM oko.district_objects3({0}) as odo INNER JOIN oko.object_status as os on odo.osm_id = os.osm_id)", region.GetValue("osm_id"));
                     DataBase.RunCommand(string.Format(reqDelete, TableName));
                     DataBase.RunCommand(string.Format(reqInsert, TableName));
                 }

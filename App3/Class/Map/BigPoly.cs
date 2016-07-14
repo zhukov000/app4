@@ -7,11 +7,11 @@ namespace App3.Class.Map
 {
     class BigPoly : Layer
     {
-        public BigPoly() : base("bigpoint") { region = new Region(); }
+        public BigPoly() : base(LayerType.BigPoly) { region = new Region(); }
 
-        public BigPoly(int pRegionId) : base(pRegionId, "bigpoint") { region = new Region(pRegionId); }
+        public BigPoly(int pRegionId) : base(pRegionId, LayerType.BigPoly) { region = new Region(pRegionId); }
 
-        public BigPoly(Region pregion) : base(pregion.RegionId, "bigpoint") { region = pregion; }
+        public BigPoly(Region pregion) : base(pregion.RegionId, LayerType.BigPoly) { region = pregion; }
 
         public override void CreateTable()
         {

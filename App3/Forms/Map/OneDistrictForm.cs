@@ -18,7 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LayerType = App3.Class.GeoDataCache.LayerType;
+// using LayerType = App3.Class.GeoDataCache.LayerType;
 using MessageGroupId = App3.Class.Utils.MessageGroupId;
 
 namespace App3.Forms
@@ -83,7 +83,7 @@ namespace App3.Forms
             mapBox1.Map.MinimumZoom = 1e3;
             mapBox1.Map.MaximumZoom = 7e5;
             // Объекты
-            SharpMap.Layers.VectorLayer ObjLayer = oMapper.CreateVLayer(LayerType.OBJECT/*, DistrictId*/, "Object");
+            SharpMap.Layers.VectorLayer ObjLayer = LayerCache.GetVLayer(LayerType.Object, DistrictId); // oMapper.CreateVLayer(LayerType.Object, "Object");
             ObjLayer.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeObject);
             mapBox1.Map.Layers.Add(ObjLayer);
             //
@@ -101,14 +101,13 @@ namespace App3.Forms
         private void InitObjectsAsync()
         {
             treeView1.Nodes.Clear();
-
+            string ObjTableName = LayerCache.Get(LayerType.Object, DistrictId).TableName;
             List<object[]> list = DataBase.RowSelect(@"SELECT status_id, status, 
                                                             count(osm_id) as cnt, color, state, state_id 
-                                                        FROM " + LayerCache.GetName("object", DistrictId) +
+                                                        FROM " + ObjTableName +
                                                         @" GROUP BY status_id, status, state, color, state_id, rank 
                                                         ORDER BY rank");
                                                         // ORDER BY state_id DESC, status_id, status, state");
-                                                        // oMapper.TableName(LayerType.OBJECT, DistrictId)
 
             int AllCount = 0;
             foreach (object[] obj in list)
@@ -120,7 +119,7 @@ namespace App3.Forms
                 node.BackColor = ColorTranslator.FromHtml(obj[3].ToString());
                 node.ForeColor = Utils.FontColor(ColorTranslator.FromHtml(obj[3].ToString()));
                 treeView1.Nodes.Add(node);
-                List<object[]> list2 = DataBase.RowSelect(string.Format(@"SELECT osm_id, name, number, color, status, status_id, state_id FROM {0} WHERE status_id = {1} AND state_id = {2} ORDER BY number", LayerCache.GetName("object", DistrictId), obj[0], obj[5])); // oMapper.TableName(LayerType.OBJECT, DistrictId)
+                List<object[]> list2 = DataBase.RowSelect(string.Format(@"SELECT osm_id, name, number, color, status, status_id, state_id FROM {0} WHERE status_id = {1} AND state_id = {2} ORDER BY number", ObjTableName, obj[0], obj[5])); // oMapper.TableName(LayerType.OBJECT, DistrictId)
 
                 foreach (object[] obj2 in list2)
                 {
@@ -224,7 +223,7 @@ namespace App3.Forms
                 }
 
                 SharpMap.Data.FeatureDataSet ds = new SharpMap.Data.FeatureDataSet();
-                SharpMap.Layers.VectorLayer Objects = mapBox1.Map.GetLayerByName("Object") as SharpMap.Layers.VectorLayer;
+                SharpMap.Layers.VectorLayer Objects = mapBox1.Map.GetLayerByName(LayerType.Object) as SharpMap.Layers.VectorLayer;
                 if (!Objects.DataSource.IsOpen)
                     Objects.DataSource.Open();
 
@@ -235,7 +234,7 @@ namespace App3.Forms
                 if (row != null)
                 {
                     int n = mapBox1.Map.Layers.Count;
-                    double[] coor = OSMObjectInfo.GetObjectCoordinate(obj.Id, LayerCache.GetName("object", DistrictId)); // oMapper.TableName(LayerType.OBJECT, DistrictId)
+                    double[] coor = OSMObjectInfo.GetObjectCoordinate(obj.Id, LayerCache.Get(LayerType.Object, DistrictId).TableName); // oMapper.TableName(LayerType.OBJECT, DistrictId)
 
                     SharpMap.Layers.VectorLayer NewLayer = new SharpMap.Layers.VectorLayer("SelectedObject");
                     FeatureDataTable fdt = new SharpMap.Data.FeatureDataTable();
@@ -331,7 +330,7 @@ namespace App3.Forms
             DataBase.RowSelect(string.Format(
                 @"select obj.*, ST_AsText(obj.way) as point
                     from {0} obj, {1} reg 
-                    where ST_covers(reg.way, obj.way)", LayerCache.GetName("object", DistrictId), LayerCache.GetName("region", DistrictId)),
+                    where ST_covers(reg.way, obj.way)", LayerCache.Get(LayerType.Object, DistrictId).TableName, LayerCache.Get(LayerType.Region, DistrictId).TableName),
                 ds
             ); // oMapper.TableName(LayerType.OBJECT, DistrictId), oMapper.TableName(LayerType.REGION, DistrictId)
 
@@ -360,7 +359,6 @@ namespace App3.Forms
             if (e.Node.Parent != null)
             {
                 ObjectSelect(e.Node.Name.ToInt64());
-                // (new ObjectForm(this.MdiParent, new AKObject(e.Node.Name.ToInt64()))).Show();
                 Handling.onObjectCardOpen(e.Node.Name.ToInt64());
             }
         }

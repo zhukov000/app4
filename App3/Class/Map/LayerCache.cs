@@ -6,21 +6,62 @@ using System.Text;
 
 namespace App3.Class.Map
 {
+    public class LayerType
+    {
+        private LayerType(string value) { Value = value; }
+
+        public string Value { get; set; }
+
+        public static LayerType BigPoly { get { return new LayerType("bigpoly"); } }
+        public static LayerType Build { get { return new LayerType("build"); } }
+        public static LayerType BuildBorder { get { return new LayerType("buildborder"); } }
+        public static LayerType HighWay { get { return new LayerType("highway"); } }
+        public static LayerType MidPoly { get { return new LayerType("midpoly"); } }
+        public static LayerType Object { get { return new LayerType("object"); } }
+        public static LayerType Place { get { return new LayerType("place"); } }
+        public static LayerType Point { get { return new LayerType("point"); } }
+        public static LayerType Polygon { get { return new LayerType("polygon"); } }
+        public static LayerType Region { get { return new LayerType("region"); } }
+        public static LayerType Road { get { return new LayerType("road"); } }
+        public static LayerType SmlPoly { get { return new LayerType("smlpoly"); } }
+        public static LayerType AllRegion { get { return new LayerType("regions"); } }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        public static implicit operator string (LayerType t)
+        {
+            return t.ToString();
+        }
+    }
+
     class LayerCache
     {
+        
         // список слоев, данные по которым кэшируются
         // список слоев - только расширяется
         static private IDictionary<string, IDictionary<int, Layer>> mapLayers = new Dictionary<string, IDictionary<int, Layer>>();
 
         static public void UpdateLayer(String Key, int pRegionId = 0)
         {
-            Layer pLayer = Get(Key, pRegionId);
-            pLayer.UpdateTable();
+            if (pRegionId >= 0)
+            {
+                Layer pLayer = Get(Key, pRegionId);
+                pLayer.UpdateTable();
+            } else
+            {
+                foreach (KeyValuePair<int, Layer> p in mapLayers[Key])
+                {
+                    p.Value.UpdateTable(); 
+                }
+            }
         }
 
         static public void UpdateLayer(Layer pLayer)
         {
-            pLayer.UpdateTable();
+            if (pLayer != null) pLayer.UpdateTable();
         }
 
         static public void UpdateLayers(int pRegionId)
@@ -37,14 +78,31 @@ namespace App3.Class.Map
             }
         }
 
+        static public void CreateAllLayers()
+        {
+            foreach (KeyValuePair<string, IDictionary<int, Layer>> l in mapLayers)
+            {
+                foreach (KeyValuePair<int, Layer> p in l.Value)
+                {
+                    p.Value.CreateTable();
+                }
+            }
+        }
+
         public static Layer Get(string Key, int pRegionId)
         {
-            if (mapLayers.ContainsKey(Key))
-                if (mapLayers[Key].ContainsKey(pRegionId))
-                {
-                    return mapLayers[Key][pRegionId];
-                }
-            throw new Exception("Ошибка обращения к справочнику слоев по ключу " + Key + " для региона " + pRegionId);
+            if (!mapLayers.ContainsKey(Key))
+            {
+                mapLayers.Add(Key, new Dictionary<int, Layer>());
+            }
+            if (!mapLayers[Key].ContainsKey(pRegionId))
+            {
+                Layer l = Create(Key, pRegionId);
+                AddLayer(Key, pRegionId, l);
+                UpdateLayer(l);
+            }
+            // throw new Exception("Ошибка обращения к справочнику слоев по ключу " + Key + " для региона " + pRegionId);
+            return mapLayers[Key][pRegionId];
         }
 
         public static String GetName(string Key, int RegionId)
@@ -52,13 +110,13 @@ namespace App3.Class.Map
             return Get(Key, RegionId).Name;
         }
 
-        public static SharpMap.Layers.VectorLayer GetVLayer(string Key, int RegionId = 0)
+        public static SharpMap.Layers.VectorLayer GetVLayer(string Key, int RegionId)
         {
             Layer l = Get(Key, RegionId);
             return l.VLayer(Key);
         }
 
-        public static SharpMap.Layers.LabelLayer GetLLayer(string Key, int RegionId = 0, string Column = "name")
+        public static SharpMap.Layers.LabelLayer GetLLayer(string Key, int RegionId, string Column = "name")
         {
             return Get(Key, RegionId).LLayer(null, Column);
         }
@@ -92,34 +150,62 @@ namespace App3.Class.Map
             }
         }
 
+        /// <summary>
+        /// Фабрика объектов
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="RegionId"></param>
+        /// <returns></returns>
+        static public Layer Create(string Type, int RegionId, Layer SubLayer = null)
+        {
+            Layer l = Type == LayerType.AllRegion ? new Region() :
+                Type == LayerType.Region ? new Region(RegionId) :
+                null;
+            l = Type == LayerType.Polygon ? new Polygon((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.Road ? new Road((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.BigPoly ? new BigPoly((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.MidPoly ? new MidPoly((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.SmlPoly ? new SmlPoly((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.HighWay ? new HighWay((Road)SubLayer ?? new Road((Region)SubLayer ?? new Region(RegionId))) : l;
+            l = Type == LayerType.Build ? new Build((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.Object ? new Object((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.Point ? new Point((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.BigPoly ? new BigPoly((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.MidPoly ? new MidPoly((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.SmlPoly ? new SmlPoly((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.Build ? new Build((Region)SubLayer ?? new Region(RegionId)) : l;
+            l = Type == LayerType.Place ? new Place((Polygon)SubLayer ?? new Polygon(RegionId)) : l;
+            return l;
+        }
+
         static public void Init(int pRegionId = 0)
         {
-            Region rall = new Region();
-            AddLayer("regions", 0, rall);
+            Layer rall = Create(LayerType.AllRegion, 0);
+            AddLayer(LayerType.AllRegion, 0, rall);
             if (pRegionId > 0)
             {
-                Region r = new Region(pRegionId);
-                AddLayer(r.Name, pRegionId, r); // mapLayers.Add(r.Name, r);
-                /*Polygon pl = new Polygon(r);
-                mapLayers.Add(pl.Name, pl);
-                Road rd = new Road(r);
-                mapLayers.Add(rd.Name, rd);
-                Layer tmp = new Point(r);
-                mapLayers.Add(tmp.Name, tmp);
-                tmp = new BigPoly(r);
-                mapLayers.Add(tmp.Name, tmp);
-                tmp = new MidPoly(r);
-                mapLayers.Add(tmp.Name, tmp);
-                tmp = new SmlPoly(r);
-                mapLayers.Add(tmp.Name, tmp);
-                tmp = new Build(r);
-                mapLayers.Add(tmp.Name, tmp);
-                tmp = new HighWay(rd);
-                mapLayers.Add(tmp.Name, tmp);
-                tmp = new Place(pl);
-                mapLayers.Add(tmp.Name, tmp);
-                tmp = new Object(r);
-                mapLayers.Add(tmp.Name, tmp);*/
+                Layer r = Create(LayerType.Region, pRegionId); 
+                AddLayer(r.Name, pRegionId, r);
+                Layer pl = Create(LayerType.Polygon, pRegionId, r);
+                AddLayer(pl.Name, pRegionId, pl);
+                Layer rd = Create(LayerType.Road, pRegionId, r);
+                AddLayer(rd.Name, pRegionId, rd);
+                Layer tmp = Create(LayerType.Point, pRegionId, r);
+                AddLayer(tmp.Name, pRegionId, tmp);
+                tmp = Create(LayerType.BigPoly, pRegionId, r);
+                AddLayer(tmp.Name, pRegionId, tmp);
+                tmp = Create(LayerType.MidPoly, pRegionId, r);
+                AddLayer(tmp.Name, pRegionId, tmp);
+                tmp = Create(LayerType.SmlPoly, pRegionId, r);
+                AddLayer(tmp.Name, pRegionId, tmp);
+                tmp = Create(LayerType.Build, pRegionId, r);
+                AddLayer(tmp.Name, pRegionId, tmp);
+                tmp = Create(LayerType.HighWay, pRegionId, rd);
+                AddLayer(tmp.Name, pRegionId, tmp);
+                tmp = Create(LayerType.Object, pRegionId, r);
+                AddLayer(tmp.Name, pRegionId, tmp);
+                tmp = Create(LayerType.Place, pRegionId, pl);
+                AddLayer(tmp.Name, pRegionId, tmp);
             }
         }
 

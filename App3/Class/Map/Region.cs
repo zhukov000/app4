@@ -7,9 +7,9 @@ namespace App3.Class.Map
 {
     class Region: Layer
     {
-        public Region(): base(0, "region") {}
+        public Region(): base(0, LayerType.Region) {}
 
-        public Region(int pRegionId) : base(pRegionId, "region") { /*base.RegionId = pRegionId;*/ }
+        public Region(int pRegionId) : base(pRegionId, LayerType.Region) {}
 
         public override void CreateTable()
         {

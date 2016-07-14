@@ -284,6 +284,7 @@ namespace App3.Forms
             if (oDistricts != null)
             {
                 ShowWarning(pEventId, pMsgGrId, pObject, pMsgTxt, pPhone, pTime);
+                LayerCache.Get(LayerType.Object, pObject.RegionId).HeatUp();
                 /*
                 switch (pMsgGrId)
                 {
@@ -424,8 +425,16 @@ namespace App3.Forms
                 // Обновление кэша БД
                 int curRegion = Config.Get("CurrenRegion").ToInt();
                 LayerCache.Init(curRegion);
-                LayerCache.UpdateLayer("regions");
-                LayerCache.UpdateLayers(curRegion);
+                LayerCache.CreateAllLayers();
+                LayerCache.UpdateLayer(LayerType.AllRegion);
+                if (Config.Get("CacheUpdateOnStart") == "1")
+                {
+                    LayerCache.UpdateLayers(curRegion);
+                }
+                else
+                {
+                    LayerCache.UpdateLayer(LayerType.Object, curRegion);
+                }
             }
             Logger.Instance.FlushLog();
         }

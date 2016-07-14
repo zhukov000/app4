@@ -7,11 +7,11 @@ namespace App3.Class.Map
 {
     class MidPoly : Layer
     {
-        public MidPoly(): base("midpoint") { region = new Region(); }
+        public MidPoly(): base("midpoly") { region = new Region(); }
 
-        public MidPoly(int pRegionId) : base(pRegionId, "midpoint") { region = new Region(pRegionId); }
+        public MidPoly(int pRegionId) : base(pRegionId, "midpoly") { region = new Region(pRegionId); }
 
-        public MidPoly(Region pregion) : base(pregion.RegionId, "midpoint") { region = pregion; }
+        public MidPoly(Region pregion) : base(pregion.RegionId, "midpoly") { region = pregion; }
 
         public override void CreateTable()
         {

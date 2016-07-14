@@ -136,8 +136,8 @@ namespace App3.Class.Static
 
             TDistrict = tmpRegions
                 .ToDictionary(
-                    x => x[2].ToString(),
-                    x => new Tuple<int, string, string>(x[0].ToInt(), x[1].ToString(), x[3].ToString())
+                    x => x[1].ToString(),
+                    x => new Tuple<int, string, string>(x[0].ToInt(), x[2].ToString(), x[3].ToString())
                 );
 
             try

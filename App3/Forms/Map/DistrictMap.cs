@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using App3.Forms.Dialog;
 using System.Windows.Forms.DataVisualization.Charting;
 using App3.Class.Singleton;
+using App3.Class.Map;
 
 namespace App3.Forms
 {
@@ -39,6 +40,7 @@ namespace App3.Forms
                 map.Refresh();
             }
             mapBox.Refresh();
+            LayerCache.UpdateLayer(LayerType.Object, -1);
         }
 
         private void SetGrBox2TextThreadSafe(string pText)

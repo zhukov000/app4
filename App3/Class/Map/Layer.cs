@@ -15,6 +15,12 @@ namespace App3.Class.Map
 
         protected event ChangeRegionDelegate ChangeRegion = null;
 
+        #region Constraints
+        protected string primary_key = "osm_id";
+        protected string way_idx = "way";
+        protected List<string> idxs = new List<string>() { };
+        #endregion
+
         private int region_id = 0;
         protected bool need_update = true;
         private string schemaName;
@@ -88,7 +94,15 @@ namespace App3.Class.Map
         {
             Updated = DateTime.Now;
             Created = Updated;
+            string tn = TableName;
+            string tn_ = tn.Replace('.','_');
             need_update = false;
+            // ALTER TABLE cache.region0 ADD CONSTRAINT osm_id_pk PRIMARY KEY (osm_id)
+            if (primary_key != "")
+                DataBase.RunCommand(string.Format("ALTER TABLE {0} ADD CONSTRAINT {1}_{2}_pk PRIMARY KEY ({2})", tn,  tn_, primary_key));
+            if (way_idx != "")
+                DataBase.RunCommand(string.Format("CREATE INDEX {0}_index ON {1} USING gist({2});", tn_, tn, way_idx));
+
         }
         /// <summary>
         /// Обновить таблицу с данными

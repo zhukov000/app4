@@ -10,7 +10,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using LayerType = App3.Class.GeoDataCache.LayerType;
 
 namespace App3.Class
 {
@@ -52,13 +51,13 @@ namespace App3.Class
             SharpMap.Map pMap = new SharpMap.Map();
             pMap.BackColor = Color.FromArgb(167, 232, 232);
             // слой с регионами
-            SharpMap.Layers.VectorLayer Regions = LayerCache.GetVLayer("regions"); // regions2map
+            SharpMap.Layers.VectorLayer Regions = LayerCache.GetVLayer("regions", 0); // regions2map
             // SharpMap.Layers.VectorLayer Regions = CreateVLayer("cache.region0", "Regions"); // cache.region0
             Regions.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
             Regions.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeRegion);
             // слой с подписями
 
-            SharpMap.Layers.LabelLayer layLabel = LayerCache.GetLLayer("regions"); // CreateLabelLayer(Regions, "RegionLabel", "name");
+            SharpMap.Layers.LabelLayer layLabel = LayerCache.GetLLayer("regions", 0); // CreateLabelLayer(Regions, "RegionLabel", "name");
             layLabel.MultipartGeometryBehaviour = SharpMap.Layers.LabelLayer.MultipartGeometryBehaviourEnum.Largest;
             layLabel.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
             layLabel.LabelFilter = SharpMap.Rendering.LabelCollisionDetection.ThoroughCollisionDetection;
@@ -72,12 +71,114 @@ namespace App3.Class
 
         public SharpMap.Map InitializeDistrictMap(bool[] layers = null)
         {
-            throw new Exception("TODO");
+            if (layers == null)
+            {
+                layers = new bool[] { true, true, true };
+            }
+            SharpMap.Map pMap = new SharpMap.Map();
+            // Главный слой
+            SharpMap.Layers.VectorLayer MainLayer = LayerCache.GetVLayer("region", districtId);
+            MainLayer.Style.EnableOutline = true;
+            MainLayer.Style.Outline = new Pen(Color.FromArgb(167, 232, 232), 2);
+            MainLayer.Style.Fill = new SolidBrush(Color.FromArgb(206, 246, 236));
+            pMap.Layers.Add(MainLayer);
+
+            SharpMap.Layers.VectorLayer[] PlgLayer = new SharpMap.Layers.VectorLayer[3];
+            SharpMap.Layers.VectorLayer HighwayLayer = null;
+            SharpMap.Layers.VectorLayer BuildingsLayer = null;
+            // Полигоны
+            if (layers[0])
+            {
+                // PlgLayer = CreateVLayer(LayerType.POLYGON, "Polygon");
+                // PlgLayer.Style.EnableOutline = true;
+                // PlgLayer.Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
+                // pMap.Layers.Add(PlgLayer);
+
+                PlgLayer[0] = LayerCache.GetVLayer(LayerType.BigPoly, districtId); //  CreateVLayer(LayerType.BIG_POLYGON/*, RegionId*/, "Polygon_BIG");
+                PlgLayer[0].Style.EnableOutline = true;
+                PlgLayer[0].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
+                pMap.Layers.Add(PlgLayer[0]);
+
+                PlgLayer[1] = LayerCache.GetVLayer(LayerType.MidPoly, districtId); // CreateVLayer(LayerType.MID_POLYGON/*, RegionId*/, "Polygon_MID");
+                PlgLayer[1].Style.EnableOutline = true;
+                PlgLayer[1].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
+                PlgLayer[1].MaxVisible = 25e3 - 1;
+                pMap.Layers.Add(PlgLayer[1]);
+
+                PlgLayer[2] = LayerCache.GetVLayer(LayerType.SmlPoly, districtId); // CreateVLayer(LayerType.SML_POLYGON/*, RegionId*/, "Polygon_SML");
+                PlgLayer[2].Style.EnableOutline = true;
+                PlgLayer[2].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
+                PlgLayer[2].MaxVisible = 10e3;
+                pMap.Layers.Add(PlgLayer[1]);
+            }
+            if (layers[1])
+            {
+                // Дороги
+                HighwayLayer = LayerCache.GetVLayer(LayerType.HighWay, districtId); // CreateVLayer(LayerType.HIGHWAY/*, RegionId*/, "Highway");
+                HighwayLayer.Style.Line = new Pen(Color.SandyBrown, 2);
+                HighwayLayer.Style.Outline = new Pen(Color.Black);
+                HighwayLayer.Style.EnableOutline = true;
+                pMap.Layers.Add(HighwayLayer);
+                layers[1] = false; // TODO
+            }
+            if (layers[2])
+            {
+                // Здания
+                BuildingsLayer = LayerCache.GetVLayer(LayerType.Build, districtId); // CreateVLayer(LayerType.BUILD/*, RegionId*/, "Buildings");
+                BuildingsLayer.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                BuildingsLayer.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeBuilding);
+                BuildingsLayer.MaxVisible = 10e3;
+                pMap.Layers.Add(BuildingsLayer);
+                //SharpMap.Layers.VectorLayer BuildingsLayer2 = CreateVLayer(LayerType.BUILD_BORDER, "Buildings_Border");
+                //BuildingsLayer2.Style.Line = new Pen(Color.Black); ;
+                //BuildingsLayer2.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                //pMap.Layers.Add(BuildingsLayer2);
+            }
+            if (layers[0])
+            {
+                SharpMap.Layers.LabelLayer[] PolygonLabelLayer = new SharpMap.Layers.LabelLayer[3];
+                PolygonLabelLayer[0] = LayerCache.GetLLayer(LayerType.BigPoly, DistrictId); // CreateLabelLayer(PlgLayer[0], "PolygonLabel_BIG");
+                PolygonLabelLayer[0].MinVisible = 25e3;
+                PolygonLabelLayer[0].Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
+                pMap.Layers.Add(PolygonLabelLayer[0]);
+
+                PolygonLabelLayer[1] = LayerCache.GetLLayer(LayerType.MidPoly, DistrictId); // CreateLabelLayer(PlgLayer[1], "PolygonLabel_MID");
+                PolygonLabelLayer[1].MaxVisible = 25e3;
+                PolygonLabelLayer[1].Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
+                pMap.Layers.Add(PolygonLabelLayer[1]);
+
+                PolygonLabelLayer[2] = LayerCache.GetLLayer(LayerType.SmlPoly, DistrictId); // CreateLabelLayer(PlgLayer[1], "PolygonLabel_SML");
+                PolygonLabelLayer[2].MaxVisible = 10e3 - 1;
+                PolygonLabelLayer[2].Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
+                pMap.Layers.Add(PolygonLabelLayer[2]);
+
+            }
+            if (layers[1])
+            {
+                SharpMap.Layers.LabelLayer HighwayLabelLayer = LayerCache.GetLLayer(LayerType.HighWay, districtId); // CreateLabelLayer(HighwayLayer, "HighwayLabelLayer");
+                HighwayLabelLayer.MaxVisible = 15e3 - 1;
+                pMap.Layers.Add(HighwayLabelLayer);
+
+                // SharpMap.Layers.LabelLayer HighwayLabelLayer = new SharpMap.Layers.LabelLayer("HighwayLabelLayer");
+
+                // layLabel.MultipartGeometryBehaviour = SharpMap.Layers.LabelLayer.MultipartGeometryBehaviourEnum.Largest;
+                // layLabel.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
+                // layLabel.LabelFilter = SharpMap.Rendering.LabelCollisionDetection.ThoroughCollisionDetection;
+            }
+            if (layers[2])
+            {
+                SharpMap.Layers.LabelLayer BuildingLabelLayer = LayerCache.GetLLayer(LayerType.Build, districtId); // CreateLabelLayer(BuildingsLayer, "BuildingLabel");
+                BuildingLabelLayer.MaxVisible = 2e3 - 1;
+                BuildingLabelLayer.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeLabel);
+                pMap.Layers.Add(BuildingLabelLayer);
+            }
+
+            return pMap;
         }
 
         public string TableName(string pType, int RegionId)
         {
-            throw new Exception("TODO");
+            return LayerCache.Get(pType, RegionId).TableName;
         }
 
         /*
@@ -233,6 +334,8 @@ namespace App3.Class
 
         public SharpMap.Data.Providers.IProvider GetProvider(LayerType pType)
         {
+            throw new Exception("Deprecated");
+            /*
             string table = UpdateDataTable(pType);
 
             if (pType == LayerType.REGION) updateOsmId(table);
@@ -243,6 +346,7 @@ namespace App3.Class
                 "way",
                 "osm_id"
             );
+            */
         }
 
         public SharpMap.Layers.LabelLayer CreateLabelLayer(SharpMap.Layers.VectorLayer Layer, string name, string col = "name")
@@ -280,7 +384,7 @@ namespace App3.Class
         {
             throw new Exception("Deprecated");
 
-            SharpMap.Map pMap = new SharpMap.Map();
+           /* SharpMap.Map pMap = new SharpMap.Map();
             pMap.BackColor = Color.FromArgb(167, 232, 232);
             // слой с регионами
             SharpMap.Layers.VectorLayer Regions = CreateVLayer(LayerType.REGION, "Regions"); // regions2map
@@ -297,7 +401,7 @@ namespace App3.Class
             // добавление слоев и подготовка карты
             pMap.Layers.Add(Regions);
             pMap.Layers.Add(layLabel);
-            return pMap;
+            return pMap;*/
         }
 
         /// <summary>
@@ -308,14 +412,14 @@ namespace App3.Class
         public SharpMap.Map InitializeDistrictMap_Depricated(bool[] layers = null)
         {
             throw new Exception("Deprecated");
-
+            /*
             if (layers == null)
             {
                 layers = new bool[] { true, true, true };
             }
             SharpMap.Map pMap = new SharpMap.Map();
             // Главный слой
-            SharpMap.Layers.VectorLayer MainLayer = CreateVLayer(LayerType.REGION/*, RegionId*/, "Region");
+            SharpMap.Layers.VectorLayer MainLayer = CreateVLayer(LayerType.REGION, "Region");
             MainLayer.Style.EnableOutline = true;
             MainLayer.Style.Outline = new Pen(Color.FromArgb(167, 232, 232), 2);
             MainLayer.Style.Fill = new SolidBrush(Color.FromArgb(206, 246, 236));
@@ -332,18 +436,18 @@ namespace App3.Class
                 // PlgLayer.Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 // pMap.Layers.Add(PlgLayer);
                 
-                PlgLayer[0] = CreateVLayer(LayerType.BIG_POLYGON/*, RegionId*/, "Polygon_BIG");
+                PlgLayer[0] = CreateVLayer(LayerType.BIG_POLYGON, "Polygon_BIG");
                 PlgLayer[0].Style.EnableOutline = true;
                 PlgLayer[0].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 pMap.Layers.Add(PlgLayer[0]);
 
-                PlgLayer[1] = CreateVLayer(LayerType.MID_POLYGON/*, RegionId*/, "Polygon_MID");
+                PlgLayer[1] = CreateVLayer(LayerType.MID_POLYGON, "Polygon_MID");
                 PlgLayer[1].Style.EnableOutline = true;
                 PlgLayer[1].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 PlgLayer[1].MaxVisible = 25e3 - 1;
                 pMap.Layers.Add(PlgLayer[1]);
 
-                PlgLayer[2] = CreateVLayer(LayerType.SML_POLYGON/*, RegionId*/, "Polygon_SML");
+                PlgLayer[2] = CreateVLayer(LayerType.SML_POLYGON, "Polygon_SML");
                 PlgLayer[2].Style.EnableOutline = true;
                 PlgLayer[2].Style.Fill = new SolidBrush(Color.FromArgb(224, 254, 224));
                 PlgLayer[2].MaxVisible = 10e3;
@@ -352,7 +456,7 @@ namespace App3.Class
             if (layers[1])
             {
                 // Дороги
-                HighwayLayer = CreateVLayer(LayerType.HIGHWAY/*, RegionId*/, "Highway");
+                HighwayLayer = CreateVLayer(LayerType.HIGHWAY, "Highway");
                 HighwayLayer.Style.Line = new Pen(Color.SandyBrown, 2);
                 HighwayLayer.Style.Outline = new Pen(Color.Black);
                 HighwayLayer.Style.EnableOutline = true;
@@ -361,7 +465,7 @@ namespace App3.Class
             if (layers[2])
             {
                 // Здания
-                BuildingsLayer = CreateVLayer(LayerType.BUILD/*, RegionId*/, "Buildings");
+                BuildingsLayer = CreateVLayer(LayerType.BUILD, "Buildings");
                 BuildingsLayer.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
                 BuildingsLayer.Theme = new SharpMap.Rendering.Thematics.CustomTheme(GeoStyles.ThemeBuilding);
                 BuildingsLayer.MaxVisible = 10e3;
@@ -410,7 +514,7 @@ namespace App3.Class
                 pMap.Layers.Add(BuildingLabelLayer);
             }
             
-            return pMap;
+            return pMap; */
         }
 
     }
