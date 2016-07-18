@@ -17,17 +17,20 @@ namespace App3.Web
             backgroundThread = new Thread(
                 new ThreadStart(() =>
                 {
-                    // var url = "http://localhost:" + Config.Get("WebPort");
+                    // var url = "http://+:" + Config.Get("WebPort");
 
-                    StartOptions options = new StartOptions();
-                    options.Urls.Add("http://localhost:" + Config.Get("WebPort"));
-                    options.Urls.Add("http://127.0.0.1:" + Config.Get("WebPort"));
+                    StartOptions options = new StartOptions("http://+:"+ Config.Get("WebPort"))
+                    {
+                        ServerFactory = "Microsoft.Owin.Host.HttpListener"
+                    } ;
+                    // options.Urls.Add("http://localhost:" + Config.Get("WebPort"));
+                    // options.Urls.Add("http://127.0.0.1:" + Config.Get("WebPort"));
 
                     string url = Config.Get("ModuleLocalServerIP");
 
                     if (!url.Equals("127.0.0.1") && !url.Equals("localhost"))
                     {
-                        options.Urls.Add("http://" + url + ":" + Config.Get("WebPort"));
+                        // options.Urls.Add("http://" + url + ":" + Config.Get("WebPort"));
                     }
 
                     try

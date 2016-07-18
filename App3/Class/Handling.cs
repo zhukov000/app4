@@ -115,7 +115,7 @@ namespace App3.Class
             int ChnlMask = 1;
             int SignalLevel = 0;
             bool f = true;
-            Logger.Instance.WriteToLog(msg.Type);
+            // Logger.Instance.WriteToLog(msg.Type);
             switch (msg.Type)
             {
                 case "MESSAGE_OKO2_RM":
@@ -162,10 +162,10 @@ namespace App3.Class
                     break;
             }
             string s = Var1 + ": =" + Var2 + "= : " + string.Join(",", Var);
-            Logger.Instance.WriteToLog(s);
+            // Logger.Instance.WriteToLog(s);
             if (f)
             {
-               
+               // ??
             }
             else
             {

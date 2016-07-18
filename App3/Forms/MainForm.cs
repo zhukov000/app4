@@ -116,6 +116,7 @@ namespace App3.Forms
                             oModuleCOM.SetChannelsMask(Config.Get("COMChannelsMask").ToByte()); //	где mask – маска каналов
                             oModuleCOM.SendAskForState(1, 0, Config.Get("RemoteAddress").ToUShort()); //
                             Logger.Instance.WriteToLog("COM connector start, port: " + str);
+                            IncConnectCnt();
                             break;
                         }
                         else
@@ -190,6 +191,18 @@ namespace App3.Forms
             if (Config.Get("COMConn") == "1")
             {
                 oModuleCOM.Close();
+            }
+        }
+
+        private void IncConnectCnt()
+        {
+            if (ConnectCnt.InvokeRequired)
+            {
+                ConnectCnt.Invoke(new Action(() => { ConnectCnt.Text = (ConnectCnt.Text.ToInt() + 1).ToString(); }));
+            }
+            else
+            {
+                ConnectCnt.Text = (ConnectCnt.Text.ToInt() + 1).ToString();
             }
         }
 

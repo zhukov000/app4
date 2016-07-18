@@ -58,6 +58,10 @@ namespace App3.Forms
         {
             // syn_nodesTableAdapter.Update(gisDataSet.syn_nodes);
             dbTable1.SaveChange();
+            if(MessageBox.Show("Закрыть окно?", "Данные были сохранены в БД. Закрыть окно синхронизации", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Close();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
