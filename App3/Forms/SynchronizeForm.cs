@@ -1,4 +1,5 @@
 ﻿using App3.Class.Static;
+using App3.Class.Synchronization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -76,7 +77,8 @@ namespace App3.Forms
             {
                 listBox1.Items.Clear();
                 listBox1.Items.Add("Синхронизация начата");
-                List<string> log = Synchronizer.Run();
+                List<SyncResult> Data = null;
+                List<string> log = Synchronizer.Run(ref Data);
                 listBox1.BeginUpdate();
                 foreach (string s in log)
                 {

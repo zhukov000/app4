@@ -423,7 +423,7 @@ namespace App3
             }
             else
             {
-                // throw new DataBaseConnectionErrorExcepion();
+                throw new DataBaseConnectionErrorExcepion();
             }
             return RowAffected;
         }

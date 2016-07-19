@@ -434,7 +434,9 @@ namespace App3.Forms
                 // Старт сервиса обновления
                 Updater.Start();
                 // Старт сервиса синхронизации
-                // TODO
+                Synchronizer.SyncStart += SynchroneStart;
+                Synchronizer.SyncStop += SynchroneStop;
+                Synchronizer.Start();
                 // Обновление кэша БД
                 int curRegion = Config.Get("CurrenRegion").ToInt();
                 LayerCache.Init(curRegion);
@@ -450,6 +452,22 @@ namespace App3.Forms
                 }
             }
             Logger.Instance.FlushLog();
+        }
+
+        private void SynchroneStart()
+        {
+            if (toolStrip.InvokeRequired)
+                toolStrip.Invoke(new Action(() => { toolStripProgressBar1.Visible = toolStripStatusLabel1.Visible = true; }));
+            else
+                toolStripProgressBar1.Visible = toolStripStatusLabel1.Visible = true;
+        }
+
+        private void SynchroneStop()
+        {
+            if (toolStrip.InvokeRequired)
+                toolStrip.Invoke(new Action(() => { toolStripProgressBar1.Visible = toolStripStatusLabel1.Visible = false; }));
+            else
+                toolStripProgressBar1.Visible = toolStripStatusLabel1.Visible = false;
         }
 
         public void LoadStat()
@@ -1101,6 +1119,11 @@ namespace App3.Forms
         {
             oLogForm.UpdateView();
             oLogForm.Show();
+        }
+
+        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

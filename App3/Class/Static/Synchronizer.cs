@@ -14,6 +14,8 @@ namespace App3.Class.Static
 {
     static class Synchronizer
     {
+        static public event Action SyncStart = null;
+        static public event Action SyncStop = null;
 
         public enum Status_Sync { RUN, SUSPEND };
         static private Status_Sync status = Status_Sync.SUSPEND;
@@ -61,8 +63,18 @@ namespace App3.Class.Static
                 {
                     while (true)
                     {
-                        Run();
-                        Thread.Sleep(3000000);
+                        List<SyncResult> Data = null;
+                        Run(ref Data);
+                        if (Data.Count > 0)
+                        {
+                            Logger.Instance.WriteToLog("Произведена автоматическая синхронизация с узлами");
+                            foreach (SyncResult data in Data)
+                            {
+                                Logger.Instance.WriteToLog(
+                                    string.Format("IP-адрес: {0} Статус: {1} Получено байт: {2} Изменено: {3} Удалено: {4}", data.IpAddress, data.Status, data.Bytes, data.Reserved, data.Deleted));
+                            }
+                        }
+                        Thread.Sleep(Config.Get("SynchSleepMinutes").ToInt() * 60 * 1000);
                     }
                 }
             ));
@@ -115,6 +127,8 @@ namespace App3.Class.Static
                     List<string> values = new List<string>();
                     foreach(Attr aaa in lll)
                     {
+                        if (aaa.key == "id")
+                            continue;
                         if (aaa.val != "")
                         {
                             fields.Add(aaa.key);
@@ -214,8 +228,9 @@ namespace App3.Class.Static
         }
         
 
-        static public List<string> Run()
+        static public List<string> Run(ref List<SyncResult> Data)
         {
+            if (Data == null) Data = new List<SyncResult>();
             List<string> s = new List<string>();
             // +1. Получить узлы, для которых выполнить синхронизацию (nid, ipaddress)
             // +2. Для каждого узла:
@@ -224,6 +239,8 @@ namespace App3.Class.Static
             // +3. Зафиксировать дату синхронизации в журнале
             lock (new object())
             {
+                if (SyncStart != null) SyncStart();
+                Data.Clear();
                 s.Add("запуск...");
                 status = Status_Sync.RUN;
                 List<object[]> nodes = DataBase.RowSelect("select id, ipv4, port from syn_nodes where synin");
@@ -231,6 +248,7 @@ namespace App3.Class.Static
                 {
                     if (!Utils.IsLocalIpAddress(node[1].ToString()))
                     {
+                        SyncResult syncRes = new SyncResult();
                         int reversed = 0;
                         int deleted = 0;
                         DateTime start = DateTime.Now;
@@ -243,11 +261,14 @@ namespace App3.Class.Static
                             last = DateTime.Parse(last2.ToString());
                         s.Add("соединяюсь с " + node[1] + "...");
                         string url = String.Format("http://{0}:{3}/get_new/{1}/{2}", node[1], Utils.DateTimeToString(last), node[0], node[2]);
+                        syncRes.IpAddress = node[1].ToString();
                         Logger.Instance.WriteToLog(string.Format("соединение с {0}: {1}",node[1], url));
                         string content = Utils.getHtmlContent(url);
                         if (content.Length > 0)
                         {
+                            syncRes.Status = SyncStatus.OK;
                             s.Add("успех: " + content.Length + " байт");
+                            syncRes.Bytes = content.Length;
                             JavaScriptSerializer js = new JavaScriptSerializer();
                             js.MaxJsonLength = int.MaxValue;
                             JsonNewObject[] objects = js.Deserialize<JsonNewObject[]>(content);
@@ -265,9 +286,12 @@ namespace App3.Class.Static
                                 Logger.Instance.WriteToLog(s1);
                             }
                             s.Add(string.Format("Всего: удалено {0}, изменено {1}", deleted, reversed));
+                            syncRes.Reserved = reversed;
+                            syncRes.Deleted = deleted;
                         }
                         else
                         {
+                            syncRes.Status = SyncStatus.EMPTY;
                             s.Add("получен пустой ответ");
                         }
                         swatch.Stop();
@@ -281,6 +305,7 @@ namespace App3.Class.Static
                                 {"node_id", node[0].ToInt()}
                             }
                         );
+                        Data.Add(syncRes);
                     }
                     else
                     {
@@ -289,6 +314,7 @@ namespace App3.Class.Static
                     s.Add("... синхронизация завершена");
                 }
                 status = Status_Sync.SUSPEND;
+                if (SyncStop != null) SyncStop();
             }
             return s;
         }

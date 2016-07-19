@@ -313,6 +313,7 @@
     <Compile Include="Class\Synchronization\SyncObjectProperties.cs" />
     <Compile Include="Class\Synchronization\SyncRealObject.cs" />
     <Compile Include="Class\Synchronization\SyncRegionStatus.cs" />
+    <Compile Include="Class\Synchronization\SyncResult.cs" />
     <Compile Include="Class\Synchronization\SyncTContact.cs" />
     <Compile Include="Class\Synchronization\SyncTMessages.cs" />
     <Compile Include="Class\Synchronization\SyncTNumber.cs" />
