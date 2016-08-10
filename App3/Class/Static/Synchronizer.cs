@@ -71,7 +71,7 @@ namespace App3.Class.Static
                             foreach (SyncResult data in Data)
                             {
                                 Logger.Instance.WriteToLog(
-                                    string.Format("IP-адрес: {0} Статус: {1} Получено байт: {2} Изменено: {3} Удалено: {4}", data.IpAddress, data.Status, data.Bytes, data.Reserved, data.Deleted));
+                                    string.Format("IP-адрес: {0} Район: {5} Статус: {1} Получено байт: {2} Изменено: {3} Удалено: {4}", data.IpAddress, data.Status, data.Bytes, data.Reserved, data.Deleted, data.Description));
                             }
                         }
                         Thread.Sleep(Config.Get("SynchSleepMinutes").ToInt() * 60 * 1000);
@@ -137,14 +137,23 @@ namespace App3.Class.Static
                     }
                     if (fields.Count > 0)
                     {
-                        try
+                        bool f = true;
+                        int ii = 0;
+                        while (f)
                         {
-                            reversed += DataBase.RunCommand(string.Format(ReqIns, string.Join(",", fields), string.Join(",", values)));
-                        }
-                        catch(Exception ex)
-                        {
-                            Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
-                            continue;
+                            string s = string.Format(ReqIns, string.Join(",", fields), string.Join(",", values));
+                            try
+                            {
+                                reversed += DataBase.RunCommand(s);
+                                f = false;
+                            }
+                            catch (Exception ex)
+                            {
+                                ii++;
+                                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                                Logger.Instance.WriteToLog(s);
+                                if (ii > 3) break;
+                            }
                         }
                     }
                 }
@@ -239,11 +248,21 @@ namespace App3.Class.Static
             // +3. Зафиксировать дату синхронизации в журнале
             lock (new object())
             {
-                if (SyncStart != null) SyncStart();
+                if (SyncStart != null)
+                {
+                    try
+                    {
+                        SyncStart();
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("Событие SyncStart вызвало исключение: " + ex.Message);
+                    }
+                }
                 Data.Clear();
                 s.Add("запуск...");
                 status = Status_Sync.RUN;
-                List<object[]> nodes = DataBase.RowSelect("select id, ipv4, port from syn_nodes where synin");
+                List<object[]> nodes = DataBase.RowSelect("select sn.id, sn.ipv4, sn.port, ip.description from syn_nodes sn left join oko.ipaddresses ip on ipv4 = ip.ipaddress where sn.synin");
                 foreach (object[] node in nodes)
                 {
                     if (!Utils.IsLocalIpAddress(node[1].ToString()))
@@ -255,15 +274,16 @@ namespace App3.Class.Static
                         System.Diagnostics.Stopwatch swatch = new System.Diagnostics.Stopwatch();
                         swatch.Start();
 
-                        DateTime last = new DateTime(2016, 3, 1);
-                        object last2 = DataBase.First("select id, start from synchronize order by start desc", "start");
+                        DateTime last = DateTime.Now.AddDays(-3);
+                        object last2 = DataBase.First(string.Format("select id, start from synchronize where node_id = {0} order by start desc", node[0]), "start");
                         if (last2 != null)
                             last = DateTime.Parse(last2.ToString());
                         s.Add("соединяюсь с " + node[1] + "...");
                         string url = String.Format("http://{0}:{3}/get_new/{1}/{2}", node[1], Utils.DateTimeToString(last), node[0], node[2]);
                         syncRes.IpAddress = node[1].ToString();
-                        Logger.Instance.WriteToLog(string.Format("соединение с {0}: {1}",node[1], url));
+                        Logger.Instance.WriteToLog(string.Format("соединение с {0}: {1}", node[1], url));
                         string content = Utils.getHtmlContent(url);
+                        syncRes.Description = node[3].ToString();
                         if (content.Length > 0)
                         {
                             syncRes.Status = SyncStatus.OK;
@@ -314,7 +334,17 @@ namespace App3.Class.Static
                     s.Add("... синхронизация завершена");
                 }
                 status = Status_Sync.SUSPEND;
-                if (SyncStop != null) SyncStop();
+                if (SyncStop != null)
+                {
+                    try
+                    {
+                        SyncStop();
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("Событие SyncStop вызвало исключение: " + ex.Message);
+                    }
+                }
             }
             return s;
         }

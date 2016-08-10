@@ -619,12 +619,14 @@ namespace App3.Forms
             string filter = "true";
             if (state_id > 0)
             {
-                filter = "osm_id in (select osm_id from oko.object_status where state_id = {0}) and " + filter;
+                filter = "region_id in (select id_region from oko.ipaddresses where listen) and osm_id in (select osm_id from oko.object_status where state_id = {0}) and " + filter;
             }
+
             if (SelectedRegion != 0)
             {
                 filter = "region_id = {1} and " + filter;
             }
+            
             if (dogovor != null)
             {
                 if (dogovor.ToBool())
@@ -636,6 +638,7 @@ namespace App3.Forms
                     filter = "not dogovor and " + filter;
                 }
             }
+            Logger.Instance.WriteToLog("Фильтр объектов: " + string.Format(filter, state_id, SelectedRegion));
             Handling.onObjectListOpen(string.Format(filter, state_id, SelectedRegion));
         }
 

@@ -23,6 +23,7 @@ namespace App3
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
+
                 using (var mutex = new Mutex(false, "Spolox Application"))
                 {
                     bool f = true;
@@ -80,10 +81,17 @@ namespace App3
                     // если обновление БД упешно пройдено или не нужно
                     if (mutex.WaitOne(TimeSpan.FromSeconds(5)) && f)
                     {
-                        /*Application.ThreadException += new ThreadExceptionEventHandler(ThreadException);
-                        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-                        AppDomain.CurrentDomain.UnhandledException += ReportAndRestart;*/
-                        Application.Run(new App3.Forms.MainForm());
+                        Form aaa;
+                        try
+                        {
+                            aaa = new App3.Forms.MainForm();
+                            Application.Run(aaa);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Необработанное исключение: " + Utils.GetaAllMessages(ex));
+                            Logger.Instance.FlushLog();
+                        }
                     }
                     else
                     {

@@ -54,6 +54,7 @@ namespace App3.Forms
         private GlobalStat oGlobalStatistic;
         private Objects oObjectList;
         private LogForm oLogForm;
+        private Journal oJournal;
 
         private bool isShowEventForm = false;
 
@@ -92,6 +93,7 @@ namespace App3.Forms
                 OKOGate.Tracer.LogFileName = Logger.LogDirectory() + "OKOGate.log";
                 Logger.Instance.WriteToLog("XML Guard start");
             }
+
             // COM
             if (Config.Get("COMConn") == "1")
             {
@@ -381,6 +383,7 @@ namespace App3.Forms
                 MessageBox.Show("Error: " + ex.Message);
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: При открытии соединения с базой произошла ошибка: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
+            
             if (!f)
             {
                 // Close();
@@ -399,6 +402,7 @@ namespace App3.Forms
                     Logger.Instance.FlushLog();
                 }
 
+
                 // окно событий
                 oEventsForm = new MessForm(this);
                 // oEventsForm.Show();
@@ -414,11 +418,22 @@ namespace App3.Forms
                 oGlobalStatistic = new GlobalStat();
                 //
                 oObjectList = new Objects(this);
+                //
+                oJournal = new Journal(this);
+
                 // запуск прослушки
                 if (DBDict.Settings["START_XML_GUARD"].ToBool())
                 {
-                    StartOkoGate();
-                    Logger.Instance.WriteToLog("Модуль ОКО запущен, подробности в OKOGate.log");
+                    Logger.Instance.WriteToLog("START_XML_GUARD = True");
+                    try
+                    {
+                        StartOkoGate();
+                        // Logger.Instance.WriteToLog("Модуль ОКО запущен, подробности в OKOGate.log");
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Instance.WriteToLog("Проблемы: " + ex.Message);
+                    }
                     Logger.Instance.FlushLog();
                 }
                 // включить карту
@@ -437,6 +452,7 @@ namespace App3.Forms
                 Synchronizer.SyncStart += SynchroneStart;
                 Synchronizer.SyncStop += SynchroneStop;
                 Synchronizer.Start();
+                
                 // Обновление кэша БД
                 int curRegion = Config.Get("CurrenRegion").ToInt();
                 LayerCache.Init(curRegion);
@@ -1108,6 +1124,7 @@ namespace App3.Forms
             optionsToolStripMenuItem.Enabled = f;
             toolStripButton1.Visible = f;
             logToolStripMenuItem.Enabled = f;
+            // journalToolStripMenuItem.Enabled = f;
         }
 
         private void фиксацияЖурналаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1124,6 +1141,12 @@ namespace App3.Forms
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void журналРаботыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            oJournal.ShowData();
+            oJournal.Show();
         }
     }
 }

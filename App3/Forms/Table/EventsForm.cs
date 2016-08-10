@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using App3.Forms;
 using App3.Class;
 using App3.Class.Singleton;
+using App3.Class.Static;
 
 namespace App3
 {
@@ -110,7 +111,7 @@ namespace App3
             bool isOpen = false;
             try
             {
-                DataBase.RowSelect("select * from oko.tmessages order by constant_name;", ds);
+                DataBase.RowSelect("select * from oko.tmessages order by constant_name", ds);
                 isOpen = true;
             }
             catch(Exception ex)
@@ -122,10 +123,36 @@ namespace App3
             {
                 checkedListBox1.Items.Clear();
                 CacheMessageTypes = new ArrayList();
-                foreach (DataRow Row in ds.Tables[0].Rows)
+                if (ds.Tables.Count > 0)
                 {
-                    CacheMessageTypes.Add(Row["constant_name"].ToString());
-                    checkedListBox1.Items.Add(Row["constant_name"].ToString(), Convert.ToBoolean(Row["show"]));
+                    try
+                    {
+                        foreach (DataRow Row in ds.Tables[0].Rows)
+                        {
+                            CacheMessageTypes.Add(Row["constant_name"].ToString());
+                            checkedListBox1.Items.Add(Row["constant_name"].ToString(), Convert.ToBoolean(Row["show"]));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    }
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("Инициализация из справочника");
+                    try
+                    {
+                        foreach (KeyValuePair<int, Tuple<string, bool>> tm in DBDict.TMessages)
+                        {
+                            CacheMessageTypes.Add(tm.Value.Item1);
+                            checkedListBox1.Items.Add(tm.Value.Item1, tm.Value.Item2);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    }
                 }
             }
         }

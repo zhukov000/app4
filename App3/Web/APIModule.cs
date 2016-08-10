@@ -122,7 +122,7 @@ namespace App3.Web
                 Logger.Instance.WriteToLog(string.Format("запрос синхронизации: id={0} url={1}", x.nid, this.Request.UserHostAddress));
 
                 // проверить разрешено ли этому узлу получать данные
-                if (DataBase.RowSelectCount(string.Format("SELECT * FROM syn_nodes WHERE synout AND ipv4 = '{0}' and id = {1}", this.Request.UserHostAddress, x.nid)) > 0)
+                if (DataBase.RowSelectCount(string.Format("SELECT * FROM syn_nodes WHERE synout AND ipv4 = '{0}'", this.Request.UserHostAddress)) > 0)
                 {
                     Logger.Instance.WriteToLog("Соединение разрешено!");
                     foreach (var el in Synchronizer.SYNC_NEW)

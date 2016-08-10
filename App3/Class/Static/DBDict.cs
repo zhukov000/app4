@@ -76,6 +76,7 @@ namespace App3.Class.Static
         public static IDictionary<int, Tuple<int,int,string,string>> TClassify;
         public static IDictionary<int, string> TRealObject;
         public static IDictionary<int, string> TCustomer;
+        public static IDictionary<int, Tuple<string, bool>> TMessages;
         public static TMessageDict TMessage;
 
         public static void UpdateDictionary(string name)
@@ -107,19 +108,19 @@ namespace App3.Class.Static
         {
             TContact = DataBase.RowSelect("select id, name from oko.tcontact")
                 .ToDictionary(x => x[0].ToInt(), x => x[1].ToString());
-            
+
             TRealObject = DataBase.RowSelect("select id, name from oko.real_object")
                 .ToDictionary(x => x[0].ToInt(), x => x[1].ToString());
-            
+
             TCustomer = DataBase.RowSelect("select id, name from oko.customer")
                         .ToDictionary(x => x[0].ToInt(), x => x[1].ToString());
-            
+
             TNumber = DataBase.RowSelect("select id, name from oko.tnumber")
                 .ToDictionary(x => x[0].ToInt(), x => x[1].ToString());
-            
+
             TStatus = DataBase.RowSelect("select id, status from oko.tstatus")
                 .ToDictionary(x => x[0].ToInt(), x => x[1].ToString());
-            
+
             TState = DataBase.RowSelect("select id, name, status, color, instat, inprocess, warn, music from oko.tstate")
                 .ToDictionary(
                     x => x[0].ToInt(),
@@ -145,17 +146,17 @@ namespace App3.Class.Static
                 IPAddress = DataBase.RowSelect("select id_region, ipaddress from oko.ipaddresses where listen")
                     .ToDictionary(x => x[1].ToString(), x => x[0].ToInt());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.Instance.WriteToLog("Ошибка в справочнике районов:  " + ex.Message); Logger.Instance.FlushLog();
 
                 IPAddress = DataBase.RowSelect("select id_region, max(ipaddress) as ipaddress from oko.ipaddresses where listen group by id_region")
                     .ToDictionary(x => x[1].ToString(), x => x[0].ToInt());
             }
-            
+
             Settings = DataBase.RowSelect("select name, value from settings")
                 .ToDictionary(x => x[0].ToString(), x => x[1].ToString());
-            
+
             /*TMinistry = DataBase.RowSelect("select id, name, head, phone from oko.ministry")
                .ToDictionary(
                    x => x[0].ToInt(),
@@ -164,15 +165,21 @@ namespace App3.Class.Static
             TCompany = DataBase.RowSelect("select id, title, type from oko.company").
                 ToDictionary(
                     x => x[0].ToInt(),
-                    x => new Tuple<string,int>(x[1].ToString(), x[2].ToInt())
+                    x => new Tuple<string, int>(x[1].ToString(), x[2].ToInt())
                 );
-            
+
             TClassify = DataBase.RowSelect("select cl.id, cl.pid, cl.value, cl.rid, clp.value from oko.classifier cl inner join oko.classifier clp on cl.pid = clp.id and clp.pid = 0").
                 ToDictionary(
                     x => x[3].ToInt(),
                     x => new Tuple<int, int, string, string>(x[0].ToInt(), x[1].ToInt(), x[2].ToString(), x[4].ToString())
                 );
-            
+
+            TMessages = DataBase.RowSelect("select id, constant_name, show from oko.tmessages").
+                ToDictionary(
+                    x => x[0].ToInt(),
+                    x => new Tuple<string, bool>(x[1].ToString(), x[2].ToBool())
+                );
+
             ClassifierObject obj = new ClassifierObject(0, 0, 0, "", false);
             
             TClassifier = new NTree<ClassifierObject>(obj);

@@ -17,21 +17,12 @@ namespace App3.Web
             backgroundThread = new Thread(
                 new ThreadStart(() =>
                 {
-                    // var url = "http://+:" + Config.Get("WebPort");
-
                     StartOptions options = new StartOptions("http://+:"+ Config.Get("WebPort"))
                     {
                         ServerFactory = "Microsoft.Owin.Host.HttpListener"
                     } ;
-                    // options.Urls.Add("http://localhost:" + Config.Get("WebPort"));
-                    // options.Urls.Add("http://127.0.0.1:" + Config.Get("WebPort"));
 
                     string url = Config.Get("ModuleLocalServerIP");
-
-                    if (!url.Equals("127.0.0.1") && !url.Equals("localhost"))
-                    {
-                        // options.Urls.Add("http://" + url + ":" + Config.Get("WebPort"));
-                    }
 
                     try
                     {
@@ -51,6 +42,7 @@ namespace App3.Web
                     catch (Exception ex)
                     {
                         Logger.Instance.WriteToLog(String.Format("{0}.{1}: Ошибка при запуске web-сервиса: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                        Logger.Instance.WriteToLog(Utils.GetaAllMessages(ex));
                     }
                 }
             ));

@@ -8,6 +8,7 @@ namespace App3.Class.Synchronization
     class SyncResult
     {
         public string IpAddress { get; set; }
+        public string Description { get; set; }
         public int Reserved { get; set; }
         public int Deleted { get; set; }
         public int Bytes { get; set; }
