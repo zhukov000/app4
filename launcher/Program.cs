@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App3.Class.Singleton;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -25,8 +26,7 @@ namespace launcher
                 }
                 else
                 {
-                    string mess = "Сбой запуска: другая копия процесса уже запущена (иконка в трее)";
-                    MessageBox.Show(mess);
+                    Logger.Instance.WriteToLog("Сбой запуска: другая копия процесса уже запущена");
                 }
             }
         }

@@ -1124,7 +1124,7 @@ namespace App3.Forms
             optionsToolStripMenuItem.Enabled = f;
             toolStripButton1.Visible = f;
             logToolStripMenuItem.Enabled = f;
-            // journalToolStripMenuItem.Enabled = f;
+            journalToolStripMenuItem.Enabled = f;
         }
 
         private void фиксацияЖурналаToolStripMenuItem_Click(object sender, EventArgs e)

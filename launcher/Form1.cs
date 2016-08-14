@@ -62,6 +62,7 @@ namespace launcher
                             // запуск приложения Сполох
                             try
                             {
+                                Logger.Instance.WriteToLog("Запуск приложения");
                                 firstProc.Start();
                             }
                             catch(Exception ex)

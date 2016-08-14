@@ -726,6 +726,8 @@ namespace App3.Class
             return b;
         }
 
+        public class DecryptException : Exception { }
+
         public static string Crypt(this string text)
         {
             return Convert.ToBase64String(
@@ -749,7 +751,10 @@ namespace App3.Class
                     )
                 );
             }
-            catch { } 
+            catch
+            {
+                throw new DecryptException();
+            } 
             return str;
         }
 

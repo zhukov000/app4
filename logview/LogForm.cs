@@ -18,13 +18,6 @@ namespace App3.Forms
         public LogForm()
         {
             InitializeComponent();
-            this.MdiParent = null;
-        }
-
-        public LogForm(Form pParent)
-        {
-            InitializeComponent();
-            this.MdiParent = pParent;
         }
 
         /// <summary>
@@ -50,7 +43,7 @@ namespace App3.Forms
             // лог око
             oko.Nodes.Add(logDir + "OKOGate.log", "OKOGate");
             // лог лаунчера
-            foreach (string file in Directory.GetFiles(logDir, "*launcher.log").OrderByDescending(f => f))
+            foreach (string file in Directory.GetFiles(logDir, "*launcher.log"))
             {
                 launcher.Nodes.Add(file, getData(file));
             }
@@ -73,7 +66,7 @@ namespace App3.Forms
 
         private void LogForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason != CloseReason.MdiFormClosing && MdiParent != null)
+            if (e.CloseReason != CloseReason.MdiFormClosing)
             {
                 this.Hide();
                 e.Cancel = true;
@@ -92,22 +85,7 @@ namespace App3.Forms
                     {
                         while (sr.Peek() >= 0)
                         {
-                            string str = sr.ReadLine();
-                            string s = "";
-                            try
-                            {
-                                s = Utils.Derypt(str);
-                            }
-                            catch(Utils.DecryptException)
-                            {
-                                s = str;
-                            }
-                            catch(Exception ex)
-                            {
-                                s = ex.Message;
-                            }
-
-                            listBox1.Items.Add(s);
+                            listBox1.Items.Add(Utils.Derypt(sr.ReadLine()));
                         }
                     }
                     if (listBox1.Items.Count > 0)

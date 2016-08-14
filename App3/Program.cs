@@ -101,6 +101,24 @@ namespace App3
                     }                    
                 }
             }
+            else if(args.Count() > 0 && args[0] == "log")
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Form aaa;
+                try
+                {
+                    aaa = new App3.Forms.LogForm();
+                    ((LogForm)aaa).UpdateView();
+                    Application.Run(aaa);
+
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog("Необработанное исключение: " + Utils.GetaAllMessages(ex));
+                    Logger.Instance.FlushLog();
+                }
+            }
             else
             {
                 MessageBox.Show("Прямой запуск приложения нежелателен. Используйте launcher.exe", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
