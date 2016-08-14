@@ -7,7 +7,7 @@ namespace LaunchService
 {
     public partial class SpoloxLauncher : ServiceBase
     {
-        private static System.Diagnostics.Process proc;
+        // private static System.Diagnostics.Process proc;
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool SetServiceStatus(IntPtr handle, ref ServiceStatus serviceStatus);
 
@@ -27,7 +27,6 @@ namespace LaunchService
             timer1 = new System.Timers.Timer();
             timer1.Interval = Convert.ToInt32(App3.Class.Config.Get("IntervalSec")) * 1000;
             timer1.Elapsed += new System.Timers.ElapsedEventHandler(this.OnTimer);
-            proc = null;
         }
 
         protected override void OnStart(string[] args)
@@ -57,18 +56,6 @@ namespace LaunchService
             // eventLog1.WriteEntry("Service stop at " + DateTime.Now.ToString());
             Logger.Instance.WriteToLog("Service stop at " + DateTime.Now.ToString());
             timer1.Stop();
-            if (proc != null)
-            {
-                try
-                {
-                    proc.CloseMainWindow();
-                    proc.Close();
-                }
-                catch
-                {
-                    Logger.Instance.WriteToLog("Process stop");
-                }
-            }
             base.OnStop();
         }
 
@@ -83,7 +70,9 @@ namespace LaunchService
                     if (mutex.WaitOne(TimeSpan.FromSeconds(5)))
                     {
                         Logger.Instance.WriteToLog("Run: " + App3.Class.Config.Get("LauncherPath"));
-                        proc = System.Diagnostics.Process.Start(App3.Class.Config.Get("LauncherPath"));
+                        ProcessAsCurrentUser.CreateProcessAsCurrentUser(App3.Class.Config.Get("LauncherPath"));
+                        // proc = 
+                        System.Diagnostics.Process.Start(App3.Class.Config.Get("LauncherPath"));
                     }
                 }
                 catch (Exception ex)
