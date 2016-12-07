@@ -1,0 +1,1 @@
+@sc create SpoloxAutoLauncher binPath= %CD%\launcher.exe DisplayName= SpoloxAutoLauncher type= own start= auto
