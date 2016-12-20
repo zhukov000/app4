@@ -1,21 +1,23 @@
-﻿using System;
+﻿using App3.Class;
+using App3.Class.Singleton;
+using App3.Class.Static;
+using App3.Forms;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Collections;
 using System.Drawing;
-using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using App3.Forms;
-using App3.Class;
-using App3.Class.Singleton;
 
 namespace App3
 {
     public partial class MessForm : Form
     {
+        public delegate int GRIDLOGDelegate(string time, string type, string message, Int64 id);
+
         private const int MAX_EVENT_NUMBER = 1000;
 
         ArrayList CacheMessageTypes = new ArrayList();
@@ -33,7 +35,6 @@ namespace App3
             UpdateCheckedTypes();
         }
 
-        public delegate int GRIDLOGDelegate(string time, string type, string message, Int64 id);
         /// <summary>
         /// Потокозащищенный метод добавления записи в лог
         /// </summary>
@@ -80,12 +81,12 @@ namespace App3
                 bool isAdded = false;
                 try
                 {
-                    int i = DataBase.RunCommand(
+                    if ( DataBase.RunCommand(
                         new StringBuilder().AppendFormat(
                                 "insert into oko.tmessages(constant_name) values('{0}')", pConstantName
                             ).ToString()
-                        );
-                    if (i > 0) isAdded = true;
+                        ) > 0 )
+                        isAdded = true;
                 }
                 catch(Exception ex)
                 {
@@ -122,11 +123,43 @@ namespace App3
             {
                 checkedListBox1.Items.Clear();
                 CacheMessageTypes = new ArrayList();
+                if (ds.Tables.Count > 0)
+                {
+                    try
+                    {
+                        foreach (DataRow dataRow in ds.Tables[0].Rows)
+                        {
+                            this.CacheMessageTypes.Add(dataRow["constant_name"].ToString());
+                            this.checkedListBox1.Items.Add(dataRow["constant_name"].ToString(), Convert.ToBoolean(dataRow["show"]));
+                        }
+                        return;
+                    }
+                    catch (Exception ex2)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex2.Message));
+                        return;
+                    }
+                }
+                Logger.Instance.WriteToLog("Инициализация из справочника");
+                try
+                {
+                    foreach (KeyValuePair<int, Tuple<string, bool>> current in DBDict.TMessages)
+                    {
+                        this.CacheMessageTypes.Add(current.Value.Item1);
+                        this.checkedListBox1.Items.Add(current.Value.Item1, current.Value.Item2);
+                    }
+                }
+                catch (Exception ex3)
+                {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex3.Message));
+                }
+                /*  старое
                 foreach (DataRow Row in ds.Tables[0].Rows)
                 {
                     CacheMessageTypes.Add(Row["constant_name"].ToString());
                     checkedListBox1.Items.Add(Row["constant_name"].ToString(), Convert.ToBoolean(Row["show"]));
                 }
+                */
             }
         }
 
@@ -242,6 +275,24 @@ namespace App3
         {
             long id = dataGridView1.Rows[e.RowIndex].Cells["id"].Value.ToInt64();
             Handling.onObjectCardOpen(id);
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.tabControl1.SelectedIndex == 1)
+            {
+                if (base.WindowState == FormWindowState.Maximized)
+                {
+                    base.WindowState = FormWindowState.Normal;
+                    this.tabControl1.TabPages[1].Text = "Развернуть";
+                }
+                else
+                {
+                    base.WindowState = FormWindowState.Maximized;
+                    this.tabControl1.TabPages[1].Text = "Свернуть";
+                }
+                this.tabControl1.SelectTab(0);
+            }
         }
     }
 }

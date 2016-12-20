@@ -78,7 +78,7 @@ namespace App3
                     }
                     
                     // если обновление БД упешно пройдено или не нужно
-                    if (mutex.WaitOne(TimeSpan.FromSeconds(5)))
+                    if (mutex.WaitOne(TimeSpan.FromSeconds(5)) & f)
                     {
                         try
                         {
@@ -86,7 +86,8 @@ namespace App3
                         }
                         catch (Exception ex)
                         {
-                            Logger.Instance.WriteToLog("Произошло не обработанное исключение: " + ex.StackTrace);
+                            Logger.Instance.WriteToLog("Произошло необработанное исключение: " + ex.StackTrace);
+                            Logger.Instance.FlushLog();
                         }
                     }
                     else

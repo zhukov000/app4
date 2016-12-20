@@ -524,5 +524,34 @@ namespace App3
         {
             return isOpen;
         }
+
+        public static bool TableExist(string tableName)
+        {
+            bool result = false;
+            string[] array = new string[] {"public", ""};
+            string[] array2 = tableName.Split(".".ToCharArray());
+            if (array2.Length == 1)
+            {
+                array[1] = array2[0];
+            }
+            else if (array2.Length == 2)
+            {
+                array[0] = array2[0];
+                array[1] = array2[1];
+            }
+            string sRequest = string.Format("select case when exists((select * from information_schema.tables where table_schema = '{0}' and table_name = '{1}')) then 1 else 0 end as v", array[0], array[1]);
+            try
+            {
+                if ((int)DataBase.First(sRequest, "v") == 1)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
+            return result;
+        }
     }
 }
