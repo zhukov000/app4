@@ -1,4 +1,4 @@
-﻿namespace App3.Forms
+﻿namespace App3.Dialog
 {
     partial class AddressDialog
     {

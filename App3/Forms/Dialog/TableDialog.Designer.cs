@@ -1,4 +1,4 @@
-﻿namespace App3.Dialogs
+﻿namespace App3.Dialog
 {
     partial class TableDialog
     {

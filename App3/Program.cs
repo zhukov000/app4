@@ -86,7 +86,9 @@ namespace App3
                         }
                         catch (Exception ex)
                         {
-                            Logger.Instance.WriteToLog("Произошло не обработанное исключение: " + ex.StackTrace);
+                            // Logger.Instance.WriteToLog("Произошло необработанное исключение: " + ex.StackTrace);
+                            Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
+                            Logger.Instance.FlushLog();
                         }
                     }
                     else

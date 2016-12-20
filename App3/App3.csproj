@@ -269,9 +269,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\Controls\BarInformation.cs" />
+    <Compile Include="Class\Controls\ChartBarDate.cs" />
+    <Compile Include="Class\Controls\DataClasses.cs" />
+    <Compile Include="Class\Controls\GanttChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Class\Controls\Header.cs" />
+    <Compile Include="Class\Map\BigPoly.cs" />
+    <Compile Include="Class\Map\Build.cs" />
+    <Compile Include="Class\Map\BuildBorder.cs" />
+    <Compile Include="Class\Map\HighWay.cs" />
+    <Compile Include="Class\Map\Layer.cs" />
+    <Compile Include="Class\Map\LayerCache.cs" />
+    <Compile Include="Class\Map\LayerType.cs" />
+    <Compile Include="Class\Map\MidPoly.cs" />
+    <Compile Include="Class\Map\Object.cs" />
+    <Compile Include="Class\Map\Place.cs" />
+    <Compile Include="Class\Map\Point.cs" />
+    <Compile Include="Class\Map\Polygon.cs" />
+    <Compile Include="Class\Map\Region.cs" />
+    <Compile Include="Class\Map\Road.cs" />
+    <Compile Include="Class\Map\SmlPoly.cs" />
+    <Compile Include="Class\Singleton\EventDispatcher.cs" />
     <Compile Include="Class\Singleton\Logger.cs" />
+    <Compile Include="Class\Socket\SocketClient.cs" />
+    <Compile Include="Class\Socket\SocketServer.cs" />
     <Compile Include="Class\Static\PermissionControl.cs" />
     <Compile Include="Class\Depricated\SingleInstance.cs" />
+    <Compile Include="Class\Static\SyncronizerViaSocket.cs" />
+    <Compile Include="Class\Static\TMessageDict.cs" />
     <Compile Include="Class\Synchronization\SyncAddresses.cs" />
     <Compile Include="Class\Synchronization\SyncClassifier.cs" />
     <Compile Include="Class\Synchronization\SyncCompany.cs" />
@@ -286,6 +313,8 @@
     <Compile Include="Class\Synchronization\SyncObjectProperties.cs" />
     <Compile Include="Class\Synchronization\SyncRealObject.cs" />
     <Compile Include="Class\Synchronization\SyncRegionStatus.cs" />
+    <Compile Include="Class\Synchronization\SyncResult.cs" />
+    <Compile Include="Class\Synchronization\SyncStatus.cs" />
     <Compile Include="Class\Synchronization\SyncTContact.cs" />
     <Compile Include="Class\Synchronization\SyncTMessages.cs" />
     <Compile Include="Class\Synchronization\SyncTNumber.cs" />
@@ -306,7 +335,7 @@
     <Compile Include="Class\Static\OkoConnection.cs" />
     <Compile Include="Class\Static\Synchronizer.cs" />
     <Compile Include="Class\Static\Updater.cs" />
-    <Compile Include="Class\Synchronization\Event.cs" />
+    <Compile Include="Class\Synchronization\EventSync.cs" />
     <Compile Include="Class\Synchronization\IEntitySynchronization.cs" />
     <Compile Include="Class\WebcamEventArgs.cs" />
     <Compile Include="Class\Controls\WebCamCapture.cs">

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace App3.Class.Synchronization
 {
-    interface IEntitySynchronization
+    internal interface IEntitySynchronization
     {
         /// <summary>
         /// Получить список измененных объектов (которые необходимо обновить)
