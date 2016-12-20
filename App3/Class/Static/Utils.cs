@@ -31,6 +31,10 @@ namespace App3.Class
             CH_S
         };
 
+        public class DecryptException : Exception
+        {
+        }
+
         public static string AppDirectory()
         {
             string s = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -281,6 +285,37 @@ namespace App3.Class
                     )
                 );
         }*/
+
+        public static IEnumerable<TSource> FromHierarchy<TSource>(
+            this TSource source,
+            Func<TSource, TSource> nextItem,
+            Func<TSource, bool> canContinue)
+        {
+            for (var current = source; canContinue(current); current = nextItem(current))
+            {
+                yield return current;
+            }
+        }
+
+        public static IEnumerable<TSource> FromHierarchy<TSource>(
+            this TSource source,
+            Func<TSource, TSource> nextItem)
+            where TSource : class
+        {
+            return FromHierarchy(source, nextItem, s => s != null);
+        }
+
+        public static string GetaAllMessages(this Exception exception)
+        {
+            var messages = exception.FromHierarchy(ex => ex.InnerException)
+                .Select(ex => ex.Message);
+            return String.Join(Environment.NewLine, messages);
+        }
+
+        public static List<object[]> GetListenIp()
+        {
+            return DataBase.RowSelect("select distinct rm.fullname, rm.num, rm.color, rm.name \r\n                    from public.regions2map rm\r\n                      inner join oko.ipaddresses ip on rm.num = ip.id_region\r\n                    where ip.listen\r\n                    order by name");
+        }
 
         public static string GetMessageText(int Class, int Code)
         {
@@ -651,6 +686,45 @@ namespace App3.Class
             if (S != null)
                 bool.TryParse(S.ToString(), out b);
             return b;
+        }
+
+        public static byte ToByte(this object B)
+        {
+            byte result = 0;
+            if (B != null)
+            {
+                byte.TryParse(B.ToString(), out result);
+            }
+            return result;
+        }
+
+        public static ushort ToUShort(this object B)
+        {
+            ushort result = 0;
+            if (B != null)
+            {
+                ushort.TryParse(B.ToString(), out result);
+            }
+            return result;
+        }
+
+        public static string Crypt(this string text)
+        {
+            return Convert.ToBase64String(ProtectedData.Protect(Encoding.Unicode.GetBytes(text), Encoding.Unicode.GetBytes(Config.Get("Entropy")), DataProtectionScope.LocalMachine));
+        }
+
+        public static string Derypt(this string text)
+        {
+            string result = "--- ошибочное значение ---";
+            try
+            {
+                result = Encoding.Unicode.GetString(ProtectedData.Unprotect(Convert.FromBase64String(text), Encoding.Unicode.GetBytes(Config.Get("Entropy")), DataProtectionScope.LocalMachine));
+            }
+            catch
+            {
+                throw new Utils.DecryptException();
+            }
+            return result;
         }
 
         #endregion

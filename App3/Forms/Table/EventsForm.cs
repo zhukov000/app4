@@ -1,23 +1,23 @@
-﻿using App3.Class;
-using App3.Class.Singleton;
-using App3.Class.Static;
-using App3.Forms;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Collections;
 using System.Drawing;
-using System.Reflection;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using App3.Forms;
+using App3.Class;
+using App3.Class.Singleton;
+using App3.Class.Static;
+using System.Reflection;
 
 namespace App3
 {
     public partial class MessForm : Form
     {
-        public delegate int GRIDLOGDelegate(string time, string type, string message, Int64 id);
-
         private const int MAX_EVENT_NUMBER = 1000;
 
         ArrayList CacheMessageTypes = new ArrayList();
@@ -35,6 +35,7 @@ namespace App3
             UpdateCheckedTypes();
         }
 
+        public delegate int GRIDLOGDelegate(string time, string type, string message, Int64 id);
         /// <summary>
         /// Потокозащищенный метод добавления записи в лог
         /// </summary>
@@ -81,12 +82,12 @@ namespace App3
                 bool isAdded = false;
                 try
                 {
-                    if ( DataBase.RunCommand(
+                    int i = DataBase.RunCommand(
                         new StringBuilder().AppendFormat(
                                 "insert into oko.tmessages(constant_name) values('{0}')", pConstantName
                             ).ToString()
-                        ) > 0 )
-                        isAdded = true;
+                        );
+                    if (i > 0) isAdded = true;
                 }
                 catch(Exception ex)
                 {
@@ -127,12 +128,11 @@ namespace App3
                 {
                     try
                     {
-                        foreach (DataRow dataRow in ds.Tables[0].Rows)
+                        foreach (DataRow Row in ds.Tables[0].Rows)
                         {
-                            this.CacheMessageTypes.Add(dataRow["constant_name"].ToString());
-                            this.checkedListBox1.Items.Add(dataRow["constant_name"].ToString(), Convert.ToBoolean(dataRow["show"]));
+                            CacheMessageTypes.Add(Row["constant_name"].ToString());
+                            checkedListBox1.Items.Add(Row["constant_name"].ToString(), Convert.ToBoolean(Row["show"]));
                         }
-                        return;
                     }
                     catch (Exception ex2)
                     {
@@ -153,13 +153,6 @@ namespace App3
                 {
                     Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex3.Message));
                 }
-                /*  старое
-                foreach (DataRow Row in ds.Tables[0].Rows)
-                {
-                    CacheMessageTypes.Add(Row["constant_name"].ToString());
-                    checkedListBox1.Items.Add(Row["constant_name"].ToString(), Convert.ToBoolean(Row["show"]));
-                }
-                */
             }
         }
 

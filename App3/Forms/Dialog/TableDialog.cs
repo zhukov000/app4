@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace App3.Dialogs
+namespace App3.Dialog
 {
     public partial class TableDialog : Form
     {

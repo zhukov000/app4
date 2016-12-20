@@ -528,7 +528,11 @@ namespace App3
         public static bool TableExist(string tableName)
         {
             bool result = false;
-            string[] array = new string[] {"public", ""};
+            string[] array = new string[]
+            {
+                "public",
+                ""
+            };
             string[] array2 = tableName.Split(".".ToCharArray());
             if (array2.Length == 1)
             {
@@ -547,9 +551,8 @@ namespace App3
                     result = true;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
             return result;
         }

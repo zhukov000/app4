@@ -45,6 +45,25 @@ namespace App3.Class
 
         #endregion
 
+        public static int BuildCacheForListened()
+        {
+            GeoDataCache.ClearCache();
+            List<object[]> arg_15_0 = Utils.GetListenIp();
+            int num = GeoDataCache.OpenSession("");
+            using (List<object[]>.Enumerator enumerator = arg_15_0.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    enumerator.Current[1].ToInt();
+                    foreach (GeoDataCache.LayerType current in GeoDataCache.tableName.Keys)
+                    {
+                        GeoDataCache.UpdateDataTable(num, current, new object[0]);
+                    }
+                }
+            }
+            return num;
+        }
+
         static public int OpenSession(string name = "")
         {
             object [] res = null;
@@ -57,7 +76,6 @@ namespace App3.Class
             return id_session;
         }
 
-
         static public void ClearCache()
         {
             DataBase.RunCommand("DROP SCHEMA cache CASCADE;");
@@ -66,7 +84,26 @@ namespace App3.Class
 
         static public void CloseSession(int pSessionId)
         {
-            foreach (var pType in tableName.Keys)
+            List<object[]> arg_10_0 = Utils.GetListenIp();
+            GeoDataCache.OpenSession("");
+            using (List<object[]>.Enumerator enumerator = arg_10_0.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    enumerator.Current[1].ToInt();
+                    foreach (GeoDataCache.LayerType current in GeoDataCache.tableName.Keys)
+                    {
+                        string format = "DROP TABLE IF EXISTS {0}";
+                        if (current == GeoDataCache.LayerType.OBJECT)
+                        {
+                            format = "DROP VIEW IF EXISTS {0}";
+                        }
+                        string arg = GeoDataCache.TableName(pSessionId, current);
+                        DataBase.RunCommand(string.Format(format, arg));
+                    }
+                }
+            }
+            /*foreach (var pType in tableName.Keys)
             {
                 string req = "DROP TABLE IF EXISTS {0}";
                 if (pType == LayerType.OBJECT)
@@ -75,7 +112,7 @@ namespace App3.Class
                 }
                 string sTableName = TableName(pSessionId, pType);
                 DataBase.RunCommand(string.Format(req, sTableName));
-            }
+            }*/
         }
 
         static public string TableName(int pSessionId, LayerType pType)
@@ -83,6 +120,61 @@ namespace App3.Class
             return "cache." + tableName[pType] + pSessionId;
         }
 
+        public static string UpdateDataTable(int pSessionId, GeoDataCache.LayerType pType, object[] Params)
+        {
+            string text = GeoDataCache.TableName(pSessionId, pType);
+            string text2 = "CREATE TABLE {0} AS ";
+            string format = "DROP TABLE IF EXISTS {0}";
+            switch (pType)
+            {
+                case GeoDataCache.LayerType.REGION:
+                    if (Params[1] != null)
+                    {
+                        text2 += string.Format("(SELECT osm_id, way, name, num FROM regions WHERE fullname = '{0}');", Params[1]);
+                    }
+                    else
+                    {
+                        text2 += string.Format("(SELECT osm_id, way, name, num FROM regions);", new object[0]);
+                    }
+                    break;
+                case GeoDataCache.LayerType.POLYGON:
+                    text2 += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_polygons({0}))", Params[0]);
+                    break;
+                case GeoDataCache.LayerType.ROAD:
+                    text2 += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_roads({0}) UNION SELECT osm_id, way, name, building, highway, place FROM oko.district_lines({0}))", Params[0]);
+                    break;
+                case GeoDataCache.LayerType.POINT:
+                    text2 += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_points({0}))", Params[0]);
+                    break;
+                case GeoDataCache.LayerType.BUILD:
+                    text2 += string.Format("(SELECT osm_id, way, COALESCE(name, \"addr:housenumber\") as name FROM oko.district_weigth_polygons({0}, 0, 100000) WHERE building is not null)", Params[0]);
+                    break;
+                case GeoDataCache.LayerType.HIGHWAY:
+                    text2 += string.Format("(SELECT osm_id, way, name FROM {0} WHERE highway is not null)", GeoDataCache.TableName(pSessionId, GeoDataCache.LayerType.ROAD));
+                    break;
+                case GeoDataCache.LayerType.PLACES:
+                    text2 += string.Format("(SELECT osm_id, way, name FROM {0} WHERE place is not null)", GeoDataCache.TableName(pSessionId, GeoDataCache.LayerType.POLYGON));
+                    break;
+                case GeoDataCache.LayerType.OBJECT:
+                    text2 = "CREATE VIEW {0} AS " + string.Format("(SELECT odo.way, odo.name as name, odo.number, os.* FROM oko.district_objects3({0}) as odo INNER JOIN oko.object_status as os on odo.osm_id = os.osm_id)", Params[0]);
+                    format = "DROP VIEW  IF EXISTS {0}";
+                    break;
+                case GeoDataCache.LayerType.BIG_POLYGON:
+                    text2 += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 1000000, null) WHERE building is null)", Params[0]);
+                    break;
+                case GeoDataCache.LayerType.MID_POLYGON:
+                    text2 += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 100000, null) WHERE building is null)", Params[0]);
+                    break;
+                case GeoDataCache.LayerType.SML_POLYGON:
+                    text2 += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 200, null) WHERE building is null)", Params[0]);
+                    break;
+            }
+            DataBase.RunCommand(string.Format(format, text));
+            DataBase.RunCommand(string.Format(text2, text));
+            return text;
+        }
+
+        /*
         static public string UpdateDataTable(int pSessionId, LayerType pType, object[] Params)
         {
             string sTableName = TableName(pSessionId, pType);
@@ -146,6 +238,6 @@ namespace App3.Class
             DataBase.RunCommand(string.Format(reqCreate, sTableName));
 
             return sTableName;
-        }
+        } */
     }
 }

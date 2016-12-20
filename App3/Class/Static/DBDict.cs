@@ -16,6 +16,7 @@ namespace App3.Class.Static
         public static IDictionary<int, ObjectState> TState;
         // public static IDictionary<int, Tuple<string, int>> TClass;
         public static IDictionary<int, Tuple<string, string, string>> TRegion;
+        public static IDictionary<string, Tuple<int, string, string>> TDistrict;
         public static IDictionary<string, int> IPAddress;
         public static IDictionary<string, string> Settings;
         // public static IDictionary<int, Tuple<string, string, string>> TMinistry;
@@ -24,6 +25,8 @@ namespace App3.Class.Static
         public static IDictionary<int, Tuple<int,int,string,string>> TClassify;
         public static IDictionary<int, string> TRealObject;
         public static IDictionary<int, string> TCustomer;
+        public static IDictionary<int, Tuple<string, bool>> TMessages;
+        public static TMessageDict TMessage;
 
         public static void UpdateDictionary(string name)
         {
@@ -43,6 +46,9 @@ namespace App3.Class.Static
                             x => x[0].ToInt(),
                             x => new Tuple<string, int>(x[1].ToString(), x[2].ToInt())
                         );
+                    break;
+                case "TMessage":
+                    DBDict.TMessage = new TMessageDict();
                     break;
             }
         }
@@ -69,8 +75,25 @@ namespace App3.Class.Static
                     x => x[0].ToInt(),
                     x => new Tuple<string, string, string>(x[1].ToString(), x[2].ToString(), x[3].ToString())
                 );
-            IPAddress = DataBase.RowSelect("select id_region, ipaddress from oko.ipaddresses where listen")
-                .ToDictionary(x => x[1].ToString(), x => x[0].ToInt());
+            TDistrict = DataBase.RowSelect("select num, fullname, name, color from regions2map order by fullname")
+                .ToDictionary(
+                    x => x[2].ToString(),
+                    x => new Tuple<int, string, string>(x[0].ToInt(), x[1].ToString(), x[3].ToString())
+                );
+            try
+            {
+                IPAddress = DataBase.RowSelect("select id_region, ipaddress from oko.ipaddresses where listen")
+                    .ToDictionary(x => x[1].ToString(), x => x[0].ToInt());
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.WriteToLog("Ошибка в справочнике районов:  " + ex.Message);
+                Logger.Instance.FlushLog();
+                // IEnumerable<object[]> arg_348_0 = DataBase.RowSelect("select id_region, max(ipaddress) as ipaddress from oko.ipaddresses where listen group by id_region");
+                IPAddress = DataBase.RowSelect("select id_region, max(ipaddress) as ipaddress from oko.ipaddresses where listen group by id_region")
+                    .ToDictionary(x => x[1].ToString(), x => x[0].ToInt());
+
+            }
             Settings = DataBase.RowSelect("select name, value from settings")
                 .ToDictionary(x => x[0].ToString(), x => x[1].ToString());
             /* TMinistry = DataBase.RowSelect("select id, name, head, phone from oko.ministry")
@@ -88,6 +111,13 @@ namespace App3.Class.Static
                     x => x[3].ToInt(),
                     x => new Tuple<int, int, string, string>(x[0].ToInt(), x[1].ToInt(), x[2].ToString(), x[4].ToString())
                 );
+
+            TMessages = DataBase.RowSelect("select id, constant_name, show from oko.tmessages").
+                ToDictionary(
+                    x => x[0].ToInt(),
+                    x => new Tuple<string, bool>(x[1].ToString(), x[2].ToBool())
+                );
+
             ClassifierObject obj = new ClassifierObject(0, 0, 0, "", false);
             TClassifier = new NTree<ClassifierObject>(obj);
             foreach (object[] r in DataBase.RowSelect("select id, pid, value, rid from oko.classifier order by coalesce(pid,0), id"))
@@ -118,6 +148,7 @@ namespace App3.Class.Static
                     }
                 }
             }
+            DBDict.TMessage = new TMessageDict();
         }
 
         static public void Load2Combobox(ref ComboBox combo, List<ComboboxItem> items, object match)

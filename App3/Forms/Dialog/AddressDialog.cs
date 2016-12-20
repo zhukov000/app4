@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace App3.Forms
+namespace App3.Dialog
 {
     public partial class AddressDialog : Form
     {
