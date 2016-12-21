@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using App3.Forms.Dialog;
 using System.Windows.Forms.DataVisualization.Charting;
 using App3.Class.Singleton;
+using App3.Class.Map;
 
 namespace App3.Forms
 {
@@ -39,6 +40,7 @@ namespace App3.Forms
                 map.Refresh();
             }
             mapBox.Refresh();
+            LayerCache.UpdateLayer(LayerType.Object, -1);
         }
 
         private void SetGrBox2TextThreadSafe(string pText)
@@ -581,7 +583,7 @@ namespace App3.Forms
 
         private void DistrictMap_FormClosing(object sender, FormClosingEventArgs e)
         {
-            oMapper.ClearCache();
+            // oMapper.ClearCache();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -639,6 +641,7 @@ namespace App3.Forms
                     filter = "not dogovor and " + filter;
                 }
             }
+            Logger.Instance.WriteToLog("Фильтр объектов: " + string.Format(filter, state_id, this.SelectedRegion));
             Handling.onObjectListOpen(string.Format(filter, state_id, SelectedRegion));
         }
 

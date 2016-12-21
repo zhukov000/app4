@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using App3.Class;
 using App3.Class.Singleton;
+using System.Reflection;
 
 namespace App3.Web
 {
@@ -17,24 +18,35 @@ namespace App3.Web
             backgroundThread = new Thread(
                 new ThreadStart(() =>
                 {
-                    var url = "http://localhost:" + Config.Get("WebPort");
+
+                    StartOptions options = new StartOptions("http://+:" + Config.Get("WebPort"))
+                    {
+                        ServerFactory = "Microsoft.Owin.Host.HttpListener"
+                    };
+                    string arg = Config.Get("ModuleLocalServerIP");
 
                     try
                     {
-                        using (WebApp.Start<Startup>(url))
+                        using (WebApp.Start<Startup>(options))
                         {
+                            Logger.Instance.WriteToLog(string.Format("Web-service start at local and {0} on port {1} ", arg, Config.Get("WebPort")));
                             while (true)
                             {
                                 // Do Nothing
                             }
                         }
                     }
+                    catch (ThreadAbortException)
+                    {
+                    }
                     catch (Exception ex)
                     {
-                        Logger.Instance.WriteToLog(String.Format("{0}.{1}: Ошибка при запуске web-сервиса на url = {2}: {3}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, url, ex.Message));
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: Ошибка при запуске web-сервиса: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+                        Logger.Instance.WriteToLog(ex.GetaAllMessages());
                     }
                 }
             ));
+            backgroundThread.IsBackground = true;
             backgroundThread.Start();
         }
 

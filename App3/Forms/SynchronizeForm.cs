@@ -1,4 +1,5 @@
 ﻿using App3.Class.Static;
+using App3.Class.Synchronization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -70,15 +71,16 @@ namespace App3.Forms
         {
             if (MessageBox.Show("Выполнить синхронизацию с выбранными узлами?", "Вопрос", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                listBox1.Items.Clear();
-                listBox1.Items.Add("Синхронизация начата");
-                List<string> log = Synchronizer.Run();
-                listBox1.BeginUpdate();
-                foreach (string s in log)
+                this.listBox1.Items.Clear();
+                this.listBox1.Items.Add("Синхронизация начата");
+                List<SyncResult> list = null;
+                List<string> arg_50_0 = Synchronizer.Run(ref list);
+                this.listBox1.BeginUpdate();
+                foreach (string current in arg_50_0)
                 {
-                    listBox1.Items.Add(s);
+                    this.listBox1.Items.Add(current);
                 }
-                listBox1.EndUpdate();
+                this.listBox1.EndUpdate();
             }
         }
     }

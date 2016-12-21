@@ -1,5 +1,4 @@
 ﻿using App3.Class;
-using App3.Dialogs;
 using Npgsql;
 using System;
 using System.Collections.Generic;

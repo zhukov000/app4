@@ -59,10 +59,9 @@ namespace App3.Forms.Map
         public void SelectRegion(string pName)
         {
             // загрузить карту региона
-            oMapper.Clear();
-            oMapper.DistrictName = pName;
-            UpdateDistrictMap();
-            panel2.Visible = true;
+            this.oMapper.DistrictName = pName;
+            this.UpdateDistrictMap();
+            this.panel2.Visible = true;
         }
 
         public void SelectRegion(int pNumber)
@@ -85,7 +84,6 @@ namespace App3.Forms.Map
 
         private void PointSelect_FormClosing(object sender, FormClosingEventArgs e)
         {
-            oMapper.ClearCache();
         }
 
         private void districtBox_SelectedIndexChanged(object sender, EventArgs e)

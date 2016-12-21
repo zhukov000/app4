@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections.Specialized;
 using App3.Class;
 using OKOGate;
-using App3.Dialogs;
 using App3.Class.Static;
 using MessageGroupId = App3.Class.Utils.MessageGroupId;
-using System.Diagnostics;
-using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.IO.Ports;
 using App3.Forms.Dialog;
 using App3.Forms.Object;
 using App3.Web;
 using App3.Class.Singleton;
+using App3.Class.Map;
+using System.Reflection;
+using System.Threading;
 
 namespace App3.Forms
 {
@@ -34,12 +29,17 @@ namespace App3.Forms
         public delegate int NodeConnected(string sIpAddress);
         public NodeConnected NodeConnectedHandle = null;
 
-        private Module oModule;
+        // private Module oModule;
+
+        private OKOGate.Module oModuleXML;
+        private GuardAgent2.Module oModuleCOM;
 
         private int ChildFormNumber = 0;
         // Формы
         private MessForm oEventsForm;
         private SynchronizeForm oSynchronizeForm;
+        private LogForm oLogForm;
+        private Journal oJournal;
         private ConfigForm oConfigForm;
         private DBEvents oDBEvents;
         // private MapForm oMap;
@@ -66,26 +66,70 @@ namespace App3.Forms
         private void StartOkoGate()
         {
             // OkoConnection.CleanCounters();
-            
-            oModule = new Module();
-            oModule.LogLevel = Tracer.eLogLevel.DEBUG;
-            oModule.Protocol = Module.PROTOCOL.XML_GUARD;
 
-            oModule.RemotePort = Config.Get("ModuleRemotePort").ToInt();
-            oModule.LocalServerIP = Config.Get("ModuleLocalServerIP");
-            oModule.LocalServerPort = Config.Get("ModuleLocalServerPort").ToInt();
-            oModule.LocalGUID = Config.Get("ModuleLocalGUID");
-            oModule.ModuleId = Config.Get("ModuleModuleId").ToInt();
+            if (Config.Get("XMLGuard") == "1")
+            {
+                this.oModuleXML = new OKOGate.Module();
+                this.oModuleXML.LogLevel = Tracer.eLogLevel.ERROR;
+                this.oModuleXML.Protocol = OKOGate.Module.PROTOCOL.XML_GUARD;
+                this.oModuleXML.RemotePort = Config.Get("ModuleRemotePort").ToInt();
+                this.oModuleXML.LocalServerIP = Config.Get("ModuleLocalServerIP");
+                this.oModuleXML.LocalServerPort = Config.Get("ModuleLocalServerPort").ToInt();
+                this.oModuleXML.LocalGUID = Config.Get("ModuleLocalGUID");
+                this.oModuleXML.ModuleId = Config.Get("ModuleModuleId").ToInt();
+                this.oModuleXML.RestoreConnectionTime = 5;
+                this.oModuleXML.GetModuleMessageEvent += new OKOGate.EventDelegate(this.ReciveMessage);
+                this.oModuleXML.StartModule();
+                this.oModuleXML.StartReceive();
+                Tracer.LogFileName = Logger.LogDirectory() + "OKOGate.log";
+                Logger.Instance.WriteToLog("XML Guard start");
+            }
+            if (Config.Get("COMConn") == "1")
+            {
+                this.oModuleCOM = new GuardAgent2.Module();
+                this.oModuleCOM.LocalAddress = "11";
+                this.oModuleCOM.ModuleId = 11;
+                string[] arg_168_0 = SerialPort.GetPortNames();
+                string a = Config.Get("COMPortName").ToString();
+                string[] array = arg_168_0;
+                for (int i = 0; i < array.Length; i++)
+                {
+                    string text = array[i];
+                    if (a == text)
+                    {
+                        this.oModuleCOM.Close();
+                        if (this.oModuleCOM.Init(text, Config.Get("COMBaudrate").ToInt()) == OKO_Messages.Module_Started)
+                        {
+                            this.oModuleCOM.GetModuleMessageEvent += new GuardAgent2.EventDelegate(Handling.ProcessingComEvent);
+                            this.oModuleCOM.ClearRetrAddrList();
+                            this.oModuleCOM.SetRetrType(Config.Get("COMRetrType").ToByte());
+                            this.oModuleCOM.AddRetrAddr(Config.Get("COMRetrAddr").ToUShort());
+                            this.oModuleCOM.SetChannelsMask(Config.Get("COMChannelsMask").ToByte());
+                            this.oModuleCOM.SendAskForState(1, 0, Config.Get("RemoteAddress").ToUShort());
+                            Logger.Instance.WriteToLog("COM connector start, port: " + text);
+                            this.IncConnectCnt();
+                            break;
+                        }
+                        this.oModuleCOM.Close();
+                    }
+                }
+            }
+            Handling.GetMessageEvent = (Handling.GetMessageHandler)Delegate.Combine(Handling.GetMessageEvent, new Handling.GetMessageHandler(this.OnGetMessage));
+            Handling.onObjectCardOpen = (Handling.ObjectCardOpen)Delegate.Combine(Handling.onObjectCardOpen, new Handling.ObjectCardOpen(this.OnObjectCardOpen));
+            Handling.onObjectListOpen = (Handling.ObjectListOpen)Delegate.Combine(Handling.onObjectListOpen, new Handling.ObjectListOpen(this.OnObjectListOpen));
+        }
 
-            oModule.RestoreConnectionTime = 5;
-            oModule.GetModuleMessageEvent += ReciveMessage;
-            oModule.StartModule();
-            oModule.StartReceive();
-
-            Handling.GetMessageEvent += OnGetMessage;
-
-            Handling.onObjectCardOpen += OnObjectCardOpen;
-            Handling.onObjectListOpen += OnObjectListOpen;
+        private void IncConnectCnt()
+        {
+            if (this.ConnectCnt.InvokeRequired)
+            {
+                this.ConnectCnt.Invoke(new Action(delegate
+                {
+                    this.ConnectCnt.Text = (this.ConnectCnt.Text.ToInt() + 1).ToString();
+                }));
+                return;
+            }
+            this.ConnectCnt.Text = (this.ConnectCnt.Text.ToInt() + 1).ToString();
         }
 
         private void OnObjectListOpen(string Filter)
@@ -133,21 +177,27 @@ namespace App3.Forms
 
         private void StopOkoGate()
         {
-            try
+            if (Config.Get("XMLGuard") == "1")
             {
-                oModule.StopReceive();
-                oModule.StopModule();
-            } 
-            catch(Exception ex)
+                try
+                {
+                    this.oModuleXML.StopReceive();
+                    this.oModuleXML.StopModule();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+                }
+            }
+            if (Config.Get("COMConn") == "1")
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                this.oModuleCOM.Close();
             }
         }
 
         private void ReciveMessage(object arg)
         {
             OKOGate.Message msg = (OKOGate.Message)arg;
-            Logger.Instance.WriteToLog(string.Format("{0}.{1}: Message.Text: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, msg.Text));
             if (msg.Text.IndexOf("?xml") > 0)
             {
                 if (msg.Content == null)
@@ -180,7 +230,7 @@ namespace App3.Forms
                             OkoConnection.FixCounterError(msg.Text);
                             break;
                         case "MESSAGE_PULT_OKOGATE": // пришло событие
-                            Handling.ProcessingEvent(msg);
+                            Handling.ProcessingXmlEvent(msg);
                             break;
                         case "ADD_OBJECT_XGUARD_OKOGATE": // добавление/изменение карточки объекта
                             MessageBox.Show("добавление/изменение карточки объекта");
@@ -235,6 +285,7 @@ namespace App3.Forms
             if (oDistricts != null)
             {
                 ShowWarning(pEventId, pMsgGrId, pObject, pMsgTxt, pPhone, pTime);
+                LayerCache.Get(LayerType.Object, pObject.RegionId).HeatUp();
                 /*
                 switch (pMsgGrId)
                 {
@@ -321,11 +372,21 @@ namespace App3.Forms
             if (!f)
             {
                 // Close();
+                Logger.Instance.WriteToLog("Соединение с БД не было установлено");
             }
             else
             {
+                Logger.Instance.WriteToLog("Соединение с БД было установлено");
                 // справочники
-                DBDict.Update();
+                try
+                {
+                    DBDict.Update();
+                }
+                catch (Exception ex2)
+                {
+                    Logger.Instance.WriteToLog("При обновлении справочников произошла ошибка: " + ex2.Message);
+                    Logger.Instance.FlushLog();
+                }
                 // окно событий
                 oEventsForm = new MessForm(this);
                 // oEventsForm.Show();
@@ -334,6 +395,7 @@ namespace App3.Forms
                 oConfigForm = new ConfigForm(this);
                 oDBEvents = new DBEvents(this);
                 oSynchronizeForm = new SynchronizeForm(this);
+                oLogForm = new LogForm(this);
                 // oMap = new MapForm(this);
                 oMessagesText = new TableEditForm(this, "oko.message_text", "Справочник сообщений");
                 oWarnMonitor = new WarningForm(this);
@@ -342,17 +404,28 @@ namespace App3.Forms
                 oGlobalStatistic = new GlobalStat();
                 //
                 oObjectList = new Objects(this);
-                // запуск прослушки
+
+                this.oJournal = new Journal(this);
                 if (DBDict.Settings["START_XML_GUARD"].ToBool())
                 {
-                    StartOkoGate();
+                    Logger.Instance.WriteToLog("START_XML_GUARD = True");
+                    try
+                    {
+                        this.StartOkoGate();
+                    }
+                    catch (Exception ex3)
+                    {
+                        Logger.Instance.WriteToLog("Проблемы: " + ex3.Message);
+                    }
+                    Logger.Instance.FlushLog();
                 }
+                
                 // включить карту
                 mapToolStrip.Checked = DBDict.Settings["ENABLE_MAP"].ToBool();
                 soundToolStrip.Checked = DBDict.Settings["ENABLE_MUSIC"].ToBool();
 
                 this.Text = this.Text + " версия " + Config.APPVERSION;
-
+                Logger.Instance.WriteToLog(this.Text);
                 // обновление статусов регионов
                 DataBase.RunCommand("select oko.update_district_statuses()");
 
@@ -361,8 +434,49 @@ namespace App3.Forms
                 // Старт сервиса обновления
                 Updater.Start();
                 // Старт сервиса синхронизации
-                // TODO
+                Synchronizer.SyncStart += new Action(this.SynchroneStart);
+                Synchronizer.SyncStop += new Action(this.SynchroneStop);
+                Synchronizer.Start();
+                int pRegionId = Config.Get("CurrenRegion").ToInt();
+                LayerCache.Init(pRegionId);
+                LayerCache.CreateAllLayers();
+                LayerCache.UpdateLayer(LayerType.AllRegion, 0);
+                if (Config.Get("CacheUpdateOnStart") == "1")
+                {
+                    LayerCache.UpdateLayers(pRegionId);
+                }
+                else
+                {
+                    LayerCache.UpdateLayer(LayerType.Object, pRegionId);
+                }
+                Logger.Instance.FlushLog();
             }
+        }
+
+        private void SynchroneStart()
+        {
+            if (this.toolStrip.InvokeRequired)
+            {
+                this.toolStrip.Invoke(new Action(delegate
+                {
+                    this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = true);
+                }));
+                return;
+            }
+            this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = true);
+        }
+
+        private void SynchroneStop()
+        {
+            if (this.toolStrip.InvokeRequired)
+            {
+                this.toolStrip.Invoke(new Action(delegate
+                {
+                    this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = false);
+                }));
+                return;
+            }
+            this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = false);
         }
 
         public void LoadStat()
@@ -438,12 +552,21 @@ namespace App3.Forms
             // отметка о запуске программы
             // SessionID
             object [] res;
-            DataBase.RunCommandInsert(
-                "journal",
-                new Dictionary<string, object>() { {"start", DateTime.Now.ToString().Q()} },
-                "id",
-                out res
-            );
+            while (true)
+            {
+                DataBase.RunCommandInsert(
+                    "journal",
+                    new Dictionary<string, object>() { { "start", DateTime.Now.ToString().Q() } },
+                    "id",
+                    out res
+                );
+                if (res.Length != 0)
+                {
+                    break;
+                }
+                Logger.Instance.WriteToLog("При запуске не удалось получить ID сессии");
+                Thread.Sleep(1000);
+            }
             SessionID = (int)res[0];
             // установка цвета формы
             MdiClient ctlMDI;
@@ -465,9 +588,7 @@ namespace App3.Forms
             oDistricts = new DistrictMap(this);
             oDistricts.Show();
             ShowMap();
-            //
             this.Visible = true;
-            // this.Invoke(new Action(() => {this.Opacity = 100;}) );
             Utils.DestroyStartThread(sf);
         }
 
@@ -695,7 +816,6 @@ namespace App3.Forms
             frmEdit.Show();
         }
 
-        
         private void очиститьКэшToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Очистка кэша потребует перезапуска программы. Вы действительно хотите выполнить перезапуск?", "Очистить кэш", MessageBoxButtons.OKCancel) == DialogResult.OK)
@@ -713,18 +833,16 @@ namespace App3.Forms
 
         private void ShowDiagramEvents()
         {
-            panel1.Visible = !panel1.Visible;
-            if (panel1.Visible && mapToolStrip.Checked)
+            this.panel1.Visible = !this.panel1.Visible;
+            if (this.panel1.Visible && this.mapToolStrip.Checked)
             {
-                oDistricts.Height = oDistricts.Height - panel1.Height;
-                oEventsForm.Top = oEventsForm.Top - panel1.Height;
-                UpdateDiagram();
+                this.oDistricts.Height = this.oDistricts.Height - this.panel1.Height;
+                this.oEventsForm.Top = this.oEventsForm.Top - this.panel1.Height;
+                this.UpdateDiagram();
+                return;
             }
-            else
-            {
-                oDistricts.Height = oDistricts.Height + panel1.Height;
-                oEventsForm.Top = oEventsForm.Top + panel1.Height;
-            }
+            this.oDistricts.Height = this.oDistricts.Height + this.panel1.Height;
+            this.oEventsForm.Top = this.oEventsForm.Top + this.panel1.Height;
         }
 
         private void toolStripButton7_Click(object sender, EventArgs e)
@@ -1003,6 +1121,18 @@ namespace App3.Forms
         private void фиксацияЖурналаToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Logger.Instance.FlushLog();
+        }
+
+        private void logToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.oLogForm.UpdateView();
+            this.oLogForm.Show();
+        }
+
+        private void журналРаботыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.oJournal.ShowData();
+            this.oJournal.Show();
         }
 
     }

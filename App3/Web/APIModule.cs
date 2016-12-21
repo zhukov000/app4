@@ -94,8 +94,39 @@ namespace App3.Web
 
         public APIModule()
         {
-            Get["/areas"] = x =>
+            this.ENableCors();
+            Get["/"] = x =>
             {
+                IDictionary<string, object> owinEnvironment = base.Context.GetOwinEnvironment();
+                Stream arg_1C_0 = (Stream)owinEnvironment["owin.RequestBody"];
+                IDictionary<string, string[]> dictionary = (IDictionary<string, string[]>)owinEnvironment["owin.RequestHeaders"];
+                string arg = (string)owinEnvironment["owin.RequestMethod"];
+                string arg_4F_0 = (string)owinEnvironment["owin.RequestPath"];
+                string arg_60_0 = (string)owinEnvironment["owin.RequestPathBase"];
+                string arg_71_0 = (string)owinEnvironment["owin.RequestProtocol"];
+                string arg_82_0 = (string)owinEnvironment["owin.RequestQueryString"];
+                string arg_93_0 = (string)owinEnvironment["owin.RequestScheme"];
+                Stream arg_A4_0 = (Stream)owinEnvironment["owin.ResponseBody"];
+                IDictionary<string, string[]> arg_B5_0 = (IDictionary<string, string[]>)owinEnvironment["owin.ResponseHeaders"];
+                string arg_C6_0 = (string)owinEnvironment["owin.Version"];
+                CancellationToken arg_D7_0 = (CancellationToken)owinEnvironment["owin.CallCancelled"];
+                string text = string.Concat(new string[]
+                {
+                    (string)owinEnvironment["owin.RequestScheme"],
+                    "://",
+                    dictionary["Host"].First<string>(),
+                    (string)owinEnvironment["owin.RequestPathBase"],
+                    (string)owinEnvironment["owin.RequestPath"]
+                });
+                if (owinEnvironment["owin.RequestQueryString"] != "")
+                {
+                    text = text + "?" + (string)owinEnvironment["owin.RequestQueryString"];
+                }
+                return string.Format("{0} {1}", arg, text);
+            };
+            Get["/areas/{x1}/{y1}/{x2}/{y2}"] = x =>
+            {
+                 // TODO
                 var responseContentObject = new JObject();
                 responseContentObject.Add("areas", generateAreas());
                 responseContentObject.Add("colors", generateColorsArray());
@@ -106,6 +137,7 @@ namespace App3.Web
 
             Get["/test"] = _ =>
             {
+                // TODO
                 var responseContentObject = new JObject();
                 /*
                 var responseThing = new

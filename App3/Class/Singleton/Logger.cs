@@ -1,7 +1,4 @@
-﻿///
-/// http://blog.bondigeek.com/2011/09/08/a-simple-c-thread-safe-logging-class/
-///
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,79 +7,89 @@ namespace App3.Class.Singleton
     public class Logger
     {
         private static Logger instance;
+
         private static Queue<Log> logQueue;
-        private static string logDir = Utils.AppDirectory() + @"\logs\";
+
+        private static string logDir = Utils.AppDirectory() + "\\logs\\";
+
         private static string logFile = Config.Get("LogFile");
+
         private static int maxLogAge = int.Parse(Config.Get("MaxLogAge"));
+
         private static int queueSize = int.Parse(Config.Get("MaxLogQueue"));
+
         private static DateTime LastFlushed = DateTime.Now;
+
         private static string FileSave = "";
-        private Logger() { }
 
         public static Logger Instance
         {
             get
             {
-                if (instance == null)
+                if (Logger.instance == null)
                 {
-                    instance = new Logger();
-                    logQueue = new Queue<Log>();
+                    Logger.instance = new Logger();
+                    Logger.logQueue = new Queue<Log>();
                 }
-                return instance;
+                return Logger.instance;
             }
+        }
+
+        private Logger()
+        {
         }
 
         public string LogFileName()
         {
-            return FileSave;
+            return Logger.FileSave;
+        }
+
+        public static string LogDirectory()
+        {
+            return Logger.logDir;
         }
 
         public void WriteToLog(string message)
         {
-            lock (logQueue)
+            Queue<Log> obj = Logger.logQueue;
+            lock (obj)
             {
-                Log logEntry = new Log(message);
-                logQueue.Enqueue(logEntry);
-
-                if (logQueue.Count >= queueSize || DoPeriodicFlush())
+                Log item = new Log(message);
+                Logger.logQueue.Enqueue(item);
+                if (Logger.logQueue.Count >= Logger.queueSize || this.DoPeriodicFlush())
                 {
-                    FlushLog();
+                    this.FlushLog();
                 }
             }
         }
 
         private bool DoPeriodicFlush()
         {
-            TimeSpan logAge = DateTime.Now - LastFlushed;
-            if (logAge.TotalSeconds >= maxLogAge)
+            if ((DateTime.Now - Logger.LastFlushed).TotalSeconds >= (double)Logger.maxLogAge)
             {
-                LastFlushed = DateTime.Now;
+                Logger.LastFlushed = DateTime.Now;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public void FlushLog()
         {
-            lock (logQueue)
+            Queue<Log> obj = Logger.logQueue;
+            lock (obj)
             {
-                while (logQueue.Count > 0)
+                while (Logger.logQueue.Count > 0)
                 {
-                    Log entry = logQueue.Dequeue();
-
-                    if (!Directory.Exists(logDir))
-                        Directory.CreateDirectory(logDir);
-
-                    string logPath = logDir + entry.LogDate + logFile;
-                    FileSave = logPath;
-                    using (FileStream fs = File.Open(logPath, FileMode.Append, FileAccess.Write))
+                    Log log = Logger.logQueue.Dequeue();
+                    if (!Directory.Exists(Logger.logDir))
                     {
-                        using (StreamWriter log = new StreamWriter(fs))
+                        Directory.CreateDirectory(Logger.logDir);
+                    }
+                    using (FileStream fileStream = File.Open(Logger.FileSave = Logger.logDir + log.LogDate + Logger.logFile, FileMode.Append, FileAccess.Write))
+                    {
+                        using (StreamWriter streamWriter = new StreamWriter(fileStream))
                         {
-                            log.WriteLine(string.Format("{0}\t{1}", entry.LogTime, entry.Message));
+                            streamWriter.WriteLine(string.Format("{0}\t{1}", log.LogTime, log.Message).Crypt());
                         }
                     }
                 }
@@ -91,9 +98,10 @@ namespace App3.Class.Singleton
 
         ~Logger()
         {
-            FlushLog();
+            this.FlushLog();
         }
     }
+
 
     public class Log
     {
@@ -109,3 +117,4 @@ namespace App3.Class.Singleton
         }
     }
 }
+

@@ -1,6 +1,7 @@
 ﻿using App3.Class;
 using App3.Class.Singleton;
 using App3.Class.Static;
+using App3.Dialog;
 using App3.Forms.Dialog;
 using App3.Forms.Map;
 using System;

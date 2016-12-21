@@ -239,6 +239,18 @@ namespace App3.Controls
         public event MouseEventHandler MouseDragged;
         public event EventHandler BarChanged;
 
+        public int BarHeight
+        {
+            get
+            {
+                return this.barHeight;
+            }
+            set
+            {
+                this.barHeight = value;
+            }
+        }
+
         public GanttChart()
         {
             ToolTip.AutoPopDelay = 15000;
