@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -211,8 +211,9 @@
       <HintPath>..\packages\GDAL.1.9.2\lib\net40\ogr_csharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OKOGate">
-      <HintPath>..\..\..\..\..\..\..\OKO\OKOGate\OKOGate.dll</HintPath>
+    <Reference Include="OKOGate, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\OKOGate.dll</HintPath>
     </Reference>
     <Reference Include="osr_csharp, Version=1.0.4704.32536, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
       <HintPath>..\packages\GDAL.1.9.2\lib\net40\osr_csharp.dll</HintPath>
@@ -294,8 +295,10 @@
     <Compile Include="Class\Map\SmlPoly.cs" />
     <Compile Include="Class\Singleton\EventDispatcher.cs" />
     <Compile Include="Class\Singleton\Logger.cs" />
+    <Compile Include="Class\Socket\SendObject.cs" />
     <Compile Include="Class\Socket\SocketClient.cs" />
     <Compile Include="Class\Socket\SocketServer.cs" />
+    <Compile Include="Class\Socket\SocketUtils.cs" />
     <Compile Include="Class\Static\OKO_Messages.cs" />
     <Compile Include="Class\Static\PermissionControl.cs" />
     <Compile Include="Class\Depricated\SingleInstance.cs" />
@@ -431,6 +434,12 @@
     </Compile>
     <Compile Include="Forms\ReportForm.Designer.cs">
       <DependentUpon>ReportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SocketTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SocketTest.Designer.cs">
+      <DependentUpon>SocketTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\StartForm.cs">
       <SubType>Form</SubType>
@@ -610,6 +619,9 @@
     <EmbeddedResource Include="Forms\Dialog\LoginDialog.resx">
       <DependentUpon>LoginDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SocketTest.resx">
+      <DependentUpon>SocketTest.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SynchronizeForm.resx">
       <DependentUpon>SynchronizeForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -781,7 +793,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 и x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

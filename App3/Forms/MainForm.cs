@@ -15,6 +15,7 @@ using App3.Class.Singleton;
 using App3.Class.Map;
 using System.Reflection;
 using System.Threading;
+using App3.Class.Socket;
 
 namespace App3.Forms
 {
@@ -430,13 +431,26 @@ namespace App3.Forms
                 DataBase.RunCommand("select oko.update_district_statuses()");
 
                 // Старт web-серсиса
-                StartWeb.Start();
+                if (Config.Get("StartWeb") != "0")
+                {
+                    StartWeb.Start();
+                }
                 // Старт сервиса обновления
                 Updater.Start();
                 // Старт сервиса синхронизации
-                Synchronizer.SyncStart += new Action(this.SynchroneStart);
-                Synchronizer.SyncStop += new Action(this.SynchroneStop);
-                Synchronizer.Start();
+                if (Config.Get("EnableSync") != "0")
+                {
+                    Synchronizer.SyncStart += new Action(this.SynchroneStart);
+                    Synchronizer.SyncStop += new Action(this.SynchroneStop);
+                    Synchronizer.Start();
+                }
+                // Старт сервера для получения сообщений
+                if (Config.Get("SocketEnableSync") == "1")
+                {
+                    SocketServer.StartListen(Config.Get("SocketServerIP"), Config.Get("SynchPort").ToInt());
+                    SocketServer.onGetObjectDelegate = Handling.GetObjectDelegate;
+                }
+                //
                 int pRegionId = Config.Get("CurrenRegion").ToInt();
                 LayerCache.Init(pRegionId);
                 LayerCache.CreateAllLayers();
@@ -607,6 +621,10 @@ namespace App3.Forms
                 new Dictionary<string, object>() { { "id", SessionID } });
             StopOkoGate();
             DataBase.CloseConnection();
+            if (Config.Get("SocketEnableSync") == "1")
+            {
+                SocketServer.StopListen();
+            }
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1072,7 +1090,14 @@ namespace App3.Forms
 
         private void синхронизацияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            oSynchronizeForm.Show();
+            if (Config.Get("EnableSync") != "0")
+            {
+                oSynchronizeForm.Show();
+            }
+            else
+            {
+                MessageBox.Show("ВНИМАНИЕ!!! Функция синхронизации устарела!\r\nСинхроинзация отключена в настройках приложения. Измените конфигурационный файл и перезапустите программу, если желаете выполнить синхронизацию вручную.");
+            }
         }
 
         private void входToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,4 +1,5 @@
 ﻿using App3.Class.Singleton;
+using App3.Class.Socket;
 using App3.Class.Static;
 using OKOGate;
 using System;
@@ -132,6 +133,48 @@ namespace App3.Class
         }
         */
 
+        /// <summary>
+        /// Метод вызывается при получении события от другого узла через сокет
+        /// </summary>
+        /// <param name="data"></param>
+        public static void GetObjectDelegate(SendObject data)
+        {
+            object[] array = new object[0];
+            try
+            {
+                // Logger.Instance.WriteToLog(data.Message);
+                DataBase.RunCommandInsert("oko.event", data.GetInfo(), "id", out array);
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Отправить данные по сокету
+        /// </summary>
+        /// <param name="pData"></param>
+        private static void SendDataBySocket(IDictionary<string, object> pData)
+        {
+            SendObject data = new SendObject(pData);
+            try
+            {
+                data.IpAddress = Config.Get("SocketServerIP");
+                foreach (object[] current in DataBase.RowSelect("select sn.id, sn.ipv4, sn.port from syn_nodes sn where sn.synout"))
+                {
+                    data.RetrNumber = current[0].ToInt();
+                    string _server = current[1].ToString();
+                    int _port = current[2].ToInt();
+                    SocketClient.SendObjectFromSocket(data, _server, _port);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
+        }
+
         private static bool ProcessingEvent(int OkoVersion, int RegionId, int ObjectNumber, int RetrNumber, int Class, int Code, int Part, int Zone, int ChnlMask, int Idx, DateTime TimeStamp, int SignalLevel, int AlarmGroupId = 0, string Address = "")
         {
             bool flag = true;
@@ -146,7 +189,8 @@ namespace App3.Class
             try
             {
                 object[] array = new object[0];
-                DataBase.RunCommandInsert("oko.event", new Dictionary<string, object>
+
+                IDictionary<string, object> data = new Dictionary<string, object>
                 {
                     { "objectnumber", ObjectNumber },
                     { "alarmgroupid", AlarmGroupId },
@@ -163,7 +207,12 @@ namespace App3.Class
                     { "retrnumber", RetrNumber },
                     { "isrepeat", !flag },
                     { "siglevel", SignalLevel }
-                }, "id", out array);
+                };
+                DataBase.RunCommandInsert("oko.event", data, "id", out array);
+                if (Config.Get("SocketEnableSync") == "1")
+                {
+                    SendDataBySocket(data);
+                }
                 if (array.Count<object>() > 0)
                 {
                     pEventId = array[0].ToInt();
@@ -198,7 +247,7 @@ namespace App3.Class
             int regionId = Config.Get("CurrenRegion").ToInt();
             int okoVersion = 0;
             int retrNumber = 0;
-            int @class = 0;
+            int _class = 0;
             int code = 0;
             int part = 0;
             int zone = 0;
@@ -257,7 +306,7 @@ namespace App3.Class
                 okoVersion = 2;
                 retrNumber = message.Get("RadioRetr").ToInt();
                 objectNumber = message.Get("Object").ToInt();
-                @class = message.Get("Class").ToInt();
+                _class = message.Get("Class").ToInt();
                 code = message.Get("Code").ToInt();
                 part = message.Get("Part").ToInt();
                 zone = message.Get("Zone").ToInt();
@@ -275,7 +324,7 @@ namespace App3.Class
             });
             if (!flag)
             {
-                Handling.ProcessingEvent(okoVersion, regionId, objectNumber, retrNumber, @class, code, part, zone, chnlMask, idx, DateTime.Now, signalLevel, 0, message.Address);
+                Handling.ProcessingEvent(okoVersion, regionId, objectNumber, retrNumber, _class, code, part, zone, chnlMask, idx, DateTime.Now, signalLevel, 0, message.Address);
             }
         }
 

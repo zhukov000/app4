@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OKOGate;
+// using OKOGate;
 
 namespace App0
 {
@@ -11,7 +11,7 @@ namespace App0
     {
         static void Main(string[] args)
         {
-            Module oModule = new Module();
+            /*Module oModule = new Module();
             oModule.LogLevel = Tracer.eLogLevel.DEBUG;
             oModule.Protocol = Module.PROTOCOL.XML_GUARD;
             oModule.RemotePort = 30003;
@@ -28,18 +28,19 @@ namespace App0
             Console.ReadKey();
 
             oModule.StopReceive();
-            oModule.StopModule();
+            oModule.StopModule();*/
         }
 
         // public delegate bool SendMessageDelegate(Message msg);
 
         static void ReciveMessage(object arg)
         {
-            Message msg = (Message)arg;
+            /*Message msg = (Message)arg;
             if (msg.Type == "MESSAGE_PULT_OKOGATE")
             {
                 Console.WriteLine("Message Recived: Address = {0} Content = {1} Id = {2} Text = {3} Type = {4}", msg.Address, msg.Content, msg.Id, msg.Text, msg.Type);
             }
+            */
         }
     }
 }

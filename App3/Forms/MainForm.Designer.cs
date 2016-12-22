@@ -36,7 +36,7 @@ namespace App3.Forms
         private void InitializeComponent()
         {
             this.components = new Container();
-            ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof(MainForm));
+            // ComponentResourceManager componentResourceManager = new ComponentResourceManager(typeof(MainForm));
             ChartArea chartArea = new ChartArea();
             Series series = new Series();
             this.menuStrip = new MenuStrip();
@@ -136,7 +136,6 @@ namespace App3.Forms
             this.файлToolStripMenuItem.Size = new Size(48, 20);
             this.файлToolStripMenuItem.Text = "Файл";
             this.синхронизацияToolStripMenuItem.Name = "синхронизацияToolStripMenuItem";
-            this.синхронизацияToolStripMenuItem.ShortcutKeys = (Keys)131155;
             this.синхронизацияToolStripMenuItem.Size = new Size(200, 22);
             this.синхронизацияToolStripMenuItem.Text = "Синхронизация";
             this.синхронизацияToolStripMenuItem.Click += new EventHandler(this.синхронизацияToolStripMenuItem_Click);
@@ -149,7 +148,6 @@ namespace App3.Forms
             this.фиксацияЖурналаToolStripMenuItem.Text = "Фиксация журнала";
             this.фиксацияЖурналаToolStripMenuItem.Click += new EventHandler(this.фиксацияЖурналаToolStripMenuItem_Click);
             this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
-            this.выходToolStripMenuItem.ShortcutKeys = (Keys)131153;
             this.выходToolStripMenuItem.Size = new Size(200, 22);
             this.выходToolStripMenuItem.Text = "Выход";
             this.выходToolStripMenuItem.Click += new EventHandler(this.выходToolStripMenuItem_Click);
@@ -215,17 +213,14 @@ namespace App3.Forms
             this.абонентскиеКомплектыToolStripMenuItem.Size = new Size(74, 20);
             this.абонентскиеКомплектыToolStripMenuItem.Text = "Картотека";
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.ShortcutKeys = (Keys)131137;
             this.addToolStripMenuItem.Size = new Size(173, 22);
             this.addToolStripMenuItem.Text = "Добавить";
             this.addToolStripMenuItem.Click += new EventHandler(this.addToolStripMenuItem_Click);
             this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            this.searchToolStripMenuItem.ShortcutKeys = (Keys)131142;
             this.searchToolStripMenuItem.Size = new Size(173, 22);
             this.searchToolStripMenuItem.Text = "Поиск";
             this.searchToolStripMenuItem.Click += new EventHandler(this.searchToolStripMenuItem_Click);
             this.списокОбъектовToolStripMenuItem.Name = "списокОбъектовToolStripMenuItem";
-            this.списокОбъектовToolStripMenuItem.ShortcutKeys = (Keys)131148;
             this.списокОбъектовToolStripMenuItem.Size = new Size(173, 22);
             this.списокОбъектовToolStripMenuItem.Text = "Список АК";
             this.списокОбъектовToolStripMenuItem.Click += new EventHandler(this.списокОбъектовToolStripMenuItem_Click);
@@ -241,7 +236,6 @@ namespace App3.Forms
             this.принятыеДанныеToolStripMenuItem.Size = new Size(119, 20);
             this.принятыеДанныеToolStripMenuItem.Text = "Принятые данные";
             this.событияToolStripMenuItem.Name = "событияToolStripMenuItem";
-            this.событияToolStripMenuItem.ShortcutKeys = (Keys)131141;
             this.событияToolStripMenuItem.Size = new Size(198, 22);
             this.событияToolStripMenuItem.Text = "Архив событий";
             this.событияToolStripMenuItem.Click += new EventHandler(this.событияToolStripMenuItem_Click);
@@ -256,7 +250,6 @@ namespace App3.Forms
             this.графикСобытийToolStripMenuItem.Text = "График событий";
             this.графикСобытийToolStripMenuItem.Click += new EventHandler(this.графикСобытийToolStripMenuItem_Click);
             this.отчетToolStripMenuItem.Name = "отчетToolStripMenuItem";
-            this.отчетToolStripMenuItem.ShortcutKeys = (Keys)131154;
             this.отчетToolStripMenuItem.Size = new Size(198, 22);
             this.отчетToolStripMenuItem.Text = "Отчет";
             this.отчетToolStripMenuItem.Click += new EventHandler(this.отчетToolStripMenuItem_Click);
@@ -276,7 +269,6 @@ namespace App3.Forms
             this.toolsMenu.Size = new Size(70, 20);
             this.toolsMenu.Text = "Свойства";
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.ShortcutKeys = (Keys)131159;
             this.optionsToolStripMenuItem.Size = new Size(209, 22);
             this.optionsToolStripMenuItem.Text = "Настройки";
             this.optionsToolStripMenuItem.Click += new EventHandler(this.optionsToolStripMenuItem_Click);
@@ -307,7 +299,6 @@ namespace App3.Forms
             this.окнаToolStripMenuItem.Text = "Окна";
             this.окнаToolStripMenuItem.Visible = false;
             this.входToolStripMenuItem.Name = "входToolStripMenuItem";
-            this.входToolStripMenuItem.ShortcutKeys = (Keys)131148;
             this.входToolStripMenuItem.Size = new Size(44, 20);
             this.входToolStripMenuItem.Text = "Вход";
             this.входToolStripMenuItem.Click += new EventHandler(this.входToolStripMenuItem_Click);
@@ -331,7 +322,7 @@ namespace App3.Forms
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "ToolStrip";
             this.toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = (Image)componentResourceManager.GetObject("toolStripButton1.Image");
+            // this.toolStripButton1.Image = (Image)componentResourceManager.GetObject("toolStripButton1.Image");
             this.toolStripButton1.ImageTransparentColor = Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new Size(23, 22);
@@ -340,7 +331,7 @@ namespace App3.Forms
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new Size(6, 25);
             this.toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = (Image)componentResourceManager.GetObject("toolStripButton2.Image");
+            // this.toolStripButton2.Image = (Image)componentResourceManager.GetObject("toolStripButton2.Image");
             this.toolStripButton2.ImageTransparentColor = Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new Size(23, 22);
@@ -361,7 +352,7 @@ namespace App3.Forms
             this.toolStripButton4.Visible = false;
             this.toolStripButton4.Click += new EventHandler(this.toolStripButton4_Click_1);
             this.toolStripButton5.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            this.toolStripButton5.Image = (Image)componentResourceManager.GetObject("toolStripButton5.Image");
+            // this.toolStripButton5.Image = (Image)componentResourceManager.GetObject("toolStripButton5.Image");
             this.toolStripButton5.ImageTransparentColor = Color.Magenta;
             this.toolStripButton5.Name = "toolStripButton5";
             this.toolStripButton5.Size = new Size(23, 22);
@@ -498,7 +489,7 @@ namespace App3.Forms
             base.Controls.Add(this.statusStrip);
             base.Controls.Add(this.toolStrip);
             base.Controls.Add(this.menuStrip);
-            base.Icon = (Icon)componentResourceManager.GetObject("$this.Icon");
+            // base.Icon = (Icon)componentResourceManager.GetObject("$this.Icon");
             base.IsMdiContainer = true;
             base.MainMenuStrip = this.menuStrip;
             base.Name = "MainForm";

@@ -62,21 +62,21 @@ namespace App3
                         {
                             DataBase.CloseConnection();
                         }
+                    
+                        if (!f)
+                        {
+                            string mess = "Ошибка обновления";
+                            Logger.Instance.WriteToLog(mess);
+                            MessageBox.Show(mess);
+                        }
+                        else
+                        {
+                            FileInfo fi = new FileInfo("update.sql");
+                            string str = fi.FullName.Substring(0, fi.FullName.Length - 3) + Utils.DateTimeToString(DateTime.Now) + ".sql";
+                            File.Move(fi.FullName, str);
+                        }
                     }
 
-                    if (!f)
-                    {
-                        string mess = "Ошибка обновления";
-                        Logger.Instance.WriteToLog(mess);
-                        MessageBox.Show(mess);
-                    }
-                    else
-                    {
-                        FileInfo fi = new FileInfo("update.sql");
-                        string str = fi.FullName.Substring(0, fi.FullName.Length - 3) + Utils.DateTimeToString(DateTime.Now) + ".sql";
-                        File.Move(fi.FullName, str);
-                    }
-                    
                     // если обновление БД упешно пройдено или не нужно
                     if (mutex.WaitOne(TimeSpan.FromSeconds(5)))
                     {
@@ -98,11 +98,44 @@ namespace App3
                         MessageBox.Show(mess);
                     }                    
                 }
+                return;
             }
-            else
+            if (args.Count() > 0 && args[0] == "log")
             {
-                MessageBox.Show("Прямой запуск приложения нежелателен. Используйте launcher.exe", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                try
+                {
+                    LogForm expr_21F = new LogForm();
+                    ((LogForm)expr_21F).UpdateView();
+                    Application.Run(expr_21F);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
+                    Logger.Instance.FlushLog();
+                    return;
+                }
             }
+            if (args.Count() > 0 && args[0] == "socket")
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                try
+                {
+                    SocketTest expr_21F = new SocketTest();
+                    Application.Run(expr_21F);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
+                    Logger.Instance.FlushLog();
+                    return;
+                }
+            }
+            MessageBox.Show("Прямой запуск приложения нежелателен. Используйте launcher.exe", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }
