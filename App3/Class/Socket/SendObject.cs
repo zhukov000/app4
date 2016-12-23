@@ -19,16 +19,15 @@ namespace App3.Class.Socket
             set { message = value; }
         }
 
-        public string IpAddress
-        {
-            get { return data["address"].ToString(); }
-            set { data["address"] = value; }
-        }
-
         public int RetrNumber
         {
             get { return data["retrnumber"].ToInt(); }
             set { data["retrnumber"] = value; }
+        }
+
+        public int ObjectNum
+        {
+            get { return data["objectnumber"].ToInt(); }
         }
 
         public SendObject()

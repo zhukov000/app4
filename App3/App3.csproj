@@ -295,6 +295,8 @@
     <Compile Include="Class\Map\SmlPoly.cs" />
     <Compile Include="Class\Singleton\EventDispatcher.cs" />
     <Compile Include="Class\Singleton\Logger.cs" />
+    <Compile Include="Class\Socket2\ClientObject.cs" />
+    <Compile Include="Class\Socket2\PortListner.cs" />
     <Compile Include="Class\Socket\SendObject.cs" />
     <Compile Include="Class\Socket\SocketClient.cs" />
     <Compile Include="Class\Socket\SocketServer.cs" />
@@ -769,6 +771,7 @@
     <Content Include="GdalConfiguration.vb" />
     <Content Include="GdalNativeConfiguration.vb" />
     <Content Include="icon.ico" />
+    <None Include="app3.snippet" />
     <None Include="Resources\asset_gridSplitter_24.png" />
     <None Include="Resources\GridSplitterElement_10711_32.bmp" />
     <None Include="Resources\minimize.png" />
@@ -807,7 +810,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\launcher\launcher.csproj">
+      <Project>{2859003E-3CEE-4949-B18B-8ED9A3584A61}</Project>
+      <Name>launcher</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

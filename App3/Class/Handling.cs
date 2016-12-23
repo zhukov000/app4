@@ -142,8 +142,9 @@ namespace App3.Class
             object[] array = new object[0];
             try
             {
-                // Logger.Instance.WriteToLog(data.Message);
-                DataBase.RunCommandInsert("oko.event", data.GetInfo(), "id", out array);
+                Logger.Instance.WriteToLog("SocketSync: Handle calling");
+                if (data != null)
+                    DataBase.RunCommandInsert("oko.event", data.GetInfo(), "id", out array);
             }
             catch (Exception ex)
             {
@@ -160,13 +161,14 @@ namespace App3.Class
             SendObject data = new SendObject(pData);
             try
             {
-                data.IpAddress = Config.Get("SocketServerIP");
+                // data.IpAddress = Config.Get("SocketServerIP");
                 foreach (object[] current in DataBase.RowSelect("select sn.id, sn.ipv4, sn.port from syn_nodes sn where sn.synout"))
                 {
                     data.RetrNumber = current[0].ToInt();
                     string _server = current[1].ToString();
                     int _port = current[2].ToInt();
-                    SocketClient.SendObjectFromSocket(data, _server, _port);
+                    SocketClient.SendObjectFromSocket2(data, _server, _port);
+
                 }
             }
             catch (Exception ex)

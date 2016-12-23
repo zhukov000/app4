@@ -91,6 +91,10 @@ namespace App3.Class.Socket
                             handler.Close();
                         }
                     }
+                    catch (ThreadAbortException ex)
+                    {
+                        
+                    }
                     catch (Exception ex)
                     {
                         Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message));

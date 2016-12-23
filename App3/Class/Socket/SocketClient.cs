@@ -5,12 +5,52 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using App3.Class.Singleton;
-using System.Reflection;
 
 namespace App3.Class.Socket
 {
     class SocketClient
     {
+        static public string SendObjectFromSocket2(SendObject data, string server, int port)
+        {
+            TcpClient client = null;
+            try
+            {
+                Logger.Instance.WriteToLog("Socket sync: send object " + data.ObjectNum);
+                client = new TcpClient(server, port);
+                NetworkStream stream = client.GetStream();
+
+                // преобразуем сообщение в массив байтов
+                byte[] data_arr = SocketUtils.ObjectToByteArray(data);
+                // отправка сообщения
+                stream.Write(data_arr, 0, data_arr.Length);
+
+                // получаем ответ в виде слова
+                StringBuilder builder = new StringBuilder();
+                int bytes = 0;
+                do
+                {
+                    bytes = stream.Read(data_arr, 0, data_arr.Length);
+                    builder.Append(Encoding.Unicode.GetString(data_arr, 0, bytes));
+                }
+                while (stream.DataAvailable);
+
+                // отправка команды на закрытие канала
+                byte[] datapart = SocketUtils.ObjectToByteArray(new SendObject("CLOSE"));
+                stream.Write(datapart, 0, datapart.Length);
+
+                return builder.ToString();
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
+            finally
+            {
+                client?.Close();
+            }
+            return "";
+        }
+
         static public string SendObjectFromSocket(SendObject data, string server, int port)
         {
             string res = "";
@@ -46,7 +86,7 @@ namespace App3.Class.Socket
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
             return res;
         }

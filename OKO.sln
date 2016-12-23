@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "launcher", "launcher\launch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaunchService", "LaunchService\LaunchService.csproj", "{A2833088-508B-4BB3-A8BC-A22E952404BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication.Sockets.Core", "..\..\..\Documents\Visual Studio 2015\Projects\SocketProject\Sockets Multiple Clients - Bytes\Communication.Sockets.Core\Communication.Sockets.Core.csproj", "{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CD_ROM|Any CPU = CD_ROM|Any CPU
@@ -219,6 +221,36 @@ Global
 		{A2833088-508B-4BB3-A8BC-A22E952404BC}.SingleImage|x64.Build.0 = Release|Any CPU
 		{A2833088-508B-4BB3-A8BC-A22E952404BC}.SingleImage|x86.ActiveCfg = Release|Any CPU
 		{A2833088-508B-4BB3-A8BC-A22E952404BC}.SingleImage|x86.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.CD_ROM|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.CD_ROM|Any CPU.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.CD_ROM|x64.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.CD_ROM|x64.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.CD_ROM|x86.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.CD_ROM|x86.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Debug|x64.Build.0 = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Debug|x86.Build.0 = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.DVD-5|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.DVD-5|Any CPU.Build.0 = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.DVD-5|x64.ActiveCfg = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.DVD-5|x64.Build.0 = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.DVD-5|x86.ActiveCfg = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.DVD-5|x86.Build.0 = Debug|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Release|x64.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Release|x64.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Release|x86.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.Release|x86.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|Any CPU.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|x64.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|x64.Build.0 = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|x86.ActiveCfg = Release|Any CPU
+		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

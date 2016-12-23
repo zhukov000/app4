@@ -15,7 +15,7 @@ using App3.Class.Singleton;
 using App3.Class.Map;
 using System.Reflection;
 using System.Threading;
-using App3.Class.Socket;
+using App3.Class.Socket2;
 
 namespace App3.Forms
 {
@@ -34,6 +34,7 @@ namespace App3.Forms
 
         private OKOGate.Module oModuleXML;
         private GuardAgent2.Module oModuleCOM;
+        private PortListner oSocketSync;
 
         private int ChildFormNumber = 0;
         // Формы
@@ -447,8 +448,10 @@ namespace App3.Forms
                 // Старт сервера для получения сообщений
                 if (Config.Get("SocketEnableSync") == "1")
                 {
-                    SocketServer.StartListen(Config.Get("SocketServerIP"), Config.Get("SynchPort").ToInt());
-                    SocketServer.onGetObjectDelegate = Handling.GetObjectDelegate;
+                    // SocketServer.StartListen(Config.Get("SocketServerIP"), Config.Get("SynchPort").ToInt());
+                    // SocketServer.onGetObjectDelegate = Handling.GetObjectDelegate;
+                    PortListner.onProcess += new ClientObject.ProcessDelegate(Handling.GetObjectDelegate);
+                    oSocketSync = new PortListner(Config.Get("SynchPort").ToInt());
                 }
                 //
                 int pRegionId = Config.Get("CurrenRegion").ToInt();
@@ -621,10 +624,7 @@ namespace App3.Forms
                 new Dictionary<string, object>() { { "id", SessionID } });
             StopOkoGate();
             DataBase.CloseConnection();
-            if (Config.Get("SocketEnableSync") == "1")
-            {
-                SocketServer.StopListen();
-            }
+            if (Config.Get("SocketEnableSync") == "1") oSocketSync.Stop();
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
