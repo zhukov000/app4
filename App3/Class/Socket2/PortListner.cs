@@ -23,7 +23,6 @@ namespace App3.Class.Socket2
 
         private int _port = 0;
         private TcpListener _server = null;
-        private bool isInit = false;
         private Thread listnerThread = null;
 
         private void ServerInit()
@@ -32,13 +31,9 @@ namespace App3.Class.Socket2
             {
                 _server = new TcpListener(IPAddress.Any, _port);
                 _server.Start();
+                Logger.Instance.WriteToLog("Start listner at port: " + _port.ToString());
                 listnerThread = new Thread(new ThreadStart(ClientAccept));
-                isInit = true;
                 listnerThread.Start();
-            }
-            catch (ThreadAbortException ex)
-            {
-                // TODO
             }
             catch (Exception ex)
             {
@@ -52,28 +47,34 @@ namespace App3.Class.Socket2
             listnerThread?.Abort();
         }
 
+        /// <summary>
+        /// Вызывается для обработки полученных соединений
+        /// </summary>
         private void ClientAccept()
         {
             try
             {
-                Logger.Instance.WriteToLog("Start listner at port: " + _port.ToString());
                 while (true)
                 {
                     TcpClient client = _server.AcceptTcpClient();
-                    // Logger.Instance.WriteToLog("SocketSync: Client Accept");
                     ClientObject clientObject = new ClientObject(client);
-                    clientObject.onProcess += new ClientObject.ProcessDelegate(onProcess);
+                    // метод, который реализует дополнительную обработку полученных данных
+                    clientObject.onProcess = new ClientObject.ProcessDelegate(onProcess);
                     // создаем новый поток для обслуживания нового клиента
-                    Thread clientThread = new Thread(new ThreadStart(clientObject.Process));
-                    clientThread.Start();
+                    new Thread(new ThreadStart(clientObject.Process)).Start();
                 }
             }
             catch (SocketException e)
             {
+                Logger.Instance.WriteToLog(string.Format("SOCKET {0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, e.Message));
             }
             catch (Exception ex)
             {
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
+            finally
+            {
+                _server?.Stop();
             }
         }
 

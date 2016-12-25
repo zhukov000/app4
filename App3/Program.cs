@@ -54,7 +54,7 @@ namespace App3
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Error: " + ex.Message);
+                            // MessageBox.Show("Error: " + ex.Message);
                             Logger.Instance.WriteToLog(string.Format("При открытии соединения с базой произошла ошибка: {0}", ex.Message));
                         }
                         
@@ -78,7 +78,7 @@ namespace App3
                     }
 
                     // если обновление БД упешно пройдено или не нужно
-                    if (mutex.WaitOne(TimeSpan.FromSeconds(5)))
+                    if (mutex.WaitOne(TimeSpan.FromSeconds(2)))
                     {
                         try
                         {

@@ -1141,6 +1141,8 @@ namespace App3.Forms
             архивацияСобытийToolStripMenuItem.Enabled = f;
             optionsToolStripMenuItem.Enabled = f;
             toolStripButton1.Visible = f;
+            тестовоеСообщениеToolStripMenuItem.Enabled = f;
+            мониторУзловToolStripMenuItem.Enabled = f;
         }
 
         private void фиксацияЖурналаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1152,12 +1154,14 @@ namespace App3.Forms
         {
             this.oLogForm.UpdateView();
             this.oLogForm.Show();
+            this.oLogForm.Focus();
         }
 
         private void журналРаботыToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.oJournal.ShowData();
             this.oJournal.Show();
+            this.oJournal.Focus();
         }
 
         private void тестовоеСообщениеToolStripMenuItem_Click(object sender, EventArgs e)

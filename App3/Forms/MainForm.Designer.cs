@@ -36,8 +36,8 @@ namespace App3.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.синхронизацияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,6 +72,8 @@ namespace App3.Forms
             this.warnToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.soundToolStrip = new System.Windows.Forms.ToolStripMenuItem();
+            this.тестовоеСообщениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.мониторУзловToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.окнаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.входToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -101,8 +103,6 @@ namespace App3.Forms
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.тестовоеСообщениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.мониторУзловToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -392,6 +392,20 @@ namespace App3.Forms
             this.soundToolStrip.Text = "Звуковое оповещение";
             this.soundToolStrip.Click += new System.EventHandler(this.soundTooItem_Click);
             // 
+            // тестовоеСообщениеToolStripMenuItem
+            // 
+            this.тестовоеСообщениеToolStripMenuItem.Name = "тестовоеСообщениеToolStripMenuItem";
+            this.тестовоеСообщениеToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.тестовоеСообщениеToolStripMenuItem.Text = "Тестовое сообщение";
+            this.тестовоеСообщениеToolStripMenuItem.Click += new System.EventHandler(this.тестовоеСообщениеToolStripMenuItem_Click);
+            // 
+            // мониторУзловToolStripMenuItem
+            // 
+            this.мониторУзловToolStripMenuItem.Name = "мониторУзловToolStripMenuItem";
+            this.мониторУзловToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.мониторУзловToolStripMenuItem.Text = "Монитор узлов";
+            this.мониторУзловToolStripMenuItem.Click += new System.EventHandler(this.мониторУзловToolStripMenuItem_Click);
+            // 
             // окнаToolStripMenuItem
             // 
             this.окнаToolStripMenuItem.Name = "окнаToolStripMenuItem";
@@ -429,6 +443,7 @@ namespace App3.Forms
             // toolStripButton1
             // 
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = global::App3.Properties.Resources.kte1386967435034_en_us;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
@@ -443,6 +458,7 @@ namespace App3.Forms
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = global::App3.Properties.Resources._455695_200;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
@@ -462,6 +478,7 @@ namespace App3.Forms
             // toolStripButton4
             // 
             this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton4.Image = global::App3.Properties.Resources.w512h5121390849392combo512;
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
             this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
@@ -472,6 +489,7 @@ namespace App3.Forms
             // toolStripButton5
             // 
             this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton5.Image = global::App3.Properties.Resources.Data_List_icon;
             this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton5.Name = "toolStripButton5";
             this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
@@ -572,14 +590,14 @@ namespace App3.Forms
             // 
             // chart1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chart1.Location = new System.Drawing.Point(200, 0);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.Name = "Series1";
-            this.chart1.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(432, 59);
             this.chart1.TabIndex = 2;
             this.chart1.Text = "chart1";
@@ -647,20 +665,6 @@ namespace App3.Forms
             this.timer1.Enabled = true;
             this.timer1.Interval = 60000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // тестовоеСообщениеToolStripMenuItem
-            // 
-            this.тестовоеСообщениеToolStripMenuItem.Name = "тестовоеСообщениеToolStripMenuItem";
-            this.тестовоеСообщениеToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.тестовоеСообщениеToolStripMenuItem.Text = "Тестовое сообщение";
-            this.тестовоеСообщениеToolStripMenuItem.Click += new System.EventHandler(this.тестовоеСообщениеToolStripMenuItem_Click);
-            // 
-            // мониторУзловToolStripMenuItem
-            // 
-            this.мониторУзловToolStripMenuItem.Name = "мониторУзловToolStripMenuItem";
-            this.мониторУзловToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.мониторУзловToolStripMenuItem.Text = "Монитор узлов";
-            this.мониторУзловToolStripMenuItem.Click += new System.EventHandler(this.мониторУзловToolStripMenuItem_Click);
             // 
             // MainForm
             // 

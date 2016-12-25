@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace App3.Class.Socket
 {
-    [Serializable]
+    [Serializable()]
     class SendObject
     {
         private IDictionary<string, object> data;
-
         private string message;
 
         public string Message
@@ -30,15 +29,10 @@ namespace App3.Class.Socket
             get { return data["objectnumber"].ToInt(); }
         }
 
-        public SendObject()
-        {
-            data = null;
-            Message = "";
-        }
-
         public SendObject(string pMessage)
         {
             Message = pMessage;
+            data = new Dictionary<string, object>();
         }
 
         public SendObject(IDictionary<string, object> pData)
