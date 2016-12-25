@@ -1,4 +1,5 @@
-﻿using App3.Class.Socket;
+﻿using App3.Class;
+using App3.Class.Socket;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +33,7 @@ namespace App3.Forms
         {
             /*SendObject data = new SendObject(textBox3.Text);
             string s = SocketClient.SendObjectFromSocket(data, textBox1.Text, Convert.ToInt32(textBox2.Text) );
-            listBox1.Items.Add(s);*/
+            listBox1.Items.Add(s);
             TcpClient client = null;
             try
             {
@@ -64,7 +65,30 @@ namespace App3.Forms
             finally
             {
                 client?.Close();
-            }
+            } */
+            object[] array = new object[0];
+            IDictionary<string, object> data = new Dictionary<string, object>
+            {
+                { "objectnumber",  10001 },
+                { "alarmgroupid", 1 },
+                { "datetime", DateTime.Now.Q() },
+                { "code", 1 },
+                { "typenumber", 1 },
+                { "partnumber", 1 },
+                { "zoneusernumber", 1 },
+                { "class", 1 },
+                { "address", "".Q() },
+                { "region_id", 99 },
+                { "channelnumber", 1 },
+                { "oko_version", 2 },
+                { "retrnumber", 1 },
+                { "isrepeat", false },
+                { "siglevel", 1 }
+            };
+            // Handling.SendDataBySocket(data);
+            SendObject obj = new SendObject(data);
+            obj.Message = textBox3.Text;
+            SocketClient.SendObjectFromSocket2(obj, textBox1.Text, Convert.ToInt32(textBox2.Text));
         }
     }
 }

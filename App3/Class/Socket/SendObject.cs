@@ -33,6 +33,7 @@ namespace App3.Class.Socket
         public SendObject()
         {
             data = null;
+            Message = "";
         }
 
         public SendObject(string pMessage)
@@ -43,6 +44,7 @@ namespace App3.Class.Socket
         public SendObject(IDictionary<string, object> pData)
         {
             data = pData;
+            Message = "";
         }
 
         public IDictionary<string, object> GetInfo()

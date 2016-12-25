@@ -35,7 +35,6 @@ namespace App3.Class.Socket2
                 listnerThread = new Thread(new ThreadStart(ClientAccept));
                 isInit = true;
                 listnerThread.Start();
-                Logger.Instance.WriteToLog("Start listner at port: " + _port.ToString());
             }
             catch (ThreadAbortException ex)
             {
@@ -57,10 +56,11 @@ namespace App3.Class.Socket2
         {
             try
             {
+                Logger.Instance.WriteToLog("Start listner at port: " + _port.ToString());
                 while (true)
                 {
                     TcpClient client = _server.AcceptTcpClient();
-                    Logger.Instance.WriteToLog("SocketSync: Client Accept");
+                    // Logger.Instance.WriteToLog("SocketSync: Client Accept");
                     ClientObject clientObject = new ClientObject(client);
                     clientObject.onProcess += new ClientObject.ProcessDelegate(onProcess);
                     // создаем новый поток для обслуживания нового клиента

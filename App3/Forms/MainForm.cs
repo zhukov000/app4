@@ -1160,5 +1160,14 @@ namespace App3.Forms
             this.oJournal.Show();
         }
 
+        private void тестовоеСообщениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (new SocketTest()).ShowDialog();
+        }
+
+        private void мониторУзловToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (new MonitorForm()).ShowDialog();
+        }
     }
 }

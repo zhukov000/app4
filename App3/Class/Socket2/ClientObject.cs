@@ -30,7 +30,7 @@ namespace App3.Class.Socket2
             NetworkStream stream = null;
             try
             {
-                Logger.Instance.WriteToLog("SocketSync: Client process");
+                // Logger.Instance.WriteToLog("SocketSync: Client process");
                 stream = client.GetStream();
                 byte[] datapart = new byte[64]; // буфер для получаемых данных
                 while (true)
@@ -48,18 +48,21 @@ namespace App3.Class.Socket2
                     {
                         // десереализация объекта
                         SendObject obj = (SendObject)SocketUtils.ByteArrayToObject(data.ToArray());
+                        if (obj.Message == null) obj.Message = "";
                         if (obj.Message == "CLOSE") break;
                         // вызов делегата (если он есть)
-                        onProcess?.Invoke(obj);
+                        if (obj.Message != "TEST") 
+                            onProcess?.Invoke(obj);
                         // отправляем обратно сообщение об успешном получении
                         datapart = Encoding.Unicode.GetBytes("ACCEPTED");
                         stream.Write(datapart, 0, datapart.Length);
+                        System.Threading.Thread.Sleep(1000);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
             finally
             {

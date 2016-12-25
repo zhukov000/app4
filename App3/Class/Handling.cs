@@ -142,7 +142,7 @@ namespace App3.Class
             object[] array = new object[0];
             try
             {
-                Logger.Instance.WriteToLog("SocketSync: Handle calling");
+                Logger.Instance.WriteToLog("SocketSync: Handle calling " + data.Message);
                 if (data != null)
                     DataBase.RunCommandInsert("oko.event", data.GetInfo(), "id", out array);
             }
@@ -156,7 +156,7 @@ namespace App3.Class
         /// Отправить данные по сокету
         /// </summary>
         /// <param name="pData"></param>
-        private static void SendDataBySocket(IDictionary<string, object> pData)
+        public static void SendDataBySocket(IDictionary<string, object> pData)
         {
             SendObject data = new SendObject(pData);
             try
@@ -168,7 +168,6 @@ namespace App3.Class
                     string _server = current[1].ToString();
                     int _port = current[2].ToInt();
                     SocketClient.SendObjectFromSocket2(data, _server, _port);
-
                 }
             }
             catch (Exception ex)

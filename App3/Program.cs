@@ -135,6 +135,33 @@ namespace App3
                     return;
                 }
             }
+            if (args.Count() > 0 && args[0] == "monitor")
+            {
+                DataBase.OpenConnection(
+                                string.Format(
+                                    "Server={0};Port={1};User Id={2};Password={3};Database={4};MaxPoolSize=40;",
+                                    Config.Get("DBServerHost"),
+                                    Config.Get("DBServerPort"),
+                                    Config.Get("DBUser"),
+                                    Config.Get("DBPassword"),
+                                    Config.Get("DBName")
+                                ));
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                try
+                {
+                    MonitorForm expr_21F = new MonitorForm();
+                    Application.Run(expr_21F);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
+                    Logger.Instance.FlushLog();
+                    return;
+                }
+            }
             MessageBox.Show("Прямой запуск приложения нежелателен. Используйте launcher.exe", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }

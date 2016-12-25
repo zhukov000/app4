@@ -113,7 +113,7 @@ namespace App3.Class.Singleton
         {
             Message = message;
             LogDate = DateTime.Now.ToString("yyyyMMdd");
-            LogTime = DateTime.Now.ToString("hh:mm:ss.fff tt");
+            LogTime = DateTime.Now.ToString("HH:mm:ss.fff tt");
         }
     }
 }

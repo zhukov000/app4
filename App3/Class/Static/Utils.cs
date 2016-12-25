@@ -312,7 +312,7 @@ namespace App3.Class
         {
             var messages = exception.FromHierarchy(ex => ex.InnerException)
                 .Select(ex => ex.Message);
-            return String.Join(Environment.NewLine, messages);
+            return String.Join(Environment.NewLine, string.Format("{1} : {0}", messages, exception.TargetSite.Name));
         }
 
         public static List<object[]> GetListenIp()
@@ -588,7 +588,7 @@ namespace App3.Class
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("Utils.getHtmlContent: Ошибка получения контента для адреса: {0} - {1} ", urlAddress, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
                 return "";
             }
 
