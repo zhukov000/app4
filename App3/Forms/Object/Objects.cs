@@ -71,7 +71,14 @@ namespace App3.Forms.Object
         public Objects(Form pParent)
         {
             InitializeComponent();
-            InitTable();
+            try
+            {
+                InitTable();
+            }
+            catch(Exception ex)
+            {
+                Class.Singleton.Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
             this.MdiParent = pParent;
         }
 

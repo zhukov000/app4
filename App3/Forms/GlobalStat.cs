@@ -28,10 +28,15 @@ namespace App3.Forms
 
         private void GlobalStat_Load(object sender, EventArgs e)
         {
-            (new gisDataReportsTableAdapters.report_all_statusTableAdapter()).Fill(this.gisDataReports.report_all_status);
-            LoadStat();
-            // this.reportViewer1.RefreshReport();
-            // LoadData();
+            try
+            {
+                (new gisDataReportsTableAdapters.report_all_statusTableAdapter()).Fill(this.gisDataReports.report_all_status);
+                LoadStat();
+            }
+            catch(Exception ex)
+            {
+                Class.Singleton.Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
         }
 
         private void BuildDataGridThreadSafe(List<object[]> data)
@@ -61,32 +66,6 @@ namespace App3.Forms
                 seriesColumns.Points.Add(row[2].ToDouble()).Color = ColorTranslator.FromHtml(row[1].ToString());
             }
         }
-
-        
-
-        /*
-        private void LoadData()
-        {
-            foreach(ComboboxItem obj in DBDict.TMinistry.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList())
-            {
-                listBox1.Items.Add(obj);
-            }
-
-            DBDict.Load2Combobox(ref comboBox1, DBDict.TRegion.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(), null);
-
-            DateTime dt = DateTime.Today;
-            dtStart.Value =  dt.AddMonths(-1);
-            dtFinish.Value = DateTime.Now;
-
-            autoCompleteTextbox1.AutoCompleteMode = AutoCompleteMode.Suggest;
-            autoCompleteTextbox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            autoCompleteTextbox1.AutoCompleteCustomSource = DataObjects();
-            if (autoCompleteTextbox1.AutoCompleteCustomSource.Count == 1)
-            {
-                autoCompleteTextbox1.Text = autoCompleteTextbox1.AutoCompleteCustomSource[0];
-            }
-        }
-         * */
 
         public void LoadStat()
         {
@@ -122,77 +101,12 @@ namespace App3.Forms
             pg.Margins.Bottom = 0;
             pg.Margins.Left = 0;
             pg.Margins.Right = 0;
-            
-            // reportViewer1.SetPageSettings(pg);
-            
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // string RepPath = comboBox1.Items[comboBox1.SelectedIndex].ToString();
-            //reportViewer1.LocalReport.ReportPath = RepPath;
-            //reportViewer1.SetDisplayMode(DisplayMode.PrintLayout);
-            // this.report_all_statusBindingSource;
-            //gisDataReportsTableAdapters.report_all_statusTableAdapter o = new gisDataReportsTableAdapters.report_all_statusTableAdapter();
-            //o.Fill(this.gisDataReports.);
-/*            reportViewer1.LocalReport.ReportEmbeddedResource = RepPath;
-            if (RepPath == "App3.Reports.Report2.rdlc")
-            {
-                (new gisDataReportsTableAdapters.report_all_statusTableAdapter()).Fill(this.gisDataReports.report_all_status);
-            }
-            else
-            {
-                (new gisDataReportsTableAdapters.report_all_regionsTableAdapter()).Fill(this.gisDataReports.report_all_regions);
-            }
-            reportViewer1.RefreshReport();
-  */           
-            // MessageBox.Show(RepPath);
-            // reportViewer1
-        }
 
-        /*
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox2.Checked)
-            {
-                listBox1.Enabled = true;
-            }
-            else
-            {
-                listBox1.Enabled = false;
-            }
         }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox1.Checked)
-            {
-                autoCompleteTextbox1.Enabled = true;
-            }
-            else
-            {
-                autoCompleteTextbox1.Enabled = false;
-            }
-        }
-
-        private void regionCheck_CheckedChanged(object sender, EventArgs e)
-        {
-            if (regionCheck.Checked)
-            {
-                comboBox1.Enabled = true;
-            }
-            else
-            {
-                comboBox1.Enabled = false;
-            }
-        }
-
-        private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-            ComboboxItem i = (ComboboxItem) comboBox1.SelectedItem;
-            autoCompleteTextbox1.AutoCompleteCustomSource = DataObjects(i.Value.ToInt());
-        }
-        */
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -201,19 +115,6 @@ namespace App3.Forms
 
         private void ShowReport()
         {
-            /*string sql = "SELECT * FROM "
-
-            if (region)
-            {
-
-            }
-            ComboboxItem i = (ComboboxItem)comboBox1.SelectedItem;
-            i.Value
-            string s = autoCompleteTextbox1.Text;
-            var l = s.Split((new string[] {"ID="}), 1, StringSplitOptions.None);
-            l[1].ToInt()
-            (new ReportForm(dtStart.Value, dtFinish.Value, object_id, region_id)).Show();
-             * */
             (new ReportForm()).Show();
         }
     }

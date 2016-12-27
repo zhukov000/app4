@@ -40,7 +40,15 @@ namespace App3.Class
         /// <returns></returns>
         public static string GetByKey(string key)
         {
-            return ConfigurationManager.AppSettings[key];
+            string s = "";
+            try
+            {
+                s = ConfigurationManager.AppSettings[key];
+            } catch
+            {
+                // 
+            }
+            return s;
         }
 
         public static string Get(string key)

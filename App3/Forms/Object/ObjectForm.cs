@@ -190,37 +190,42 @@ namespace App3.Forms
 
         private void LoadDictionaries()
         {
-            /*DBDict.Load2Combobox(ref classBox, 
-                DBDict.TClass.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
-                Obj.TClass
-            );*/
-            DBDict.Load2Combobox(ref statusBox,
-                DBDict.TStatus.Select(x => new ComboboxItem(x.Value, x.Key)).ToList(), 
-                Obj.TStatus
-            );
-            /*DBDict.Load2Combobox(
-                ref contactBox,
-                DBDict.TContact.Select(x => new ComboboxItem(x.Value, x.Key)).ToList(),
-                1
-            );*/
-            /* DBDict.Load2Combobox(
-                ref ministryBox,
-                DBDict.TMinistry.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
-                Obj.TMinistry
-            ); */
-            DBDict.Load2Combobox(
-                ref companyBox,
-                DBDict.TCompany.Where(x => x.Value.Item2 == 1).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
-                1
-            );
+            try
+            {
+                /*DBDict.Load2Combobox(ref classBox, 
+                    DBDict.TClass.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
+                    Obj.TClass
+                );*/
+                DBDict.Load2Combobox(ref statusBox,
+                    DBDict.TStatus.Select(x => new ComboboxItem(x.Value, x.Key)).ToList(),
+                    Obj.TStatus
+                );
+                /*DBDict.Load2Combobox(
+                    ref contactBox,
+                    DBDict.TContact.Select(x => new ComboboxItem(x.Value, x.Key)).ToList(),
+                    1
+                );*/
+                /* DBDict.Load2Combobox(
+                    ref ministryBox,
+                    DBDict.TMinistry.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
+                    Obj.TMinistry
+                ); */
+                DBDict.Load2Combobox(
+                    ref companyBox,
+                    DBDict.TCompany.Where(x => x.Value.Item2 == 1).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
+                    1
+                );
 
-            DBDict.Load2Combobox(
-                ref serviceBox,
-                DBDict.TCompany.Where(x => x.Value.Item2 == 2).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
-                null
-            );
-
-            // Select(x => new ComboboxItem(x.Value, x.Key))
+                DBDict.Load2Combobox(
+                    ref serviceBox,
+                    DBDict.TCompany.Where(x => x.Value.Item2 == 2).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
+                    null
+                );
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
         }
 
         private int ComboboxVal(ref ComboBox combo)

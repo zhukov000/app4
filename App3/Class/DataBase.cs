@@ -350,19 +350,26 @@ namespace App3
         public static string Help4Select(string pTableName, IDictionary<string, object> pSelect, IDictionary<string, object> pWhere)
         {
             string request = "SELECT ";
-            if (pSelect.Count == 0)
+            try
             {
-                request += "*";
+                if (pSelect.Count == 0)
+                {
+                    request += "*";
+                }
+                else
+                {
+                    request += string.Join(",", pSelect.Select(x => x.Key).ToArray());
+                }
+                request += " FROM " + pTableName;
+                if (pWhere.Count() > 0)
+                {
+                    request += " WHERE " +
+                        string.Join(" AND ", pWhere.Select(x => x.Key + "=" + x.Value).ToArray());
+                }
             }
-            else
+            catch(Exception ex)
             {
-                request += string.Join(",", pSelect.Select(x => x.Key ).ToArray());
-            }
-            request += " FROM " + pTableName;
-            if (pWhere.Count() > 0)
-            {
-                request += " WHERE " +
-                    string.Join(" AND ", pWhere.Select(x => x.Key + "=" + x.Value).ToArray());
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
             return request;
         }

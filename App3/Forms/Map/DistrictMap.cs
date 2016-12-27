@@ -115,6 +115,7 @@ namespace App3.Forms
 
         public int OnNodeConnected(string sAddress)
         {
+            int i = 0;
             try
             {
                 int IdRegion = DBDict.IPAddress[sAddress];
@@ -125,14 +126,13 @@ namespace App3.Forms
                 {
                     BuildTreeView();
                 }
-                
+                i = Regions.Where(x => x.Value).Count();
             }
             catch (Exception ex)
             {
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: Неизвестный адрес '{3}'. Для предотвращения появления этой ошибки добавьте этот адрес в справочник в БД: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, sAddress));
-                // MessageBox.Show("Неизвестный адрес " + sAddress + ". Для предотвращения появления этой ошибки добавьте этот адрес в справочник в БД");
             }
-            return Regions.Where(x => x.Value).Count();
+            return i;
         }
 
         public int OneDistrictMapOpened

@@ -101,7 +101,7 @@ namespace App3.Class.Static
                     x => x[0].ToInt(),
                     x => new Tuple<string, string, string>(x[1].ToString(), x[2].ToString(), x[3].ToString())
                 ); */
-            TCompany = DataBase.RowSelect("select id_company, title, type from oko.company").
+            TCompany = DataBase.RowSelect("select id, title, type from oko.company").
                 ToDictionary(
                     x => x[0].ToInt(),
                     x => new Tuple<string,int>(x[1].ToString(), x[2].ToInt())

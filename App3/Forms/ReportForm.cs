@@ -93,27 +93,32 @@ namespace App3.Forms
             {
                 autoCompleteTextbox6.Text = autoCompleteTextbox6.AutoCompleteCustomSource[0].ToString();
             }
-            
         }
 
         private void ReportForm_Load(object sender, EventArgs e)
         {
-            LoadData();
-            DBDict.Load2Combobox(ref districtBox,
-                DBDict.TRegion.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
-                null
-            );
-            DBDict.Load2Combobox(
-                ref MonCompBox,
-                DBDict.TCompany.Where(x => x.Value.Item2 == 1).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
-                1
-            );
-            DBDict.Load2Combobox(
-                ref serviceCompBox,
-                DBDict.TCompany.Where(x => x.Value.Item2 == 2).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
-                null
-            );
-
+            try
+            {
+                LoadData();
+                DBDict.Load2Combobox(ref districtBox,
+                    DBDict.TRegion.Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
+                    null
+                );
+                DBDict.Load2Combobox(
+                    ref MonCompBox,
+                    DBDict.TCompany.Where(x => x.Value.Item2 == 1).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
+                    1
+                );
+                DBDict.Load2Combobox(
+                    ref serviceCompBox,
+                    DBDict.TCompany.Where(x => x.Value.Item2 == 2).Select(x => new ComboboxItem(x.Value.Item1, x.Key)).ToList(),
+                    null
+                );
+            }
+            catch (Exception ex)
+            {
+                Class.Singleton.Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
             dtStart.Value = DateTime.Now.AddMonths(-1);
             treeView1.Nodes[0].Checked = true;
         }

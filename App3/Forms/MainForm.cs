@@ -448,8 +448,6 @@ namespace App3.Forms
                 // Старт сервера для получения сообщений
                 if (Config.Get("SocketEnableSync") == "1")
                 {
-                    // SocketServer.StartListen(Config.Get("SocketServerIP"), Config.Get("SynchPort").ToInt());
-                    // SocketServer.onGetObjectDelegate = Handling.GetObjectDelegate;
                     PortListner.onProcess += new ClientObject.ProcessDelegate(Handling.GetObjectDelegate);
                     oSocketSync = new PortListner(Config.Get("SynchPort").ToInt());
                 }
