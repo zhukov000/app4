@@ -303,7 +303,6 @@
     <Compile Include="Class\Socket\SocketUtils.cs" />
     <Compile Include="Class\Static\OKO_Messages.cs" />
     <Compile Include="Class\Static\PermissionControl.cs" />
-    <Compile Include="Class\Depricated\SingleInstance.cs" />
     <Compile Include="Class\Static\SyncronizerViaSocket.cs" />
     <Compile Include="Class\Static\TMessageDict.cs" />
     <Compile Include="Class\Synchronization\SyncAddresses.cs" />
@@ -419,12 +418,6 @@
     <Compile Include="Forms\Map\PointSelect.Designer.cs">
       <DependentUpon>PointSelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Depricated\TestForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Depricated\TestForm.Designer.cs">
-      <DependentUpon>TestForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\MonitorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -454,6 +447,12 @@
     </Compile>
     <Compile Include="Forms\StartForm.Designer.cs">
       <DependentUpon>StartForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StartupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StartupForm.Designer.cs">
+      <DependentUpon>StartupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\SynchronizeForm.cs">
       <SubType>Form</SubType>
@@ -518,12 +517,6 @@
     <Compile Include="Forms\Dialog\AddressDialog.Designer.cs">
       <DependentUpon>AddressDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Depricated\Client.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Depricated\Client.Designer.cs">
-      <DependentUpon>Client.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\ConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -548,23 +541,11 @@
     <Compile Include="Forms\Table\EventsForm.Designer.cs">
       <DependentUpon>EventsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Depricated\InfoForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Depricated\InfoForm.Designer.cs">
-      <DependentUpon>InfoForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Depricated\MapForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Depricated\MapForm.Designer.cs">
-      <DependentUpon>MapForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Object\ObjectForm.cs">
       <SubType>Form</SubType>
@@ -583,12 +564,6 @@
     </Compile>
     <Compile Include="Forms\Object\SearchObject.Designer.cs">
       <DependentUpon>SearchObject.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Depricated\SelectionMode.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Depricated\SelectionMode.Designer.cs">
-      <DependentUpon>SelectionMode.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Table\TableEditForm.cs">
       <SubType>Form</SubType>
@@ -633,6 +608,9 @@
     <EmbeddedResource Include="Forms\SocketTest.resx">
       <DependentUpon>SocketTest.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StartupForm.resx">
+      <DependentUpon>StartupForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\SynchronizeForm.resx">
       <DependentUpon>SynchronizeForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -651,9 +629,6 @@
     <EmbeddedResource Include="Forms\Dialog\AddressDialog.resx">
       <DependentUpon>AddressDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Depricated\Client.resx">
-      <DependentUpon>Client.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -665,9 +640,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Map\PointSelect.resx">
       <DependentUpon>PointSelect.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Depricated\TestForm.resx">
-      <DependentUpon>TestForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Object\Objects.resx">
       <DependentUpon>Objects.cs</DependentUpon>
@@ -692,14 +664,8 @@
     <EmbeddedResource Include="Forms\Table\EventsForm.resx">
       <DependentUpon>EventsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Depricated\InfoForm.resx">
-      <DependentUpon>InfoForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Depricated\MapForm.resx">
-      <DependentUpon>MapForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Object\ObjectForm.resx">
       <DependentUpon>ObjectForm.cs</DependentUpon>
@@ -710,9 +676,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Object\SearchObject.resx">
       <DependentUpon>SearchObject.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Depricated\SelectionMode.resx">
-      <DependentUpon>SelectionMode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Table\TableEditForm.resx">
       <DependentUpon>TableEditForm.cs</DependentUpon>

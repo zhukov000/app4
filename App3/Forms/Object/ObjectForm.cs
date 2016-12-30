@@ -124,42 +124,38 @@ namespace App3.Forms
 
         private void LoadData()
         {
-            if (Obj.IsExists())
+            if (this.Obj.IsExists())
             {
-                numberBox.Invoke(new Action(() => { numberBox.Text = Obj.number.ToString(); }));
-                // numberBox.Text = Obj.number.ToString();
-                nameBox.Text = Obj.name;
-                makeDateTime.Text = Obj.makedatetime;
-                addressBox.Text = Obj.AddressStr;
-                cladrBox.Text = Obj.AddressCode;
-                dogovorBox.Checked = Obj.Dogovor;
-                ///
-                /*eventTable.AddHidden2(new string[]
+                if (this.numberBox.InvokeRequired)
+                {
+                    this.numberBox.Invoke(new Action(delegate
                     {
-                        "objectnumber",
-                        "region_id"
-                    });*/
-                //eventTable.Filter = string.Format("objectnumber = {0} AND region_id = {1}", Obj.number, Obj.RegionId);
-
-               // contactTable.Filter = string.Format("object_id = {0}", Obj.Id);
-               // contractTable.Filter = string.Format("id_contract in (SELECT contract_id FROM oko.object_in_contract WHERE object_id = {0})", Obj.Id);
-
-                // contactTable.AddHidden("object_id", Obj.Id.ToString());
-                // contactTable.AddHidden2("id");
-                // contactTable.AddForeign("tcontact", "oko.tcontact", "id", "name");
-
-                autoCompleteTextbox2.MinTypedCharacters = 2000;
-                autoCompleteTextbox2.Text = Obj.RealObjectName;
-                autoCompleteTextbox1.MinTypedCharacters = 2000;
-                autoCompleteTextbox1.Text = Obj.CustomerName;
+                        this.numberBox.Text = this.Obj.number.ToString();
+                    }));
+                }
+                else
+                {
+                    this.numberBox.Text = this.Obj.number.ToString();
+                }
                 
-                UpdateClassifier();
-                UpdateContacts();
-
-                autoCompleteTextbox2.MinTypedCharacters = 2;
-                autoCompleteTextbox1.MinTypedCharacters = 2;
-
-                Utils.UpdateState(Obj.number, Obj.RegionId);
+                this.nameBox.Text = this.Obj.name;
+                this.makeDateTime.Text = this.Obj.makedatetime;
+                this.addressBox.Text = this.Obj.AddressStr;
+                this.cladrBox.Text = this.Obj.AddressCode;
+                this.dogovorBox.Checked = this.Obj.Dogovor;
+                this.autoCompleteTextbox2.MinTypedCharacters = 2000;
+                this.autoCompleteTextbox2.Text = this.Obj.RealObjectName;
+                this.autoCompleteTextbox1.MinTypedCharacters = 2000;
+                this.autoCompleteTextbox1.Text = this.Obj.CustomerName;
+                this.UpdateClassifier();
+                this.UpdateContacts();
+                this.autoCompleteTextbox2.MinTypedCharacters = 2;
+                this.autoCompleteTextbox1.MinTypedCharacters = 2;
+                Utils.UpdateState(this.Obj.number, this.Obj.RegionId);
+            }
+            else
+            {
+                MessageBox.Show("Объект не найден в базе данных объектов.","Предупреждение", MessageBoxButtons.OK);
             }
         }
 

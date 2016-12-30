@@ -522,7 +522,8 @@ namespace App3
             catch(Exception ex)
             {
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
-                // throw new DataBaseConnectionErrorExcepion(ex.Message);
+                isOpen = false;
+                throw new DataBaseConnectionErrorExcepion(ex.Message);
             }
             return isOpen;
         }

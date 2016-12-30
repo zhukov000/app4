@@ -1,19 +1,10 @@
 ﻿using App3.Class;
 using App3.Tools;
 using App3.Class.Static;
-using SharpMap.Data;
-using SharpMap.Data.Providers;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Media;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using App3.Forms.Dialog;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -361,11 +352,18 @@ namespace App3.Forms
             }
             if (DistrictName != "")
             {
-                map = new OneDistrictForm(this.MdiParent, DistrictName);
-                map.Top = 0;
-                map.Left = 0;
-                map.Size = this.Size;
-                map.Show();
+                try
+                {
+                    map = new OneDistrictForm(this.MdiParent, DistrictName);
+                    map.Top = 0;
+                    map.Left = 0;
+                    map.Size = this.Size;
+                    map.Show();
+                }
+                catch(Exception ex)
+                {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                }
             }
         }
 

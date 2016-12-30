@@ -272,7 +272,7 @@ namespace App3.Class
 
         public bool IsExists()
         {
-            if (id == 0)
+            if (number == 0)
             {
                 return false;
             }

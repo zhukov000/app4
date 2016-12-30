@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using App3.Forms;
 using System.Threading;
 using App3.Class.Singleton;
 using System.IO;
 using App3.Class;
+using App3.Class.Static;
 
 namespace App3
 {
@@ -19,10 +18,22 @@ namespace App3
         [STAThread]
         static void Main(String[] args)
         {
-            if (args.Count() > 0 && args[0] == "run")
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            string tstart = "";
+            if (args.Count() == 0)
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
+                StartupForm dialog = new StartupForm();
+                dialog.ShowDialog();
+                tstart = dialog.TStartup;
+            }
+            else
+            {
+                tstart = args[0];
+            }
+            //
+            if (tstart == StartupType.Run)
+            {
                 using (var mutex = new Mutex(false, "Spolox Application"))
                 {
                     bool f = true;
@@ -54,7 +65,6 @@ namespace App3
                         }
                         catch (Exception ex)
                         {
-                            // MessageBox.Show("Error: " + ex.Message);
                             Logger.Instance.WriteToLog(string.Format("При открытии соединения с базой произошла ошибка: {0}", ex.Message));
                         }
                         
@@ -67,7 +77,7 @@ namespace App3
                         {
                             string mess = "Ошибка обновления";
                             Logger.Instance.WriteToLog(mess);
-                            MessageBox.Show(mess);
+                            // MessageBox.Show(mess);
                         }
                         else
                         {
@@ -76,7 +86,6 @@ namespace App3
                             File.Move(fi.FullName, str);
                         }
                     }
-
                     // если обновление БД упешно пройдено или не нужно
                     if (mutex.WaitOne(TimeSpan.FromSeconds(2)))
                     {
@@ -86,7 +95,6 @@ namespace App3
                         }
                         catch (Exception ex)
                         {
-                            // Logger.Instance.WriteToLog("Произошло необработанное исключение: " + ex.StackTrace);
                             Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
                             Logger.Instance.FlushLog();
                         }
@@ -98,44 +106,35 @@ namespace App3
                         MessageBox.Show(mess);
                     }                    
                 }
-                return;
             }
-            if (args.Count() > 0 && args[0] == "log")
+            else if (tstart == StartupType.Log)
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
                 try
                 {
                     LogForm expr_21F = new LogForm();
                     ((LogForm)expr_21F).UpdateView();
                     Application.Run(expr_21F);
-                    return;
                 }
                 catch (Exception ex)
                 {
                     Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
                     Logger.Instance.FlushLog();
-                    return;
                 }
             }
-            if (args.Count() > 0 && args[0] == "socket")
+            else if (tstart == StartupType.Socket)
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
                 try
                 {
                     SocketTest expr_21F = new SocketTest();
                     Application.Run(expr_21F);
-                    return;
                 }
                 catch (Exception ex)
                 {
                     Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
                     Logger.Instance.FlushLog();
-                    return;
                 }
             }
-            if (args.Count() > 0 && args[0] == "monitor")
+            else if (tstart == StartupType.Monitor)
             {
                 DataBase.OpenConnection(
                                 string.Format(
@@ -147,22 +146,22 @@ namespace App3
                                     Config.Get("DBName")
                                 ));
 
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
                 try
                 {
                     MonitorForm expr_21F = new MonitorForm();
                     Application.Run(expr_21F);
-                    return;
                 }
                 catch (Exception ex)
                 {
                     Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
                     Logger.Instance.FlushLog();
-                    return;
                 }
             }
-            MessageBox.Show("Прямой запуск приложения нежелателен. Используйте launcher.exe", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else if (tstart == StartupType.Server)
+            {
+                // TODO
+            }
+            Environment.Exit(0);
         }
     }
 }

@@ -103,16 +103,6 @@ namespace App3.Class
                     }
                 }
             }
-            /*foreach (var pType in tableName.Keys)
-            {
-                string req = "DROP TABLE IF EXISTS {0}";
-                if (pType == LayerType.OBJECT)
-                {
-                    req = "DROP VIEW IF EXISTS {0}";
-                }
-                string sTableName = TableName(pSessionId, pType);
-                DataBase.RunCommand(string.Format(req, sTableName));
-            }*/
         }
 
         static public string TableName(int pSessionId, LayerType pType)
@@ -174,70 +164,5 @@ namespace App3.Class
             return text;
         }
 
-        /*
-        static public string UpdateDataTable(int pSessionId, LayerType pType, object[] Params)
-        {
-            string sTableName = TableName(pSessionId, pType);
-            string reqCreate = "CREATE TABLE {0} AS ";
-            string reqDrop = "DROP TABLE IF EXISTS {0}";
-
-            switch (pType)
-            {
-                case LayerType.REGION:
-                    if (Params[1] != null)
-                        reqCreate += string.Format("(SELECT osm_id, way, name, num FROM regions WHERE fullname = '{0}');", Params[1]); // districtname
-                    else
-                        reqCreate += string.Format("(SELECT osm_id, way, name, num FROM regions);");
-                    break;
-
-                case LayerType.POLYGON:
-                    reqCreate += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_polygons({0}))", Params[0]); // osm_id
-                    break;
-                case LayerType.ROAD:
-                    reqCreate += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_roads({0}) UNION SELECT osm_id, way, name, building, highway, place FROM oko.district_lines({0}))", Params[0]); // osm_id
-                    break;
-                case LayerType.POINT:
-                    reqCreate += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_points({0}))", Params[0]); // osm_id
-                    break;
-
-                case LayerType.BIG_POLYGON:
-                    reqCreate += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 1000000, null) WHERE building is null)", Params[0]); 
-                    break;
-                case LayerType.MID_POLYGON:
-                    reqCreate += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 100000, null) WHERE building is null)", Params[0]);
-                    break;
-                case LayerType.SML_POLYGON:
-                    reqCreate += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 200, null) WHERE building is null)", Params[0]);
-                    break;
-
-                case LayerType.BUILD_BORDER:
-                    // reqCreate += string.Format("(SELECT osm_id, way, name FROM {0} WHERE building is not null)", TableName(pSessionId, LayerType.ROAD));
-                    // reqCreate += string.Format("(SELECT osm_id, way, name, building, highway, place FROM oko.district_weigth_polygons({0}, 0, 100000) WHERE building = 'yes')", Params[0]);
-                    break;
-                case LayerType.BUILD:
-                    // reqCreate += string.Format("(SELECT osm_id, way, COALESCE(name, \"addr:housenumber\") as name FROM {0} WHERE building is not null)", TableName(pSessionId, LayerType.POLYGON));
-                    reqCreate += string.Format("(SELECT osm_id, way, COALESCE(name, \"addr:housenumber\") as name FROM oko.district_weigth_polygons({0}, 0, 100000) WHERE building is not null)", Params[0]);
-                    break;
-                case LayerType.HIGHWAY:
-                    reqCreate += string.Format("(SELECT osm_id, way, name FROM {0} WHERE highway is not null)", TableName(pSessionId, LayerType.ROAD));
-                    break;
-                case LayerType.PLACES:
-                    reqCreate += string.Format("(SELECT osm_id, way, name FROM {0} WHERE place is not null)", TableName(pSessionId, LayerType.POLYGON));
-                    break;
-
-                case LayerType.OBJECT:
-                    reqCreate = "CREATE VIEW {0} AS " + string.Format("(SELECT odo.way, odo.name as name, odo.number, os.* FROM oko.district_objects3({0}) as odo " +
-                        "INNER JOIN oko.object_status as os on odo.osm_id = os.osm_id)", 
-                        Params[0]); // osm_id
-                    reqDrop = "DROP VIEW  IF EXISTS {0}";
-                    break;
-            }
-            // удалить таблицу
-            DataBase.RunCommand(string.Format(reqDrop, sTableName));
-            // создать таблицу
-            DataBase.RunCommand(string.Format(reqCreate, sTableName));
-
-            return sTableName;
-        } */
     }
 }

@@ -21,6 +21,7 @@ namespace App3.Forms
 {
     public partial class MainForm : Form
     {
+        private bool NotStartedNormal = false;
         private StartForm sf;
         private int SessionID = -1;
 
@@ -61,8 +62,15 @@ namespace App3.Forms
 
         private void SetChildFormsPosition()
         {
-            oEventsForm.Top = this.Height - oEventsForm.Height - FORM_TOP_OFFSET;
-            oEventsForm.Width = this.Width - 2 * FORM_BORDER_WIDTH;
+            try
+            {
+                oEventsForm.Top = this.Height - oEventsForm.Height - FORM_TOP_OFFSET;
+                oEventsForm.Width = this.Width - 2 * FORM_BORDER_WIDTH;
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
         }
 
         private void StartOkoGate()
@@ -179,22 +187,30 @@ namespace App3.Forms
 
         private void StopOkoGate()
         {
-            if (Config.Get("XMLGuard") == "1")
+            try
             {
-                try
+                if (Config.Get("XMLGuard") == "1")
                 {
-                    this.oModuleXML.StopReceive();
-                    this.oModuleXML.StopModule();
+                    try
+                    {
+                        this.oModuleXML.StopReceive();
+                        this.oModuleXML.StopModule();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+                    }
                 }
-                catch (Exception ex)
+                if (Config.Get("COMConn") == "1")
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+                    this.oModuleCOM.Close();
                 }
             }
-            if (Config.Get("COMConn") == "1")
+            catch(Exception ex)
             {
-                this.oModuleCOM.Close();
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
+
         }
 
         private void ReciveMessage(object arg)
@@ -362,19 +378,21 @@ namespace App3.Forms
             }
             catch (DataBaseConnectionErrorExcepion ex)
             {
-                MessageBox.Show("DataBasse: " + ex.Message);
-                SetStatusText("Соединение с БД не было установлено. Причина: " + ex.Message);
+                // MessageBox.Show("DataBasse: " + ex.Message);
+                // SetStatusText("Соединение с БД не было установлено. Причина: " + ex.Message);
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: Соединение с БД не было установлено. Причина: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message);
+                // MessageBox.Show("Error: " + ex.Message);
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: При открытии соединения с базой произошла ошибка: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
+
             if (!f)
             {
                 // Close();
                 Logger.Instance.WriteToLog("Соединение с БД не было установлено");
+                NotStartedNormal = true;
             }
             else
             {
@@ -388,27 +406,38 @@ namespace App3.Forms
                 {
                     Logger.Instance.WriteToLog("При обновлении справочников произошла ошибка: " + ex2.Message);
                     Logger.Instance.FlushLog();
+                    return;
                 }
-                // окно событий
-                oEventsForm = new MessForm(this);
-                // oEventsForm.Show();
-                SetChildFormsPosition();
+                bool flag = false;
+                try
+                {
+                    // окно событий
+                    oEventsForm = new MessForm(this);
+                    // oEventsForm.Show();
+                    SetChildFormsPosition();
+                    oConfigForm = new ConfigForm(this);
+                    oDBEvents = new DBEvents(this);
+                    oSynchronizeForm = new SynchronizeForm(this);
+                    oLogForm = new LogForm(this);
+                    oMessagesText = new TableEditForm(this, "oko.message_text", "Справочник сообщений");
+                    oWarnMonitor = new WarningForm(this);
+                    // окошко статистики
+                    oGlobalStatistic = new GlobalStat();
+                    //
+                    oObjectList = new Objects(this);
+                    this.oJournal = new Journal(this);
 
-                oConfigForm = new ConfigForm(this);
-                oDBEvents = new DBEvents(this);
-                oSynchronizeForm = new SynchronizeForm(this);
-                oLogForm = new LogForm(this);
-                // oMap = new MapForm(this);
-                oMessagesText = new TableEditForm(this, "oko.message_text", "Справочник сообщений");
-                oWarnMonitor = new WarningForm(this);
+                    flag = /*DBDict.Settings.ContainsKey("START_XML_GUARD") &&*/ DBDict.Settings["START_XML_GUARD"].ToBool();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    Logger.Instance.FlushLog();
+                    NotStartedNormal = true;
+                    return;
+                }
 
-                // окошко статистики
-                oGlobalStatistic = new GlobalStat();
-                //
-                oObjectList = new Objects(this);
-
-                this.oJournal = new Journal(this);
-                if (DBDict.Settings["START_XML_GUARD"].ToBool())
+                if (flag)
                 {
                     Logger.Instance.WriteToLog("START_XML_GUARD = True");
                     try
@@ -564,47 +593,65 @@ namespace App3.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // отметка о запуске программы
-            // SessionID
-            object [] res;
-            while (true)
+            if (NotStartedNormal)
             {
-                DataBase.RunCommandInsert(
-                    "journal",
-                    new Dictionary<string, object>() { { "start", DateTime.Now.ToString().Q() } },
-                    "id",
-                    out res
-                );
-                if (res.Length != 0)
-                {
-                    break;
-                }
-                Logger.Instance.WriteToLog("При запуске не удалось получить ID сессии");
-                Thread.Sleep(1000);
+                Utils.DestroyStartThread(sf);
+                Close();
             }
-            SessionID = (int)res[0];
-            // установка цвета формы
-            MdiClient ctlMDI;
-            foreach (Control ctl in this.Controls)
+            else
             {
-                try
+                // отметка о запуске программы
+                // SessionID
+                object[] res;
+                int i = 10;
+                while (i-- > 0)
                 {
-                    ctlMDI = (MdiClient)ctl;
-                    ctlMDI.BackColor = this.BackColor;
+                    try
+                    {
+                        DataBase.RunCommandInsert(
+                            "journal",
+                            new Dictionary<string, object>() { { "start", DateTime.Now.ToString().Q() } },
+                            "id",
+                            out res
+                        );
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                        break;
+                    }
+                    if (res.Length != 0)
+                    {
+                        SessionID = (int)res[0];
+                        break;
+                    }
+                    Logger.Instance.WriteToLog("При запуске не удалось получить ID сессии");
+                    Thread.Sleep(1000);
                 }
-                catch (Exception ex)
+                // установка цвета формы
+                MdiClient ctlMDI;
+                foreach (Control ctl in this.Controls)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    try
+                    {
+                        ctlMDI = (MdiClient)ctl;
+                        ctlMDI.BackColor = this.BackColor;
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                        // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    }
                 }
+                // события
+                // ShowDBEvents();
+                // запуск формы с картой районов
+                oDistricts = new DistrictMap(this);
+                oDistricts.Show();
+                ShowMap();
+                this.Visible = true;
+                Utils.DestroyStartThread(sf);
             }
-            // события
-            // ShowDBEvents();
-            // запуск формы с картой районов
-            oDistricts = new DistrictMap(this);
-            oDistricts.Show();
-            ShowMap();
-            this.Visible = true;
-            Utils.DestroyStartThread(sf);
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
@@ -614,15 +661,25 @@ namespace App3.Forms
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Updater.Stop();
-            StartWeb.Stop();
-            DataBase.RunCommandUpdate(
-                "journal",
-                new Dictionary<string, object>() { { "finish", DateTime.Now.ToString().Q() } },
-                new Dictionary<string, object>() { { "id", SessionID } });
-            StopOkoGate();
-            DataBase.CloseConnection();
-            if (Config.Get("SocketEnableSync") == "1") oSocketSync.Stop();
+            try
+            {
+                Updater.Stop();
+                StartWeb.Stop();
+                if (DataBase.IsOpen())
+                {
+                    DataBase.RunCommandUpdate(
+                        "journal",
+                        new Dictionary<string, object>() { { "finish", DateTime.Now.ToString().Q() } },
+                        new Dictionary<string, object>() { { "id", SessionID } });
+                    DataBase.CloseConnection();
+                }
+                StopOkoGate();
+                if (Config.Get("SocketEnableSync") == "1") oSocketSync.Stop();
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+            }
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -661,11 +718,6 @@ namespace App3.Forms
             {
                 oWarnMonitor.PlaySound();
             }
-        }
-
-        public void AddMapClickEvents(App3.Forms.MapForm.MapBoxClick pMethod)
-        {
-            // oMap.AddClickEvents(pMethod);
         }
 
         private void ShowMap()
@@ -729,7 +781,6 @@ namespace App3.Forms
         private void addToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ObjectForm objFrm = new ObjectForm(this);
-            AddMapClickEvents(objFrm.MapBoxClick);
             objFrm.Show();
         }
 
@@ -754,11 +805,6 @@ namespace App3.Forms
         public void ChangeDistrictScale(double Scale)
         {
             oDistricts.SetScale(Scale);
-        }
-
-        public void ShowDistrict(string DistrictName)
-        {
-            oDistricts.OpenOneDistrictForm(DistrictName);
         }
 
         private void ShowEventForm()
@@ -1170,6 +1216,10 @@ namespace App3.Forms
         private void мониторУзловToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (new MonitorForm()).ShowDialog();
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
         }
     }
 }

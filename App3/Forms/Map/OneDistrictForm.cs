@@ -31,23 +31,13 @@ namespace App3.Forms
         // private string DistrictName = "";
         // private string DistrictWay = "";
 
-        private int district_id = 0;
         public int DistrictId
         {
             get
             {
-                return district_id;
+                return this.oMapper.DistrictId;
             }
         }
-
-        /*        private void OnGetMessage(MessageGroupId pMsgGrId, AKObject pObject, string pMsgTxt, int pGroupId)
-                {
-                    if (Visible)
-                    {
-                        MessageBox.Show(pMsgTxt);
-                    }
-                }
-         * */
 
         public OneDistrictForm(Form Parent, int pDistrictId)
         {

@@ -92,10 +92,10 @@ namespace App3.Forms
         private void UpdateData(DateTime beginDate, DateTime endDate, int last = -1, int district_id = -1)
         {
             DataSet ds = new DataSet();
-            string sql = String.Format("SELECT m.objectnumber, m.datetime, m.code, m.typenumber, m.class, ms.message, m.address, rm.name as district " +
+            string sql = String.Format("SELECT m.objectnumber, m.datetime, m.code, m.typenumber, m.class, ms.message, ip.ipaddress as address, rm.name as district " +
                                     "FROM oko.event m JOIN oko.message_text ms ON m.class = ms.class AND m.code = ms.code " +
-                                    "LEFT JOIN oko.ipaddresses ip on ip.ipaddress = m.address " +
-                                    "LEFT JOIN regions2map rm on rm.num = ip.id_region " +
+                                    "LEFT JOIN regions2map rm on rm.num = m.region_id " +
+                                    "LEFT JOIN oko.ipaddresses ip on ip.id_region = m.region_id " +
                                     "WHERE datetime BETWEEN '{0}' AND '{1}'", beginDate, endDate);
             if (district_id != -1)
             {
@@ -168,8 +168,8 @@ namespace App3.Forms
 
         private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            // string ObjCode = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-            // (new ObjectForm(this.MdiParent, ObjCode)).Show();
+            int ObjCode = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToInt();
+            (new ObjectForm(this.MdiParent, ObjCode)).Show();
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)

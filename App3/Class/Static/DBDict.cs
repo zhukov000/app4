@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace App3.Class.Static
@@ -77,8 +75,8 @@ namespace App3.Class.Static
                 );
             TDistrict = DataBase.RowSelect("select num, fullname, name, color from regions2map order by fullname")
                 .ToDictionary(
-                    x => x[2].ToString(),
-                    x => new Tuple<int, string, string>(x[0].ToInt(), x[1].ToString(), x[3].ToString())
+                    x => x[1].ToString(),
+                    x => new Tuple<int, string, string>(x[0].ToInt(), x[2].ToString(), x[3].ToString())
                 );
             try
             {
@@ -169,32 +167,72 @@ namespace App3.Class.Static
                 combo.SelectedIndex = 0;
             }
         }
-
-        #region Depricated Работа со связанными справочниками
-        /*public static List<KeyValuePair<int,string>> DictValues(string Table, string FieldK, string FieldV)
-        {
-            List<KeyValuePair<int, string>> r = new List<KeyValuePair<int, string>>();
-            DataSet ds = new DataSet();
-            DataBase.RowSelect("SELECT * FROM " + Table, ds);
-            foreach (DataRow dr in ds.Tables[0].Rows)
-            {
-                r.Add(new KeyValuePair<int, string>(
-                    (dr[FieldK]),
-                    dr[FieldV].ToString()
-                ));
-            }
-            return r;
-        }
-
-        public static List<KeyValuePair<int, string>> Classes()
-        {
-            return DictValues("oko.klass", "id", "name");
-        }
-
-        public static List<KeyValuePair<int, string>> Statuses()
-        {
-            return DictValues("oko.tstatus", "id", "status"); ;
-        } */
-        #endregion
     }
+
+    #region Справочник типов запуска
+
+    public class StartupType
+    {
+        public string Value
+        {
+            get;
+            set;
+        }
+
+        public static StartupType Run
+        {
+            get
+            {
+                return new StartupType("run");
+            }
+        }
+
+        public static StartupType Log
+        {
+            get
+            {
+                return new StartupType("log");
+            }
+        }
+
+        public static StartupType Monitor
+        {
+            get
+            {
+                return new StartupType("monitor");
+            }
+        }
+
+        public static StartupType Socket
+        {
+            get
+            {
+                return new StartupType("socket");
+            }
+        }
+
+        public static StartupType Server
+        {
+            get
+            {
+                return new StartupType("server");
+            }
+        }
+
+        private StartupType(string value)
+        {
+            this.Value = value;
+        }
+
+        public override string ToString()
+        {
+            return this.Value;
+        }
+
+        public static implicit operator string(StartupType t)
+        {
+            return t.ToString();
+        }
+    }
+    #endregion
 }
