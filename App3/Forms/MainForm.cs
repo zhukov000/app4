@@ -457,8 +457,7 @@ namespace App3.Forms
 
                 this.Text = this.Text + " версия " + Config.APPVERSION;
                 Logger.Instance.WriteToLog(this.Text);
-                // обновление статусов регионов
-                DataBase.RunCommand("select oko.update_district_statuses()");
+                Utils.UpdateDistrictStatuses();
 
                 // Старт web-серсиса
                 if (Config.Get("StartWeb") != "0")

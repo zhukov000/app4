@@ -26,6 +26,7 @@ namespace App3.Forms
 
         public void RefreshMaps()
         {
+            Utils.UpdateDistrictStatuses();
             if (map != null)
             {
                 map.Refresh();

@@ -54,6 +54,12 @@ namespace App3.Class
             }
             return ret;
         }
+        
+        // обновление статусов регионов
+        static public void UpdateDistrictStatuses()
+        {   
+            DataBase.RunCommand("select oko.update_district_statuses()");
+        }
 
         public static void FreezeObject(Int64 pObjectId, DateTime pFreezeOff)
         {

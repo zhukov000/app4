@@ -127,18 +127,40 @@ namespace App3.Web
 
             Get["/data"] = x =>
             {
-                DataBase.RunCommand("select oko.update_district_statuses()");
+                Utils.UpdateDistrictStatuses();
                 string query_dist = "select fullname as name, num as region_id, fias, color from regions2map reg inner join oko.ipaddresses addr on reg.num = addr.id_region where addr.listen order by reg.name";
 
                 var responseContentArray = new JArray();
+                // общая статистика
+                var responseContentObject = new JObject();
+                responseContentObject.Add("name", "Ростовская область");
+                responseContentObject.Add("region_id", "0");
+                responseContentObject.Add("fias", "61000000000000000000000");
+                responseContentObject.Add("color", "#B39494");
+                int num = 0;
+                foreach (List<object[]> stats in Utils.GetStatistic(0))
+                {
+                    var arr = new JArray();
+                    foreach (object[] row_stat in stats)
+                    {
+                        var row_obj = new JObject();
+                        row_obj.Add("title", row_stat[0].ToString());
+                        row_obj.Add("cnt", row_stat[2].ToInt());
+                        arr.Add(row_obj);
+                    }
+                    responseContentObject.Add("stat" + num.ToString(), arr);
+                    num++;
+                }
+                responseContentArray.Add(responseContentObject);
+                // статистика по каждому муниципальному обр.
                 foreach (object[] row in DataBase.RowSelect(query_dist))
                 {
-                    var responseContentObject = new JObject();
+                    responseContentObject = new JObject();
                     responseContentObject.Add("name", row[0].ToString());
                     responseContentObject.Add("region_id", row[1].ToInt());
                     responseContentObject.Add("fias", row[2].ToString());
                     responseContentObject.Add("color", row[3].ToString());
-                    int num = 0;
+                    num = 0;
                     foreach (List<object[]> stats in Utils.GetStatistic(row[1].ToInt()))
                     {
                         var arr = new JArray();
