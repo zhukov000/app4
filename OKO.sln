@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaunchService", "LaunchServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication.Sockets.Core", "..\..\..\Documents\Visual Studio 2015\Projects\SocketProject\Sockets Multiple Clients - Bytes\Communication.Sockets.Core\Communication.Sockets.Core.csproj", "{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpoloxInstall", "SpoloxInstall\SpoloxInstall.csproj", "{6DBEC34A-2726-45A1-B685-54540F5BBC1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CD_ROM|Any CPU = CD_ROM|Any CPU
@@ -251,6 +253,36 @@ Global
 		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|x64.Build.0 = Release|Any CPU
 		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|x86.ActiveCfg = Release|Any CPU
 		{DC7B20D0-B1D4-40E1-AF98-7C4DB3291A8D}.SingleImage|x86.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.CD_ROM|Any CPU.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.CD_ROM|Any CPU.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.CD_ROM|x64.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.CD_ROM|x64.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.CD_ROM|x86.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.CD_ROM|x86.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Debug|x64.Build.0 = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Debug|x86.Build.0 = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.DVD-5|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.DVD-5|Any CPU.Build.0 = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.DVD-5|x64.ActiveCfg = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.DVD-5|x64.Build.0 = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.DVD-5|x86.ActiveCfg = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.DVD-5|x86.Build.0 = Debug|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Release|x64.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Release|x64.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Release|x86.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.Release|x86.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.SingleImage|Any CPU.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.SingleImage|Any CPU.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.SingleImage|x64.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.SingleImage|x64.Build.0 = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.SingleImage|x86.ActiveCfg = Release|Any CPU
+		{6DBEC34A-2726-45A1-B685-54540F5BBC1E}.SingleImage|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
