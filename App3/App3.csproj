@@ -303,6 +303,7 @@
     <Compile Include="Class\Socket\SocketUtils.cs" />
     <Compile Include="Class\Static\OKO_Messages.cs" />
     <Compile Include="Class\Static\PermissionControl.cs" />
+    <Compile Include="Class\Static\ReportsRequest.cs" />
     <Compile Include="Class\Static\SyncronizerViaSocket.cs" />
     <Compile Include="Class\Static\TMessageDict.cs" />
     <Compile Include="Class\Synchronization\SyncAddresses.cs" />

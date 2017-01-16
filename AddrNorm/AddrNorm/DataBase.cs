@@ -82,7 +82,7 @@ namespace App3
                 {
                     o = dr[ColName];
                 }
-                catch 
+                catch
                 {
                     o = null;
                 }
@@ -136,11 +136,11 @@ namespace App3
             }
             catch (DataBaseRunCommandExcepion e1)
             {
-                throw e1;
+                throw new DataBaseRunCommandExcepion(e1.Message + " : " + sRequest);
             }
             catch(Exception e)
             {
-                throw new DataBaseRunCommandExcepion(e.Message);
+                throw new DataBaseRunCommandExcepion(e.Message + " : " + sRequest);
             }
             return ret;
         }
@@ -177,7 +177,7 @@ namespace App3
                     }
                     catch (Exception e)
                     {
-                        throw new DataBaseRunCommandExcepion(e.Message);
+                        throw new DataBaseRunCommandExcepion(e.Message + " : " + sRequest);
                     }
                 }
             }
@@ -205,7 +205,7 @@ namespace App3
                     }
                     catch (Exception e)
                     {
-                        throw new DataBaseRunCommandExcepion(e.Message);
+                        throw new DataBaseRunCommandExcepion(e.Message + " : " + pCommand);
                     }
                 }
             }
@@ -294,7 +294,7 @@ namespace App3
             }
             catch(Exception e)
             {
-                throw new DataBaseConnectionErrorExcepion(e.Message);
+                throw new DataBaseConnectionErrorExcepion(e.Message + " : " + pConnectionString);
             }
             return isOpen;
         }
