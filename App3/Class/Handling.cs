@@ -59,7 +59,7 @@ namespace App3.Class
                 // data.IpAddress = Config.Get("SocketServerIP");
                 foreach (object[] current in DataBase.RowSelect("select sn.id, sn.ipv4, sn.port from syn_nodes sn where sn.synout"))
                 {
-                    data.RetrNumber = current[0].ToInt();
+                    data.RetrNumber = Config.Get("CurrenRegion").ToInt(); // current[0].ToInt();
                     string _server = current[1].ToString();
                     int _port = current[2].ToInt();
                     SocketClient.SendObjectFromSocket2(data, _server, _port);

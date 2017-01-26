@@ -31,9 +31,20 @@ namespace App3.Class
             CH_S
         };
 
-        public static void RunCmd(string exefile, string strCmdText)
+        public static void WriteToFile(string batFile, string text)
         {
-            Process.Start(exefile, strCmdText);
+            using (StreamWriter sw = new StreamWriter(batFile))
+                sw.WriteLine(text);
+        }
+
+        public static void RunCmd(string exefile, string strCmdText, bool wait = true)
+        {
+            Process process = new Process { StartInfo = new ProcessStartInfo(exefile, strCmdText) };
+            process.Start();
+            if (wait)
+            {
+                process.WaitForExit();
+            }
         }
 
         public static bool RunApp(string Path)

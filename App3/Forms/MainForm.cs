@@ -35,6 +35,7 @@ namespace App3.Forms
 
         private OKOGate.Module oModuleXML;
         private GuardAgent2.Module oModuleCOM;
+        // private List<PortListner> oSocketSync;
         private PortListner oSocketSync;
 
         private int ChildFormNumber = 0;
@@ -354,6 +355,17 @@ namespace App3.Forms
             }
         }
 
+        private void GetObjectViaSocket(Class.Socket.SendObject data)
+        {
+            string regionName = "";
+            try
+            {
+                regionName = DBDict.TRegion[data.RetrNumber].Item1;
+            }
+            catch { }
+            oEventsForm.AddEvent(data.ObjectNum.ToString(), regionName /*+ " " + data.Message*/, 0);
+        }
+
         public MainForm()
         {
             this.Visible = false;
@@ -477,7 +489,23 @@ namespace App3.Forms
                 if (Config.Get("SocketEnableSync") == "1")
                 {
                     PortListner.onProcess += new ClientObject.ProcessDelegate(Handling.GetObjectDelegate);
-                    oSocketSync = new PortListner(Config.Get("SynchPort").ToInt());
+                    PortListner.onProcess += new ClientObject.ProcessDelegate(GetObjectViaSocket);
+
+                    int SynchPortStart = Config.Get("SynchPort").ToInt();
+                    oSocketSync = new PortListner(SynchPortStart);
+                    /*int SynchPortEnd = SynchPortStart;
+                    try
+                    {
+                        SynchPortEnd = Config.Get("SynchPortEnd").ToInt();
+                    }
+                    catch
+                    {
+                        SynchPortEnd = SynchPortStart;
+                    }
+                    for(int i = SynchPortStart; i<=SynchPortEnd; i++)
+                    {
+                        oSocketSync.Add(new PortListner(i));
+                    }*/
                 }
                 //
                 int pRegionId = Config.Get("CurrenRegion").ToInt();
@@ -651,6 +679,7 @@ namespace App3.Forms
                 this.Visible = true;
                 Utils.DestroyStartThread(sf);
             }
+            this.WindowState = FormWindowState.Minimized;
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
@@ -673,7 +702,14 @@ namespace App3.Forms
                     DataBase.CloseConnection();
                 }
                 StopOkoGate();
-                if (Config.Get("SocketEnableSync") == "1") oSocketSync.Stop();
+                if (Config.Get("SocketEnableSync") == "1")
+                {
+                    oSocketSync.Stop();
+                    /*foreach (var obj in oSocketSync)
+                    { 
+                        obj.Stop();
+                    }*/
+                }
             }
             catch(Exception ex)
             {

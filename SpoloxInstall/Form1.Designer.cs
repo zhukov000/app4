@@ -157,6 +157,7 @@
             this.button4.TabIndex = 11;
             this.button4.Text = "Обзор";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // arhivePath
             // 
@@ -216,6 +217,7 @@
             this.button8.TabIndex = 12;
             this.button8.Text = "4. Копирование";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button9
             // 
@@ -226,6 +228,7 @@
             this.button9.TabIndex = 12;
             this.button9.Text = "5. Конфигурация";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button10
             // 
@@ -235,6 +238,7 @@
             this.button10.TabIndex = 15;
             this.button10.Text = "Обзор";
             this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // dirPath
             // 
@@ -300,7 +304,7 @@
             this.dbName.Name = "dbName";
             this.dbName.Size = new System.Drawing.Size(153, 20);
             this.dbName.TabIndex = 19;
-            this.dbName.Text = "gis2";
+            this.dbName.Text = "gis";
             // 
             // label12
             // 
@@ -418,15 +422,16 @@
             this.button11.TabIndex = 12;
             this.button11.Text = "6. Запуск";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // label13
             // 
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(12, 158);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(93, 13);
+            this.label13.Size = new System.Drawing.Size(62, 13);
             this.label13.TabIndex = 6;
-            this.label13.Text = "Путь к pg_restore";
+            this.label13.Text = "Путь к psql";
             // 
             // pgbinPath
             // 
@@ -434,7 +439,7 @@
             this.pgbinPath.Name = "pgbinPath";
             this.pgbinPath.Size = new System.Drawing.Size(406, 20);
             this.pgbinPath.TabIndex = 7;
-            this.pgbinPath.Text = "C:\\Program Files\\PostgreSQL\\9.6\\bin\\pg_restore.exe";
+            this.pgbinPath.Text = "C:\\Program Files\\PostgreSQL\\9.6\\bin\\psql.exe";
             // 
             // button12
             // 

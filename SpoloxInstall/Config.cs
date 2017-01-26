@@ -77,10 +77,13 @@ namespace App3.Class
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public static void Set(string key, string value)
+        public static void Set(string key, string value, string configFile = "")
         {
             ConfigurationManager.AppSettings.Set(key, value);
-            string configFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile; 
+            if (configFile == "")
+            {
+                configFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+            }
             ExeConfigurationFileMap configFileMap = new ExeConfigurationFileMap();
             configFileMap.ExeConfigFilename = configFile;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);

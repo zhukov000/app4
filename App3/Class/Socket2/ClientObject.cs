@@ -55,7 +55,7 @@ namespace App3.Class.Socket2
                             onProcess?.Invoke(obj);
                             if (Config.Get("RedirectAllIncomming") != "")
                             { // пересылка
-                                SocketClient.SendObjectFromSocket2(obj, Config.Get("RedirectAllIncommingServer"), Config.Get("RedirectAllIncommingPort").ToInt());
+                                // SocketClient.SendObjectFromSocket2(obj, Config.Get("RedirectAllIncommingServer"), Config.Get("RedirectAllIncommingPort").ToInt());
                             }
                             // отправляем обратно сообщение об успешном получении
                             datapart = Encoding.Unicode.GetBytes("ACCEPTED");
