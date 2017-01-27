@@ -358,12 +358,21 @@ namespace App3.Forms
         private void GetObjectViaSocket(Class.Socket.SendObject data)
         {
             string regionName = "";
+            string message = "";
+            int idObj = 0;
             try
             {
-                regionName = DBDict.TRegion[data.RetrNumber].Item1;
+                IDictionary<string, object> dataInfo = data.GetInfo();
+                regionName = DBDict.TRegion[dataInfo["region_id"].ToInt()].Item1;
+                int OkoVersion = dataInfo["oko_version"].ToInt();
+                int Class = dataInfo["class"].ToInt();
+                int Code = dataInfo["code"].ToInt();
+                message = string.Format("{0}({1})", DBDict.TMessage[OkoVersion, Class, Code].Item2, DBDict.TMessage[OkoVersion, Class, Code].Item3);
+                idObj = data.RetrNumber;
             }
             catch { }
-            oEventsForm.AddEvent(data.ObjectNum.ToString(), regionName /*+ " " + data.Message*/, 0);
+            
+            oEventsForm.AddEvent(data.ObjectNum.ToString(), regionName + ": " + message, idObj);
         }
 
         public MainForm()

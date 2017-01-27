@@ -51,7 +51,7 @@ namespace App3.Class
         /// Отправить данные по сокету
         /// </summary>
         /// <param name="pData"></param>
-        public static void SendDataBySocket(IDictionary<string, object> pData)
+        public static void SendDataBySocket(IDictionary<string, object> pData, long objectId)
         {
             SendObject data = new SendObject(pData);
             try
@@ -59,7 +59,7 @@ namespace App3.Class
                 // data.IpAddress = Config.Get("SocketServerIP");
                 foreach (object[] current in DataBase.RowSelect("select sn.id, sn.ipv4, sn.port from syn_nodes sn where sn.synout"))
                 {
-                    data.RetrNumber = Config.Get("CurrenRegion").ToInt(); // current[0].ToInt();
+                    data.RetrNumber = (int)objectId; // Config.Get("CurrenRegion").ToInt(); // current[0].ToInt();
                     string _server = current[1].ToString();
                     int _port = current[2].ToInt();
                     SocketClient.SendObjectFromSocket2(data, _server, _port);
@@ -107,7 +107,7 @@ namespace App3.Class
                 DataBase.RunCommandInsert("oko.event", data, "id", out array);
                 if (Config.Get("SocketEnableSync") == "1")
                 {
-                    SendDataBySocket(data);
+                    SendDataBySocket(data, aKObject.Id);
                 }
                 if (array.Count<object>() > 0)
                 {

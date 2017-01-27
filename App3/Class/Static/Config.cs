@@ -12,7 +12,7 @@ namespace App3.Class
 {
     public static class Config
     {
-        public static string APPVERSION = "1.09";
+        public static string APPVERSION = "1.10";
 
         private static Dictionary<string, string> DAliases = new Dictionary<string, string>();
 
