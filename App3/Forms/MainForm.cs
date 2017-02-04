@@ -23,7 +23,6 @@ namespace App3.Forms
     {
         private bool NotStartedNormal = false;
         private StartForm sf;
-        private int SessionID = -1;
 
         public const int FORM_TOP_OFFSET = 113;
         public const int FORM_BORDER_WIDTH = 10;
@@ -55,6 +54,7 @@ namespace App3.Forms
         private Objects oObjectList;
 
         private bool isShowEventForm = false;
+        // private bool isLogin = false;
 
         public void SetStatusText(string pText)
         {
@@ -642,11 +642,12 @@ namespace App3.Forms
                 int i = 10;
                 while (i-- > 0)
                 {
+                    DateTime dt = DateTime.Now;
                     try
                     {
                         DataBase.RunCommandInsert(
                             "journal",
-                            new Dictionary<string, object>() { { "start", DateTime.Now.ToString().Q() } },
+                            new Dictionary<string, object>() { { "start", dt.ToString().Q() } },
                             "id",
                             out res
                         );
@@ -658,7 +659,8 @@ namespace App3.Forms
                     }
                     if (res.Length != 0)
                     {
-                        SessionID = (int)res[0];
+                        DBDict.SessionID = (int)res[0];
+                        DBDict.SessionStart = dt;
                         break;
                     }
                     Logger.Instance.WriteToLog("При запуске не удалось получить ID сессии");
@@ -688,7 +690,10 @@ namespace App3.Forms
                 this.Visible = true;
                 Utils.DestroyStartThread(sf);
             }
-            this.WindowState = FormWindowState.Minimized;
+            if (Config.Get("StartupMinimized") != "0")
+            {
+                this.WindowState = FormWindowState.Minimized;
+            }
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
@@ -707,7 +712,7 @@ namespace App3.Forms
                     DataBase.RunCommandUpdate(
                         "journal",
                         new Dictionary<string, object>() { { "finish", DateTime.Now.ToString().Q() } },
-                        new Dictionary<string, object>() { { "id", SessionID } });
+                        new Dictionary<string, object>() { { "id", DBDict.SessionID } });
                     DataBase.CloseConnection();
                 }
                 StopOkoGate();
@@ -806,7 +811,7 @@ namespace App3.Forms
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Если приложение будет закрыто - на данном узле мониторинг событий будет остановлен. Завершить работу с программой?", "Выйти из программы", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            if ( MessageBox.Show("Если приложение будет закрыто - на данном узле мониторинг событий будет остановлен. Завершить работу с программой?", "Выйти из программы", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 Close();
             }
@@ -1231,6 +1236,7 @@ namespace App3.Forms
             toolStripButton1.Visible = f;
             тестовоеСообщениеToolStripMenuItem.Enabled = f;
             мониторУзловToolStripMenuItem.Enabled = f;
+            toolStripButton3.Visible = f;
         }
 
         private void фиксацияЖурналаToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1264,6 +1270,48 @@ namespace App3.Forms
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
+            if (Config.Get("AutoLogin") != "")
+            {
+                if (PermissionControl.auth(Config.Get("AutoLogin")))
+                {
+                    Login();
+                }
+            }
+        }
+
+        private void отправитьПоследниеСообщенияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string sql = @"SELECT DISTINCT ON (objectnumber) objectnumber,
+                                alarmgroupid, code, channelnumber, partnumber,
+                                zoneusernumber, typenumber, class, address, 
+                                datetime, region_id, oko_version, retrnumber, 
+                                isrepeat, siglevel, id
+                           FROM   oko.event
+                           WHERE region_id = ?
+                           ORDER BY objectnumber, datetime DESC";
+
+            foreach (object[] row in DataBase.RowSelect(string.Format(sql, Config.Get("CurrenRegion").ToInt())))
+            {
+                IDictionary<string, object> data = new Dictionary<string, object>
+                {
+                    { "objectnumber", row[0] },
+                    { "alarmgroupid", row[1] },
+                    { "code", row[2] },
+                    { "channelnumber", row[3] },
+                    { "partnumber", row[4] },
+                    { "zoneusernumber", row[5] },
+                    { "typenumber", row[6] },
+                    { "class", row[7] },
+                    { "address", row[8] },
+                    { "datetime", row[9].Q() },
+                    { "region_id", row[10] },
+                    { "oko_version", row[11] },
+                    { "retrnumber", row[12] },
+                    { "isrepeat", row[13] },
+                    { "siglevel", row[14] }
+                };
+                Handling.SendDataBySocket(data, row[15].ToInt());
+            }
         }
     }
 }

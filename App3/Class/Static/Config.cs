@@ -12,7 +12,7 @@ namespace App3.Class
 {
     public static class Config
     {
-        public static string APPVERSION = "1.10";
+        public static string APPVERSION = "1.11";
 
         private static Dictionary<string, string> DAliases = new Dictionary<string, string>();
 
@@ -38,9 +38,9 @@ namespace App3.Class
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static string GetByKey(string key)
+        public static string GetByKey(string key, string defaultval = "")
         {
-            string s = "";
+            string s = defaultval;
             try
             {
                 s = ConfigurationManager.AppSettings[key];
@@ -51,9 +51,9 @@ namespace App3.Class
             return s;
         }
 
-        public static string Get(string key)
+        public static string Get(string key, string defaultval = "")
         {
-            return GetByKey(key);
+            return GetByKey(key, defaultval);
         }
 
         /// <summary>

@@ -26,6 +26,9 @@ namespace App3.Class.Static
         public static IDictionary<int, Tuple<string, bool>> TMessages;
         public static TMessageDict TMessage;
 
+        public static int SessionID = -1;
+        public static DateTime SessionStart = DateTime.Now;
+
         public static void UpdateDictionary(string name)
         {
             switch(name)

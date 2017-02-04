@@ -7,13 +7,13 @@ using System.Runtime.Versioning;
 using System.Security;
 using System.Security.Permissions;
 
-[assembly: AssemblyVersion("1.0.10.0")]
+[assembly: AssemblyVersion("1.0.11.0")]
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: AssemblyCompany("Стройэлектробыт")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyFileVersion("1.0.10.0")]
+[assembly: AssemblyFileVersion("1.0.11.0")]
 [assembly: AssemblyProduct("Spolox")]
 [assembly: AssemblyTitle("Spolox")]
 [assembly: AssemblyTrademark("")]

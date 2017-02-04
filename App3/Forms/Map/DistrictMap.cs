@@ -26,6 +26,18 @@ namespace App3.Forms
 
         public void RefreshMaps()
         {
+            if (DBDict.Settings["RESTART_TIME"] != "")
+            {
+                int mins = DBDict.Settings["RESTART_TIME"].ToInt();
+                TimeSpan duration = DateTime.Now - DBDict.SessionStart;
+                if (duration.TotalMinutes > mins)
+                {
+                    AutoClosingMessageBox.Show("Происходит плановая перезагрузка приложения...", "Предупреждение", 2000);
+                    Logger.Instance.WriteToLog("Плановая перезагрузка приложения");
+                    Application.Exit();
+                }
+            }
+            
             Utils.UpdateDistrictStatuses();
             if (map != null)
             {
@@ -33,6 +45,7 @@ namespace App3.Forms
             }
             mapBox.Refresh();
             LayerCache.UpdateLayer(LayerType.Object, -1);
+
         }
 
         private void SetGrBox2TextThreadSafe(string pText)

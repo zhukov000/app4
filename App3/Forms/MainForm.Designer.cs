@@ -103,6 +103,7 @@ namespace App3.Forms
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.отправитьПоследниеСообщенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -131,6 +132,7 @@ namespace App3.Forms
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.синхронизацияToolStripMenuItem,
+            this.отправитьПоследниеСообщенияToolStripMenuItem,
             this.logToolStripMenuItem,
             this.journalToolStripMenuItem,
             this.фиксацияЖурналаToolStripMenuItem,
@@ -142,35 +144,35 @@ namespace App3.Forms
             // синхронизацияToolStripMenuItem
             // 
             this.синхронизацияToolStripMenuItem.Name = "синхронизацияToolStripMenuItem";
-            this.синхронизацияToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.синхронизацияToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
             this.синхронизацияToolStripMenuItem.Text = "Синхронизация";
             this.синхронизацияToolStripMenuItem.Click += new System.EventHandler(this.синхронизацияToolStripMenuItem_Click);
             // 
             // logToolStripMenuItem
             // 
             this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
             this.logToolStripMenuItem.Text = "Журнал событий";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
             // 
             // journalToolStripMenuItem
             // 
             this.journalToolStripMenuItem.Name = "journalToolStripMenuItem";
-            this.journalToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.journalToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
             this.journalToolStripMenuItem.Text = "Журнал работы";
             this.journalToolStripMenuItem.Click += new System.EventHandler(this.журналРаботыToolStripMenuItem_Click);
             // 
             // фиксацияЖурналаToolStripMenuItem
             // 
             this.фиксацияЖурналаToolStripMenuItem.Name = "фиксацияЖурналаToolStripMenuItem";
-            this.фиксацияЖурналаToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.фиксацияЖурналаToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
             this.фиксацияЖурналаToolStripMenuItem.Text = "Фиксация журнала";
             this.фиксацияЖурналаToolStripMenuItem.Click += new System.EventHandler(this.фиксацияЖурналаToolStripMenuItem_Click);
             // 
             // выходToolStripMenuItem
             // 
             this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
-            this.выходToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.выходToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
             this.выходToolStripMenuItem.Text = "Выход";
             this.выходToolStripMenuItem.Click += new System.EventHandler(this.выходToolStripMenuItem_Click);
             // 
@@ -666,6 +668,13 @@ namespace App3.Forms
             this.timer1.Interval = 60000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // отправитьПоследниеСообщенияToolStripMenuItem
+            // 
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Name = "отправитьПоследниеСообщенияToolStripMenuItem";
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Text = "Синхронизация последних сообщения";
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Click += new System.EventHandler(this.отправитьПоследниеСообщенияToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -773,6 +782,7 @@ namespace App3.Forms
         private ToolStripMenuItem journalToolStripMenuItem;
         private ToolStripMenuItem тестовоеСообщениеToolStripMenuItem;
         private ToolStripMenuItem мониторУзловToolStripMenuItem;
+        private ToolStripMenuItem отправитьПоследниеСообщенияToolStripMenuItem;
     }
 }
 
