@@ -130,6 +130,10 @@ namespace App3.Class
                 }
                 flag = true;
             }
+            else
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, "Сообщение не было сохранено в БД и/или АК объекта не создана: " + ObjectNumber));
+            }
             return flag;
         }
 
@@ -221,6 +225,16 @@ namespace App3.Class
             if (!flag)
             {
                 Handling.ProcessingEvent(okoVersion, regionId, objectNumber, retrNumber, _class, code, part, zone, chnlMask, idx, DateTime.Now, signalLevel, 0, message.Address);
+            }
+            else
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
+                    "!!! !!! !!! Сообщение не было обработано" ));
+                try
+                {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Объект: " + message.Get("Object").ToInt()));
+                }
+                catch { }
             }
         }
 

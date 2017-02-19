@@ -76,14 +76,14 @@ namespace RESTService
                         using (FtpConnection ftp = new FtpConnection(server, "anonymous", ""))
                         {
 
-                            ftp.Open(); 
-                            ftp.Login(); 
+                            ftp.Open();
+                            ftp.Login();
 
-                            if (ftp.DirectoryExists("/Spolox")) 
+                            if (ftp.DirectoryExists("/Spolox"))
                                 ftp.SetCurrentDirectory("/Spolox");
 
                             string dirDistr = "/Spolox/" + version;
-                            foreach (var FtpFile in ftp.GetFiles("/Spolox/"+version))
+                            foreach (var FtpFile in ftp.GetFiles("/Spolox/" + version))
                             {
                                 Console.WriteLine(FtpFile.Name + " => " + dir + @"\" + FtpFile.Name);
                                 ftp.GetFile(dirDistr + "/" + FtpFile.Name, dir + @"\" + FtpFile.Name, false);

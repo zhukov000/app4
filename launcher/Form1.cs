@@ -37,7 +37,7 @@ namespace launcher
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            WindowState = FormWindowState.Minimized;
+            this.WindowState = FormWindowState.Minimized;
             Hide();
             Start();
         }
@@ -53,7 +53,16 @@ namespace launcher
                         string updPath = ConfigurationManager.AppSettings["UpdBatPath"];
                         Process firstProc = new Process();
                         firstProc.StartInfo.FileName = FILENAME;
+                        // RunOption
                         firstProc.StartInfo.Arguments = "run";
+                        try
+                        {
+                            firstProc.StartInfo.Arguments = ConfigurationManager.AppSettings["RunOption"]; 
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                        }
                         firstProc.EnableRaisingEvents = true;
 
                         while (isAlive)
@@ -80,7 +89,11 @@ namespace launcher
                             try
                             {
                                 // запуск обновления
-                                ExecuteCommand(updPath);
+                                // ExecuteCommand(updPath);
+                                if (ConfigurationManager.AppSettings["EnableUpdate"] == "1")
+                                {
+                                    RunCmd(updPath, "");
+                                }
                             } catch (Exception ex)
                             {
                                 Logger.Instance.WriteToLog("Невозможно запустить команду обновления приложения: " + ex.Message);
@@ -145,6 +158,16 @@ namespace launcher
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Stop();
+        }
+
+        public static void RunCmd(string exefile, string strCmdText, bool wait = true)
+        {
+            Process process = new Process { StartInfo = new ProcessStartInfo(exefile, strCmdText) };
+            process.Start();
+            if (wait)
+            {
+                process.WaitForExit();
+            }
         }
 
         static void ExecuteCommand(string command)

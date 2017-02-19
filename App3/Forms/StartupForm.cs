@@ -36,5 +36,10 @@ namespace App3.Forms
         {
             startupType = StartupType.Socket;
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            startupType = StartupType.Server;
+        }
     }
 }

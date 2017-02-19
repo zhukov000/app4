@@ -39,6 +39,8 @@ namespace App3.Forms
             }
             
             Utils.UpdateDistrictStatuses();
+            LayerCache.UpdateLayer(LayerType.AllRegion, -1);
+
             if (map != null)
             {
                 map.Refresh();

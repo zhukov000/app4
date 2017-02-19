@@ -159,7 +159,22 @@ namespace App3
             }
             else if (tstart == StartupType.Server)
             {
-                // TODO
+                using (var mutex = new Mutex(false, "Spolox Server"))
+                {
+                    if (mutex.WaitOne(TimeSpan.FromSeconds(2)))
+                    {
+                        try
+                        {
+                            DBDict.IsServer = true;
+                            Application.Run(new App3.Forms.ServerForm());
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
+                            Logger.Instance.FlushLog();
+                        }
+                    }
+                }
             }
             Environment.Exit(0);
         }

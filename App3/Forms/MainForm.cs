@@ -325,7 +325,7 @@ namespace App3.Forms
                         break;
                 }*/
             }
-            oEventsForm.AddEvent(pObject.number.ToString(), pMsgTxt, pObject.Id);
+            if (!DBDict.IsServer) oEventsForm.AddEvent(pObject.number.ToString(), pMsgTxt, pObject.Id);
         }
 
         /// <summary>
@@ -371,16 +371,19 @@ namespace App3.Forms
                 idObj = data.RetrNumber;
             }
             catch { }
-            
-            oEventsForm.AddEvent(data.ObjectNum.ToString(), regionName + ": " + message, idObj);
+
+            if (!DBDict.IsServer) oEventsForm.AddEvent(data.ObjectNum.ToString(), regionName + ": " + message, idObj);
         }
 
         public MainForm()
         {
-            this.Visible = false;
-            sf = Utils.CreateLoadThread();
-            InitializeComponent();
-            Logout();
+            if (!DBDict.IsServer)
+            {
+                this.Visible = false;
+                sf = Utils.CreateLoadThread();
+                InitializeComponent();
+                Logout();
+            }
             Boolean f = false;
             // открыть соединение с БД
             try
@@ -394,7 +397,7 @@ namespace App3.Forms
                         Config.Get("DBPassword"),
                         Config.Get("DBName")
                     ));
-                SetStatusText("Система запущена");
+                if (!DBDict.IsServer) SetStatusText("Система запущена");
                 f = true;
             }
             catch (DataBaseConnectionErrorExcepion ex)
@@ -432,21 +435,24 @@ namespace App3.Forms
                 bool flag = false;
                 try
                 {
-                    // окно событий
-                    oEventsForm = new MessForm(this);
-                    // oEventsForm.Show();
-                    SetChildFormsPosition();
-                    oConfigForm = new ConfigForm(this);
-                    oDBEvents = new DBEvents(this);
-                    oSynchronizeForm = new SynchronizeForm(this);
-                    oLogForm = new LogForm(this);
-                    oMessagesText = new TableEditForm(this, "oko.message_text", "Справочник сообщений");
-                    oWarnMonitor = new WarningForm(this);
-                    // окошко статистики
-                    oGlobalStatistic = new GlobalStat();
-                    //
-                    oObjectList = new Objects(this);
-                    this.oJournal = new Journal(this);
+                    if (!DBDict.IsServer)
+                    {
+                        // окно событий
+                        oEventsForm = new MessForm(this);
+                        // oEventsForm.Show();
+                        SetChildFormsPosition();
+                        oConfigForm = new ConfigForm(this);
+                        oDBEvents = new DBEvents(this);
+                        oSynchronizeForm = new SynchronizeForm(this);
+                        oLogForm = new LogForm(this);
+                        oMessagesText = new TableEditForm(this, "oko.message_text", "Справочник сообщений");
+                        oWarnMonitor = new WarningForm(this);
+                        // окошко статистики
+                        oGlobalStatistic = new GlobalStat();
+                        //
+                        oObjectList = new Objects(this);
+                        this.oJournal = new Journal(this);
+                    }
 
                     flag = /*DBDict.Settings.ContainsKey("START_XML_GUARD") &&*/ DBDict.Settings["START_XML_GUARD"].ToBool();
                 }
@@ -460,7 +466,7 @@ namespace App3.Forms
 
                 if (flag)
                 {
-                    Logger.Instance.WriteToLog("START_XML_GUARD = True");
+                    Logger.Instance.WriteToLog("START Listen");
                     try
                     {
                         this.StartOkoGate();
@@ -471,14 +477,18 @@ namespace App3.Forms
                     }
                     Logger.Instance.FlushLog();
                 }
-                
+
                 // включить карту
-                mapToolStrip.Checked = DBDict.Settings["ENABLE_MAP"].ToBool();
-                soundToolStrip.Checked = DBDict.Settings["ENABLE_MUSIC"].ToBool();
+                if (!DBDict.IsServer)
+                {
+                    mapToolStrip.Checked = DBDict.Settings["ENABLE_MAP"].ToBool();
+                    soundToolStrip.Checked = DBDict.Settings["ENABLE_MUSIC"].ToBool();
+                }
 
                 this.Text = this.Text + " версия " + Config.APPVERSION;
                 Logger.Instance.WriteToLog(this.Text);
-                Utils.UpdateDistrictStatuses();
+
+                if (!DBDict.IsServer) Utils.UpdateDistrictStatuses();
 
                 // Старт web-серсиса
                 if (Config.Get("StartWeb") != "0")
@@ -517,17 +527,20 @@ namespace App3.Forms
                     }*/
                 }
                 //
-                int pRegionId = Config.Get("CurrenRegion").ToInt();
-                LayerCache.Init(pRegionId);
-                LayerCache.CreateAllLayers();
-                LayerCache.UpdateLayer(LayerType.AllRegion, 0);
-                if (Config.Get("CacheUpdateOnStart") == "1")
+                if (!DBDict.IsServer)
                 {
-                    LayerCache.UpdateLayers(pRegionId);
-                }
-                else
-                {
-                    LayerCache.UpdateLayer(LayerType.Object, pRegionId);
+                    int pRegionId = Config.Get("CurrenRegion").ToInt();
+                    LayerCache.Init(pRegionId);
+                    LayerCache.CreateAllLayers();
+                    LayerCache.UpdateLayer(LayerType.AllRegion, 0);
+                    if (Config.Get("CacheUpdateOnStart") == "1")
+                    {
+                        LayerCache.UpdateLayers(pRegionId);
+                    }
+                    else
+                    {
+                        LayerCache.UpdateLayer(LayerType.Object, pRegionId);
+                    }
                 }
                 Logger.Instance.FlushLog();
             }
@@ -631,7 +644,7 @@ namespace App3.Forms
         {
             if (NotStartedNormal)
             {
-                Utils.DestroyStartThread(sf);
+                if (!DBDict.IsServer) Utils.DestroyStartThread(sf);
                 Close();
             }
             else
@@ -667,28 +680,32 @@ namespace App3.Forms
                     Thread.Sleep(1000);
                 }
                 // установка цвета формы
-                MdiClient ctlMDI;
-                foreach (Control ctl in this.Controls)
+                if (!DBDict.IsServer)
                 {
-                    try
+                    MdiClient ctlMDI;
+                    foreach (Control ctl in this.Controls)
                     {
-                        ctlMDI = (MdiClient)ctl;
-                        ctlMDI.BackColor = this.BackColor;
+                        try
+                        {
+                            ctlMDI = (MdiClient)ctl;
+                            ctlMDI.BackColor = this.BackColor;
+                        }
+                        catch (Exception ex)
+                        {
+                            continue;
+                            // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        continue;
-                        // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
-                    }
+                
+                    // события
+                    // ShowDBEvents();
+                    // запуск формы с картой районов
+                    oDistricts = new DistrictMap(this);
+                    oDistricts.Show();
+                    ShowMap();
+                    this.Visible = true;
+                    Utils.DestroyStartThread(sf);
                 }
-                // события
-                // ShowDBEvents();
-                // запуск формы с картой районов
-                oDistricts = new DistrictMap(this);
-                oDistricts.Show();
-                ShowMap();
-                this.Visible = true;
-                Utils.DestroyStartThread(sf);
             }
             if (Config.Get("StartupMinimized") != "0")
             {
@@ -771,26 +788,29 @@ namespace App3.Forms
 
         private void ShowMap()
         {
-            if (mapToolStrip.Checked)
+            if (!DBDict.IsServer)
             {
-                // oMap.Visible = mapToolStrip.Checked;
-                oDistricts.Visible = Visible;
-                // oMap.Show();
-                // oMap.Left = this.Width - oMap.Width - 20;
-                // oMap.Top = 0;
-                UpdInsideSize();
-            }
-            else
-            {
-                oDistricts.Visible = false;
-            }
-            DBDict.Settings["ENABLE_MAP"] = mapToolStrip.Checked.ToString();
+                if (mapToolStrip.Checked)
+                {
+                    // oMap.Visible = mapToolStrip.Checked;
+                    oDistricts.Visible = Visible;
+                    // oMap.Show();
+                    // oMap.Left = this.Width - oMap.Width - 20;
+                    // oMap.Top = 0;
+                    UpdInsideSize();
+                }
+                else
+                {
+                    oDistricts.Visible = false;
+                }
+                DBDict.Settings["ENABLE_MAP"] = mapToolStrip.Checked.ToString();
 
-            DataBase.RunCommand(
-                    string.Format("UPDATE settings SET value = '{0}' WHERE name = 'ENABLE_MAP'",
-                        mapToolStrip.Checked.ToString()
-                    )
-                );
+                DataBase.RunCommand(
+                        string.Format("UPDATE settings SET value = '{0}' WHERE name = 'ENABLE_MAP'",
+                            mapToolStrip.Checked.ToString()
+                        )
+                    );
+            }
 
         }
 
@@ -867,6 +887,7 @@ namespace App3.Forms
                 }
                 else
                 {
+                    oEventsForm.Hide();
                     oDistricts.Height = oDistricts.Height + oEventsForm.Height;
                     oDistricts.Focus();
                     oDistricts.FocusOneDistrictForm();
@@ -884,7 +905,7 @@ namespace App3.Forms
         {
             if (mapToolStrip.Checked)
             {
-                oDistricts.RefreshMaps();
+                if (!DBDict.IsServer) oDistricts.RefreshMaps();
             }
         }
 
@@ -1033,12 +1054,15 @@ namespace App3.Forms
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            UpdateDiagram();
-            label4.Text = (label4.Text.ToInt() + 1).ToString();
-            if (Updater.NeedUpdate)
+            if (!DBDict.IsServer)
             {
-                AutoClosingMessageBox.Show("Необходимо выполнить обновление. Программа будет закрыта.", "Предупреждение", 10000);
-                Close();
+                UpdateDiagram();
+                label4.Text = (label4.Text.ToInt() + 1).ToString();
+                if (Updater.NeedUpdate)
+                {
+                    AutoClosingMessageBox.Show("Необходимо выполнить обновление. Программа будет закрыта.", "Предупреждение", 10000);
+                    Close();
+                }
             }
         }
 
@@ -1287,7 +1311,7 @@ namespace App3.Forms
                                 datetime, region_id, oko_version, retrnumber, 
                                 isrepeat, siglevel, id
                            FROM   oko.event
-                           WHERE region_id = ?
+                           WHERE region_id = {0}
                            ORDER BY objectnumber, datetime DESC";
 
             foreach (object[] row in DataBase.RowSelect(string.Format(sql, Config.Get("CurrenRegion").ToInt())))

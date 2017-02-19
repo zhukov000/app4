@@ -27,6 +27,7 @@ namespace App3.Class.Static
         public static TMessageDict TMessage;
 
         public static int SessionID = -1;
+        public static bool IsServer = false;
         public static DateTime SessionStart = DateTime.Now;
 
         public static void UpdateDictionary(string name)
