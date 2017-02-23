@@ -19,6 +19,7 @@ namespace App3.Forms
         private void ServerForm_Load(object sender, EventArgs e)
         {
             label2.Text = DateTime.Now.ToString();
+            this.Icon = Properties.Resources.server;
         }
 
         private void button1_Click(object sender, EventArgs e)

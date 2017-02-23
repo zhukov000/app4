@@ -753,6 +753,8 @@
     <Content Include="GdalConfiguration.vb" />
     <Content Include="GdalNativeConfiguration.vb" />
     <Content Include="icon.ico" />
+    <Content Include="Resources\server.ico" />
+    <None Include="server.ico" />
     <None Include="Resources\Data-List-icon.png" />
     <None Include="Resources\w512h5121390849392combo512.png" />
     <None Include="Resources\455695-200.png" />
