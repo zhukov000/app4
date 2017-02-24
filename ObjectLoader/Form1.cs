@@ -85,10 +85,27 @@ namespace ObjectLoader
         /// <param name="regionName"></param>
         private void LoadData(int regionId, string geoName, string regionName)
         {
-            string file = @"c:\temp\Millerovo.xlsx";
+            string file = textBox1.Text;
 
             FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read);
-            IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+            IExcelDataReader excelReader;
+            try
+            {
+                excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                //if (!excelReader.IsClosed)
+                //    excelReader.Close();
+                if (!excelReader.IsValid)
+                {
+                    stream = File.Open(file, FileMode.Open, FileAccess.Read);
+                    excelReader = ExcelReaderFactory.CreateBinaryReader(stream); // для 2003
+                }
+            }
+            catch(Exception ex)
+            {
+                MenuChange(ex.Message);
+                MenuChange("true");
+                return;
+            }
             DataSet result = excelReader.AsDataSet();
             bool skipFirst = checkBox2.Checked;
             bool enableGeo = checkBox1.Checked;
@@ -102,6 +119,8 @@ namespace ObjectLoader
             };
 
             ShowMessage(string.Format("В файле {0} строк.", result.Tables[0].Rows.Count));
+            int c_upd = 0;
+            int c_ins = 0;
             foreach (DataRow row in result.Tables[0].Rows)
             {
                 if (skipFirst)
@@ -137,6 +156,7 @@ namespace ObjectLoader
                         }
                     }
                     // 2. Проверить существует ли объект
+                    
                     object osm_id = DataBase.First(string.Format("select osm_id from oko.object where number = {0} and region_id = {1}", objNumber, regionId), "osm_id");
                     if (osm_id == null)
                     {
@@ -174,6 +194,7 @@ namespace ObjectLoader
                         // сохранение в БД
                         Obj.Save2DB();
                         ShowMessage(string.Format("Объект {0} создан.", objNumber));
+                        c_ins++;
                     }
                     else
                     {
@@ -203,6 +224,7 @@ namespace ObjectLoader
                         }
                         Obj.Save2DB();
                         ShowMessage(string.Format("Объект {0} обновлен.", objNumber));
+                        c_upd++;
                     }
                     // 3. Добавить сообщение
                     // 3.1 Получить код сообщения
@@ -210,6 +232,10 @@ namespace ObjectLoader
                         string.Format("select \"OKO\", class, code from oko.message_text where message like '{0}'", objLastMess), 
                         -1);
                     // 3.2
+                    if (tm_row.Count() == 0)
+                    { // значение по умолчанию
+                        tm_row = new object[3] { 2, 128, 0 };
+                    }
                     DataBase.RunCommandInsert
                     (
                         "oko.event",
@@ -233,7 +259,7 @@ namespace ObjectLoader
                 }
             }
             excelReader.Close();
-
+            ShowMessage(string.Format("Всего объектов: добавлено - {0}, обновлено - {1}", c_ins, c_upd));
             // включить интерфейс программы
             MenuChange("true");
         }
@@ -266,6 +292,7 @@ namespace ObjectLoader
             if (!listBox1.InvokeRequired)
             {
                 listBox1.Items.Add(message);
+                listBox1.SelectedIndex = listBox1.Items.Count - 1; // autoscroll
             }
             else
             {
