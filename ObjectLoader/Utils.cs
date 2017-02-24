@@ -1,5 +1,4 @@
-﻿using App3.Class.Singleton;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -518,7 +517,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
             return false;
         }
@@ -534,7 +533,7 @@ namespace App3.Class
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
                 return "";
             }
 
@@ -617,7 +616,9 @@ namespace App3.Class
         {
             Double i = 0;
             if (S != null)
-                Double.TryParse(S.ToString(), out i);
+            {
+                Double.TryParse(S.ToString().Replace(".", ","), out i);
+            }
             return i;
         }
 

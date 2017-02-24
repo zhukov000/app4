@@ -1,5 +1,4 @@
 ﻿using App3.Class;
-using App3.Class.Singleton;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,12 +38,17 @@ namespace App3.Class
         public string devicetypename = "";
         public bool autocontrol = true;
         public int autointerval = 0;
-        
+
         public List<int> ClassCodes = new List<int>();
         
         #endregion
 
         #region Свойства
+
+        public string Description
+        {
+            get; set;
+        }
 
         public int RegionId
         {
@@ -180,7 +184,6 @@ namespace App3.Class
                 try { id = Convert.ToInt64(RowFromDB["osm_id"]); }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}, id = {3}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, id));
                     id = Convert.ToInt64(RowFromDB["id"]); 
                 }
                 LoadFromDB(RowFromDB);
@@ -298,6 +301,11 @@ namespace App3.Class
             }
         }
 
+        public Address GetAddress()
+        {
+            return address;
+        }
+
         public void SetAddress(Address pAddress)
         {
             address = pAddress;
@@ -321,6 +329,7 @@ namespace App3.Class
                 {"name",name.Q()},
                 {"number",number},
                 {"region_id", RegionId},
+                {"description", Description.Q()},
                 {"way",string.Format("ST_Transform(ST_GeomFromText('POINT({0} {1})', 4326), 900913)",latitude.C2S(), longitude.C2S())}
             };
             if (id != 0)
@@ -352,7 +361,7 @@ namespace App3.Class
 
         private DataRow SelectData(string[] kfields, string[] kvals)
         {
-            string where = " WHERE " + string.Join(" and ", kfields.Zip(kvals, (a, b) => string.Format("{0} = '{1}'", a, b)).ToArray() );
+            string where = " WHERE " + string.Join(" and ", kfields.Zip(kvals, (a, b) => string.Format("{0} = {1}", a, b)).ToArray() );
             return DataBase.FirstRow(
                 String.Format("SELECT *, ST_AsText(ST_Transform(way, 4326)) as coor_txt FROM {0} {1}", OTable, where));
         }

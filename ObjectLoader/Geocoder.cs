@@ -1,5 +1,4 @@
-﻿using App3.Class.Singleton;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -24,7 +23,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             { 
-                Logger.Instance.WriteToLog(string.Format("Utils.getHtmlContent: Не удалось получить информацию об объекте: {0} - {1} ", s, ex.Message));
+                // Logger.Instance.WriteToLog(string.Format("Utils.getHtmlContent: Не удалось получить информацию об объекте: {0} - {1} ", s, ex.Message));
             }
             if (row != null && double.Parse(row["dist"].ToString().Replace('.', ',')) < 10 )
             {
@@ -161,7 +160,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             { 
-                Logger.Instance.WriteToLog(string.Format("Geocoder.Address: Не удалось декодировать координаты: {0} ", ex.Message));
+                // Logger.Instance.WriteToLog(string.Format("Geocoder.Address: Не удалось декодировать координаты: {0} ", ex.Message));
             }
             if (row != null)
             {
@@ -249,7 +248,7 @@ namespace App3.Class
             }
             catch (Exception ex) 
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
             }
             return res;
         }

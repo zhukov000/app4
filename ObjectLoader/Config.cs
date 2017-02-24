@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Collections.Specialized;
 using System.Collections;
 using System.Configuration;
-using App3.Class.Singleton;
 
 namespace App3.Class
 {
@@ -91,7 +90,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("Config.Set: Не получилось изменить значение параметра конфигурации: {0} - {1} ", key, ex.Message));
+                // Logger.Instance.WriteToLog(string.Format("Config.Set: Не получилось изменить значение параметра конфигурации: {0} - {1} ", key, ex.Message));
             }
         }
 

@@ -111,13 +111,17 @@ namespace ObjectLoader
                     continue;
                 }
                 // данные строки
-                string objNumber = row[0].ToString();
-                string objName = row[1].ToString();
+                string objNumber = (row[0].ToString());
+                string objName = (row[1].ToString());
                 string objAddress = row[2].ToString();
                 string objStatus = row[3].ToString();
                 string objLastMess = row[4].ToString();
                 string objLastMessTime = row[5].ToString();
                 string objDesc = row[6].ToString();
+
+                if(objNumber == "")
+                    continue;
+
                 try
                 {
                     // 1. Если включен геокодинг - получить информацию об адресе объекта
@@ -139,9 +143,18 @@ namespace ObjectLoader
                         // 2.1 Если объект не существует, то создать объект и адрес
                         AKObject Obj = new AKObject();
                         Obj.number = objNumber.ToInt();
-                        Obj.name = objName;
+                        Obj.name = objName ;
                         Obj.makedatetime = DateTime.Now.ToString();
-                        Obj.TStatus = TStatus[objStatus];
+                        try
+                        {
+                            Obj.TStatus = TStatus[objStatus];
+                        }
+                        catch
+                        {
+                            Obj.TStatus = 1;
+                        }
+                        Obj.Description = objDesc;
+
                         if (geoObj != null)
                         {
                             // изменить точку
@@ -156,21 +169,64 @@ namespace ObjectLoader
                             objAddr.House = geoObj.house();
 
                             objAddr.Save2DB();
-                            Obj.SetAddress(objAddr);
+                            // Obj.SetAddress(objAddr);
                         }
                         // сохранение в БД
                         Obj.Save2DB();
+                        ShowMessage(string.Format("Объект {0} создан.", objNumber));
                     }
                     else
                     {
                         // 2.2 Если существует, то 
                         // 2.2.1 обновить имя, статус, описание
-                        // 2.2.2 установлена галка обновлять адрес - обновить адрес
+                        AKObject Obj = new AKObject(objNumber.ToInt(), regionId);
+                        Obj.name = objName;
+                        Obj.TStatus = TStatus[objStatus];
+                        Obj.Description = objDesc;
+                        
+                        if (updateAdr && geoObj != null)
+                        {
+                            // 2.2.2 установлена галка обновлять адрес - обновить адрес
+                            Address objAddr = Obj.GetAddress();
+
+                            // изменить точку
+                            // double[] coor = Geocoder.UTM2LL(new double[] { geoObj.latitude().ToDouble(), geoObj.longitude().ToDouble() });
+                            Obj.SetPoint(geoObj.latitude().ToDouble(), geoObj.longitude().ToDouble(), true);
+
+                            objAddr.Region = geoObj.region();
+                            objAddr.Locality = geoObj.locality();
+                            objAddr.Street = geoObj.street();
+                            objAddr.House = geoObj.house();
+
+                            objAddr.Save2DB();
+                            // Obj.SetAddress(objAddr);
+                        }
+                        Obj.Save2DB();
+                        ShowMessage(string.Format("Объект {0} обновлен.", objNumber));
                     }
                     // 3. Добавить сообщение
+                    // 3.1 Получить код сообщения
+                    object[] tm_row = DataBase.FirstRow(
+                        string.Format("select \"OKO\", class, code from oko.message_text where message like '{0}'", objLastMess), 
+                        -1);
+                    // 3.2
+                    DataBase.RunCommandInsert
+                    (
+                        "oko.event",
+                        new Dictionary<string, object>()
+                        {
+                            {"code", tm_row[2]},
+                            {"class", tm_row[1]},
+                            {"oko_version", tm_row[0]},
+                            {"datetime", objLastMessTime},
+                            {"objectnumber", objNumber},
+                            {"region_id", regionId}
+                        }
+                    );
                 }
                 catch (Exception ex)
                 {
+                    ShowMessage(ex.Message);
                     ShowMessage(ex.StackTrace);
                     ShowMessage("Операция загрузки остановлена из-за возникшей ошибки");
                     break;
@@ -257,7 +313,7 @@ namespace ObjectLoader
         private void button2_Click(object sender, EventArgs e)
         {
 
-            // if (Verify())
+            if (Verify())
             {
                 listBox1.Items.Clear();
                 LoadDataDelegate s = new LoadDataDelegate(LoadData);
