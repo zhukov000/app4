@@ -546,6 +546,27 @@ namespace App3.Forms
             }
         }
 
+        private void обновитьВесьКэшToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Очистка кэша потребует перезапуска программы. Вы действительно хотите выполнить перезапуск?", "Очистить кэш", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                Hide();
+                GeoDataCache.ClearCache();
+
+                foreach(object[] row in DataBase.RowSelect("select distinct rm.num from regions2map rm join oko.ipaddresses ip on rm.num = ip.id_region where ip.listen"))
+                {
+                    int pRegionId = row[0].ToInt();
+
+                    LayerCache.Init(pRegionId);
+                    LayerCache.CreateAllLayers();
+                    LayerCache.UpdateLayers(pRegionId);
+                }
+                LayerCache.UpdateLayer(LayerType.AllRegion, 0);
+
+                Utils.restartApp();
+            }
+        }
+
         private void SynchroneStart()
         {
             if (this.toolStrip.InvokeRequired)
@@ -1336,6 +1357,12 @@ namespace App3.Forms
                 };
                 Handling.SendDataBySocket(data, row[15].ToInt());
             }
+        }
+
+        private void обновитьСтатусыРайоновToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Utils.UpdateDistrictStatuses();
+            LayerCache.UpdateLayer(LayerType.AllRegion, -1);
         }
     }
 }

@@ -59,6 +59,10 @@ namespace App3.Class
                 else*/
                     return region_id; 
             }
+            set
+            {
+                region_id = value;
+            }
         }
 
         public int TState

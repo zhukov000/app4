@@ -36,11 +36,12 @@ namespace App3.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.синхронизацияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.отправитьПоследниеСообщенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.journalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.фиксацияЖурналаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,7 +104,8 @@ namespace App3.Forms
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.отправитьПоследниеСообщенияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.обновитьВесьКэшToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.обновитьСтатусыРайоновToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -147,6 +149,13 @@ namespace App3.Forms
             this.синхронизацияToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
             this.синхронизацияToolStripMenuItem.Text = "Синхронизация";
             this.синхронизацияToolStripMenuItem.Click += new System.EventHandler(this.синхронизацияToolStripMenuItem_Click);
+            // 
+            // отправитьПоследниеСообщенияToolStripMenuItem
+            // 
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Name = "отправитьПоследниеСообщенияToolStripMenuItem";
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Text = "Синхронизация последних сообщения";
+            this.отправитьПоследниеСообщенияToolStripMenuItem.Click += new System.EventHandler(this.отправитьПоследниеСообщенияToolStripMenuItem_Click);
             // 
             // logToolStripMenuItem
             // 
@@ -343,7 +352,9 @@ namespace App3.Forms
             // 
             this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.optionsToolStripMenuItem,
+            this.обновитьСтатусыРайоновToolStripMenuItem,
             this.очиститьКэшToolStripMenuItem,
+            this.обновитьВесьКэшToolStripMenuItem,
             this.warnToolStrip,
             this.mapToolStrip,
             this.soundToolStrip,
@@ -592,14 +603,14 @@ namespace App3.Forms
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chart1.Location = new System.Drawing.Point(200, 0);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Name = "Series1";
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(432, 59);
             this.chart1.TabIndex = 2;
             this.chart1.Text = "chart1";
@@ -668,12 +679,19 @@ namespace App3.Forms
             this.timer1.Interval = 60000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // отправитьПоследниеСообщенияToolStripMenuItem
+            // обновитьВесьКэшToolStripMenuItem
             // 
-            this.отправитьПоследниеСообщенияToolStripMenuItem.Name = "отправитьПоследниеСообщенияToolStripMenuItem";
-            this.отправитьПоследниеСообщенияToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
-            this.отправитьПоследниеСообщенияToolStripMenuItem.Text = "Синхронизация последних сообщения";
-            this.отправитьПоследниеСообщенияToolStripMenuItem.Click += new System.EventHandler(this.отправитьПоследниеСообщенияToolStripMenuItem_Click);
+            this.обновитьВесьКэшToolStripMenuItem.Name = "обновитьВесьКэшToolStripMenuItem";
+            this.обновитьВесьКэшToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.обновитьВесьКэшToolStripMenuItem.Text = "Обновить весь кэш";
+            this.обновитьВесьКэшToolStripMenuItem.Click += new System.EventHandler(this.обновитьВесьКэшToolStripMenuItem_Click);
+            // 
+            // обновитьСтатусыРайоновToolStripMenuItem
+            // 
+            this.обновитьСтатусыРайоновToolStripMenuItem.Name = "обновитьСтатусыРайоновToolStripMenuItem";
+            this.обновитьСтатусыРайоновToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.обновитьСтатусыРайоновToolStripMenuItem.Text = "Обновить статусы районов";
+            this.обновитьСтатусыРайоновToolStripMenuItem.Click += new System.EventHandler(this.обновитьСтатусыРайоновToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -783,6 +801,8 @@ namespace App3.Forms
         private ToolStripMenuItem тестовоеСообщениеToolStripMenuItem;
         private ToolStripMenuItem мониторУзловToolStripMenuItem;
         private ToolStripMenuItem отправитьПоследниеСообщенияToolStripMenuItem;
+        private ToolStripMenuItem обновитьВесьКэшToolStripMenuItem;
+        private ToolStripMenuItem обновитьСтатусыРайоновToolStripMenuItem;
     }
 }
 

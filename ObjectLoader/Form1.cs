@@ -138,8 +138,11 @@ namespace ObjectLoader
                 string objLastMessTime = row[5].ToString();
                 string objDesc = row[6].ToString();
 
-                if(objNumber == "")
+                if (objNumber == "" || objNumber.ToInt() == 0)
+                {
+                    ShowMessage("Пропуск строки");
                     continue;
+                }
 
                 try
                 {
@@ -164,6 +167,7 @@ namespace ObjectLoader
                         AKObject Obj = new AKObject();
                         Obj.number = objNumber.ToInt();
                         Obj.name = objName ;
+                        Obj.RegionId = regionId;
                         Obj.makedatetime = DateTime.Now.ToString();
                         try
                         {
@@ -177,23 +181,26 @@ namespace ObjectLoader
 
                         if (geoObj != null)
                         {
+                            Address objAddr = new Address();
                             // изменить точку
                             // double[] coor = Geocoder.UTM2LL(new double[] { geoObj.latitude().ToDouble(), geoObj.longitude().ToDouble() });
-                            Obj.SetPoint(geoObj.latitude().ToDouble(), geoObj.longitude().ToDouble(), true);
+                            Obj.SetPoint(geoObj.longitude().ToDouble(), geoObj.latitude().ToDouble(),  true);
                             // создание адреса
-                            Address objAddr = new Address();
 
                             objAddr.Region = geoObj.region();
                             objAddr.Locality = geoObj.locality();
                             objAddr.Street = geoObj.street();
                             objAddr.House = geoObj.house();
+                            objAddr.FullAddress = geoObj.addressString();
+                            objAddr.latitude = geoObj.latitude();
+                            objAddr.longitude = geoObj.longitude();
 
                             objAddr.Save2DB();
                             // Obj.SetAddress(objAddr);
                         }
                         // сохранение в БД
                         Obj.Save2DB();
-                        ShowMessage(string.Format("Объект {0} создан.", objNumber));
+                        ShowMessage(string.Format("Объект {0} создан", objNumber));
                         c_ins++;
                     }
                     else
@@ -212,18 +219,21 @@ namespace ObjectLoader
 
                             // изменить точку
                             // double[] coor = Geocoder.UTM2LL(new double[] { geoObj.latitude().ToDouble(), geoObj.longitude().ToDouble() });
-                            Obj.SetPoint(geoObj.latitude().ToDouble(), geoObj.longitude().ToDouble(), true);
+                            Obj.SetPoint(geoObj.longitude().ToDouble(), geoObj.latitude().ToDouble(),  true);
 
                             objAddr.Region = geoObj.region();
                             objAddr.Locality = geoObj.locality();
                             objAddr.Street = geoObj.street();
                             objAddr.House = geoObj.house();
+                            objAddr.FullAddress = geoObj.addressString();
+                            objAddr.latitude = geoObj.latitude();
+                            objAddr.longitude = geoObj.longitude();
 
                             objAddr.Save2DB();
                             // Obj.SetAddress(objAddr);
                         }
                         Obj.Save2DB();
-                        ShowMessage(string.Format("Объект {0} обновлен.", objNumber));
+                        ShowMessage(string.Format("Объект {0} обновлен", objNumber));
                         c_upd++;
                     }
                     // 3. Добавить сообщение

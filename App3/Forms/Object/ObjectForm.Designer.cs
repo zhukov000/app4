@@ -31,7 +31,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            // this.videoViewerWF1 = new Ozeki.Controls.VideoViewerWF();
             this.panel1 = new System.Windows.Forms.Panel();
             this.button9 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
@@ -106,6 +105,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.button14 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -121,26 +121,12 @@
             this.tabPage3.SuspendLayout();
             this.panel3.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // videoViewerWF1
-            // 
-            /*this.videoViewerWF1.BackColor = System.Drawing.Color.Black;
-            this.videoViewerWF1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.videoViewerWF1.FlipMode = Ozeki.Controls.FlipMode.None;
-            this.videoViewerWF1.FrameStretch = Ozeki.Controls.FrameStretch.Uniform;
-            this.videoViewerWF1.FullScreenEnabled = true;
-            this.videoViewerWF1.Location = new System.Drawing.Point(0, 0);
-            this.videoViewerWF1.Name = "videoViewerWF1";
-            this.videoViewerWF1.RotateAngle = 0;
-            this.videoViewerWF1.Size = new System.Drawing.Size(417, 364);
-            this.videoViewerWF1.TabIndex = 2;
-            this.videoViewerWF1.Text = "videoViewerWF1";*/
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.panel1.Controls.Add(this.button14);
             this.panel1.Controls.Add(this.button9);
             this.panel1.Controls.Add(this.button8);
             this.panel1.Controls.Add(this.pictureBox1);
@@ -167,7 +153,7 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(68, 278);
+            this.button8.Location = new System.Drawing.Point(72, 278);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(57, 23);
             this.button8.TabIndex = 4;
@@ -888,13 +874,22 @@
             // 
             // tabPage4
             // 
-            // this.tabPage4.Controls.Add(this.videoViewerWF1);
             this.tabPage4.Location = new System.Drawing.Point(4, 25);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(417, 364);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Видео";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(5, 243);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(124, 23);
+            this.button14.TabIndex = 5;
+            this.button14.Text = "Удалить";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // ObjectForm
             // 
@@ -927,7 +922,6 @@
             this.panel3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.tabPage4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1010,5 +1004,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn notes;
         private System.Windows.Forms.DataGridViewTextBoxColumn status;
         private System.Windows.Forms.DataGridViewTextBoxColumn address;
+        private System.Windows.Forms.Button button14;
     }
 }

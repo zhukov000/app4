@@ -20,6 +20,7 @@ namespace App3.Forms
         private OneDistrictForm map = null;
         private int SelectedRegion = 0;
         private int positionRow = 0;
+        private static int UPDATE_CACHE = 10;
 
         private Mapper oMapper = new Mapper();
         private IDictionary<int, bool> Regions = new Dictionary<int, bool>();
@@ -37,16 +38,23 @@ namespace App3.Forms
                     Application.Exit();
                 }
             }
-            
-            Utils.UpdateDistrictStatuses();
-            LayerCache.UpdateLayer(LayerType.AllRegion, -1);
+
+            if (UPDATE_CACHE < 0)
+            {
+                Utils.UpdateDistrictStatuses();
+                LayerCache.UpdateLayer(LayerType.AllRegion, -1);
+                LayerCache.UpdateLayer(LayerType.Object, -1);
+                UPDATE_CACHE = 10;
+            }
+            else
+                UPDATE_CACHE--;
 
             if (map != null)
             {
                 map.Refresh();
             }
             mapBox.Refresh();
-            LayerCache.UpdateLayer(LayerType.Object, -1);
+            
 
         }
 

@@ -428,6 +428,19 @@ namespace App3.Class
             address.Save2DB();
         }
 
+        public void RemoveObject()
+        {
+            if (id != 0)
+            { // удалить объект
+                DataBase.RunCommandDelete("oko.object",
+                    new Dictionary<string, object>()
+                    {
+                        {"osm_id", id}
+                    }
+                );
+            }
+        }
+
         private DataRow SelectData(string kfield, string kval)
         {
             return DataBase.FirstRow(String.Format("SELECT *, ST_AsText(ST_Transform(way, 4326)) as coor_txt FROM {2} WHERE {0} = '{1}'", kfield, kval, OTable));

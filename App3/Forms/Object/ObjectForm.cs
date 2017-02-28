@@ -23,33 +23,12 @@ namespace App3.Forms
     public partial class ObjectForm : Form
     {
 
-        //private OzekiCamera _webCamera;
-        //private DrawingImageProvider _imageProvider;
-        //private MediaConnector _mediaConnector;
-        //private CameraURLBuilderWF _myCameraUrlBuilder;
-//        WebCam webcam;
-        //private string Number = "";
-
         private void Init()
         {
-            ///
-            ///
-            //_imageProvider = new DrawingImageProvider();
-            //_mediaConnector = new MediaConnector();
 
-            //var data = new CameraURLBuilderData { IPCameraEnabled = false };
-            // _myCameraUrlBuilder = new CameraURLBuilderWF(data);
-
-
-            //videoViewerWF1.SetImageProvider(_imageProvider);
-            // 
-            // _myCameraUrlBuilder.CameraURL = "usb://DeviceId=0;Name=USB2.0 Camera;"
-            
         }
 
         private Controls.DBTable contractTable;
-        // private Controls.DBTable contactTable;
-        // private Controls.DBTable eventTable;
 
         private void InitTables()
         {
@@ -575,7 +554,7 @@ namespace App3.Forms
             }
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void LoadNext()
         {
             // 
             int pObjectId = Utils.GetNextNumber(Obj.number, Obj.RegionId);
@@ -584,6 +563,11 @@ namespace App3.Forms
             LoadData();
             Init();
             LoadDictionaries();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            LoadNext();
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -749,6 +733,22 @@ namespace App3.Forms
                 // tabPage1.Enabled = false;
                 tabControl1.Enabled = false;
                 groupBox1.Enabled = false;
+            }
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            if (Obj.IsExists())
+            {
+                if (MessageBox.Show("Объект будет физически удален из базы. Продолжить удаление?", "Удалить объект", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    Obj.RemoveObject();
+                    LoadNext();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Нельзя удалить объект, который не сохранен в БД", "Предупреждение");
             }
         }
     }

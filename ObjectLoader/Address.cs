@@ -69,8 +69,8 @@ namespace App3.Class
         private string address = "";
         private string code = "";
 
-        private string latitude = "";
-        private string longitude = "";
+        public string latitude = "";
+        public string longitude = "";
         #endregion
 
         #region Открытые свойства
@@ -82,12 +82,15 @@ namespace App3.Class
             get { return region; }
             set
             {
-                address = ""; code = "";
+                // address = ""; code = "";
                 region = value;
-                rCode = DataBase.First(
+
+                object o = DataBase.First(
                     string.Format("SELECT DISTINCT code FROM kladr.regions WHERE name || ' ' || socrname = '{0}'", region),
                     "code"
-                ).ToString();
+                );
+                if (o != null)
+                    rCode = o.ToString();
 
             }
         }
@@ -121,11 +124,11 @@ namespace App3.Class
             get { return locality; }
             set
             {
-                address = "";
+                // address = "";
                 locality = value;
                 if (value != "")
                 {
-                    code = "";
+                    // code = "";
                     object o = DataBase.First(
                         string.Format("SELECT DISTINCT code FROM kladr.locality WHERE fullname = '{0}'", locality),
                         "code"
@@ -145,11 +148,11 @@ namespace App3.Class
             get { return street; }
             set
             {
-                address = ""; 
+                // address = ""; 
                 street = value;
                 if (value != "")
                 {
-                    code = "";
+                    // code = "";
                     object o = DataBase.First(
                         string.Format("select distinct s.code from kladr.street s left join kladr.socrbase b on s.socr = b.scname WHERE lower(b.socrname) || ' ' || s.name = '{0}' and s.code like '{1}'", street, SqlLikeMask(lCode)),
                         "code"
@@ -167,11 +170,11 @@ namespace App3.Class
             get { return house; }
             set
             {
-                address = "";
+                // address = "";
                 house = value;
                 if (value != "")
                 {
-                    code = "";
+                    // code = "";
                     object resCode = DataBase.First(
                         string.Format("select distinct code from kladr.house where fullname = '{0}'", house),
                         "code"
@@ -242,6 +245,10 @@ namespace App3.Class
                     address = s;
                 }
                 return address;
+            }
+            set
+            {
+                address = value;
             }
         }
         #endregion
