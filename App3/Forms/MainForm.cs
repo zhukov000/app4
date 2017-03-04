@@ -103,28 +103,46 @@ namespace App3.Forms
                 string[] arg_168_0 = SerialPort.GetPortNames();
                 string a = Config.Get("COMPortName").ToString();
                 string[] array = arg_168_0;
+                bool flag = false;
                 for (int i = 0; i < array.Length; i++)
                 {
                     string text = array[i];
+                    Logger.Instance.WriteToLog("Check port " + text);
                     if (a == text)
                     {
+                        Logger.Instance.WriteToLog("1");
                         this.oModuleCOM.Close();
-                        if (this.oModuleCOM.Init(text, Config.Get("COMBaudrate").ToInt()) == OKO_Messages.Module_Started)
+                        for (int j = 0; j < 5; j++)
                         {
-                            this.oModuleCOM.GetModuleMessageEvent += new GuardAgent2.EventDelegate(Handling.ProcessingComEvent);
-                            this.oModuleCOM.ClearRetrAddrList();
-                            this.oModuleCOM.SetRetrType(Config.Get("COMRetrType").ToByte());
-                            this.oModuleCOM.AddRetrAddr(Config.Get("COMRetrAddr").ToUShort());
-                            this.oModuleCOM.SetChannelsMask(Config.Get("COMChannelsMask").ToByte());
-                            this.oModuleCOM.SendAskForState(1, 0, Config.Get("RemoteAddress").ToUShort());
-                            Logger.Instance.WriteToLog("COM connector start, port: " + text);
-                            this.IncConnectCnt();
-                            break;
+                            uint res = this.oModuleCOM.Init(text, Config.Get("COMBaudrate").ToInt());
+                            Logger.Instance.WriteToLog(res.ToString());
+                            if (res == OKO_Messages.Module_Started)
+                            {
+                                Logger.Instance.WriteToLog("2");
+                                this.oModuleCOM.GetModuleMessageEvent += new GuardAgent2.EventDelegate(Handling.ProcessingComEvent);
+                                this.oModuleCOM.ClearRetrAddrList();
+                                this.oModuleCOM.SetRetrType(Config.Get("COMRetrType").ToByte());
+                                this.oModuleCOM.AddRetrAddr(Config.Get("COMRetrAddr").ToUShort());
+                                this.oModuleCOM.SetChannelsMask(Config.Get("COMChannelsMask").ToByte());
+                                this.oModuleCOM.SendAskForState(1, 0, Config.Get("RemoteAddress").ToUShort());
+                                Logger.Instance.WriteToLog("COM connector start, port: " + text);
+                                if (!DBDict.IsServer)
+                                    this.IncConnectCnt();
+                                flag = true;
+                                break;
+                            }
+                            else if (res == OKO_Messages.Module_CanNotOpenPort)
+                            {
+                                this.oModuleCOM.Close();
+                            }
                         }
+                        if (flag) break;
+                        Logger.Instance.WriteToLog("3");
                         this.oModuleCOM.Close();
                     }
                 }
             }
+
             Handling.GetMessageEvent = (Handling.GetMessageHandler)Delegate.Combine(Handling.GetMessageEvent, new Handling.GetMessageHandler(this.OnGetMessage));
             Handling.onObjectCardOpen = (Handling.ObjectCardOpen)Delegate.Combine(Handling.onObjectCardOpen, new Handling.ObjectCardOpen(this.OnObjectCardOpen));
             Handling.onObjectListOpen = (Handling.ObjectListOpen)Delegate.Combine(Handling.onObjectListOpen, new Handling.ObjectListOpen(this.OnObjectListOpen));
@@ -390,7 +408,7 @@ namespace App3.Forms
             {
                 DataBase.OpenConnection(
                     string.Format(
-                        "Server={0};Port={1};User Id={2};Password={3};Database={4};MaxPoolSize=40;",
+                        "Server={0};Port={1};User Id={2};Password={3};Database={4};MaxPoolSize=40;Timeout=250;CommandTimeout=0;",
                         Config.Get("DBServerHost"),
                         Config.Get("DBServerPort"),
                         Config.Get("DBUser"),
@@ -488,7 +506,10 @@ namespace App3.Forms
                 this.Text = this.Text + " версия " + Config.APPVERSION;
                 Logger.Instance.WriteToLog(this.Text);
 
-                if (!DBDict.IsServer) Utils.UpdateDistrictStatuses();
+                Utils.ArhiveEvents();
+
+                if (!DBDict.IsServer)
+                    Utils.UpdateDistrictStatuses(Config.Get("CurrenRegion").ToInt());
 
                 // Старт web-серсиса
                 if (Config.Get("StartWeb") != "0")
@@ -496,7 +517,10 @@ namespace App3.Forms
                     StartWeb.Start();
                 }
                 // Старт сервиса обновления
-                Updater.Start();
+                if (Config.Get("UrlUpdate") != "")
+                {
+                    Updater.Start();
+                }
                 // Старт сервиса синхронизации
                 if (Config.Get("EnableSync") != "0")
                 {
@@ -1361,7 +1385,7 @@ namespace App3.Forms
 
         private void обновитьСтатусыРайоновToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Utils.UpdateDistrictStatuses();
+            Utils.UpdateDistrictStatuses(Config.Get("CurrenRegion").ToInt());
             LayerCache.UpdateLayer(LayerType.AllRegion, -1);
         }
     }

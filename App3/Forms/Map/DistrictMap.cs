@@ -41,7 +41,7 @@ namespace App3.Forms
 
             if (UPDATE_CACHE < 0)
             {
-                Utils.UpdateDistrictStatuses();
+                Utils.UpdateDistrictStatuses(Config.Get("CurrenRegion").ToInt());
                 LayerCache.UpdateLayer(LayerType.AllRegion, -1);
                 LayerCache.UpdateLayer(LayerType.Object, -1);
                 UPDATE_CACHE = 10;

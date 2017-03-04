@@ -126,6 +126,7 @@ namespace App3.Class
                 text = string.Format("Объект расположенный по адресу:{0}, \r\nсообщает:{1}", aKObject.AddressStr, text);
                 if (Handling.GetMessageEvent != null)
                 {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, text));
                     Handling.GetMessageEvent(pEventId, item, aKObject, text, string.Join(", ", aKObject.GetContacts()), TimeStamp.ToString());
                 }
                 flag = true;
@@ -224,15 +225,21 @@ namespace App3.Class
             });
             if (!flag)
             {
+                Logger.Instance.WriteToLog("Объект: " + message.Get("Object").ToInt() + ", type = " + message.Type +
+                        ", code = " + message.Get("Code").ToString() +
+                        ", text = " + message.Get("Text").ToString());
                 Handling.ProcessingEvent(okoVersion, regionId, objectNumber, retrNumber, _class, code, part, zone, chnlMask, idx, DateTime.Now, signalLevel, 0, message.Address);
             }
             else
             {
                 Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
-                    "!!! !!! !!! Сообщение не было обработано" ));
+                    "Сообщение не было обработано" ));
                 try
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Объект: " + message.Get("Object").ToInt()));
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
+                        "Объект: " + message.Get("Object").ToInt() + ", type = " + message.Type +
+                        ", code = " + message.Get("Code").ToString() + 
+                        ", text = " + message.Get("Text").ToString()));
                 }
                 catch { }
             }

@@ -45,7 +45,7 @@ namespace App3
                         {
                             DataBase.OpenConnection(
                                 string.Format(
-                                    "Server={0};Port={1};User Id={2};Password={3};Database={4};MaxPoolSize=40;",
+                                    "Server={0};Port={1};User Id={2};Password={3};Database={4};MaxPoolSize=40;Timeout=250;CommandTimeout=0;",
                                     Config.Get("DBServerHost"),
                                     Config.Get("DBServerPort"),
                                     Config.Get("DBUser"),

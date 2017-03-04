@@ -23,8 +23,9 @@ namespace App3.Class
                 row = DataBase.FirstRow(s);
             }
             catch (Exception ex)
-            { 
-                Logger.Instance.WriteToLog(string.Format("Utils.getHtmlContent: Не удалось получить информацию об объекте: {0} - {1} ", s, ex.Message));
+            {
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("Не удалось получить информацию об объекте: {0} - {1} ", s, ex.Message));
             }
             if (row != null && double.Parse(row["dist"].ToString().Replace('.', ',')) < 10 )
             {

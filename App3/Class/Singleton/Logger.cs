@@ -89,7 +89,7 @@ namespace App3.Class.Singleton
                     {
                         using (StreamWriter streamWriter = new StreamWriter(fileStream))
                         {
-                            streamWriter.WriteLine(string.Format("{0}\t{1}", log.LogTime, log.Message).Crypt());
+                            streamWriter.WriteLine(string.Format("{0}\t{1}", log.LogTime, log.Message)); // .Crypt()
                         }
                     }
                 }

@@ -57,7 +57,7 @@ namespace App3.Forms
                         string.Format(@"SELECT * FROM (
                                     SELECT obj.osm_id, obj.number, obj.name, obj.region_id, obj.address_id,
                                             addr.address, 
-                                            3*(obj.number = {0})::int + (obj.region_id = {1})::int + (obj.name like '%{2}%')::int as rate
+                                            3*(obj.number = {0})::int + (obj.region_id = {1})::int + (upper(obj.name) like upper('%{2}%'))::int as rate
                                     FROM oko.object obj 
                                         INNER JOIN oko.addresses addr ON obj.address_id = addr.id
                                         INNER JOIN regions2map reg ON reg.num = obj.region_id) t WHERE t.rate > 0 ORDER BY t.rate DESC LIMIT 30",

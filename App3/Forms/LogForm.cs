@@ -78,7 +78,8 @@ namespace App3.Forms
                         while (streamReader.Peek() >= 0)
                         {
                             string text = streamReader.ReadLine();
-                            string item = "";
+                            string item = text;
+                            /* 
                             try
                             {
                                 item = text.Derypt();
@@ -90,7 +91,8 @@ namespace App3.Forms
                             catch (Exception arg_8C_0)
                             {
                                 item = arg_8C_0.Message;
-                            }
+                            } 
+                            */
                             this.listBox1.Items.Add(item);
                         }
                     }

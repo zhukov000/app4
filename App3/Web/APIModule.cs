@@ -122,12 +122,12 @@ namespace App3.Web
                 {
                     text = text + "?" + (string)owinEnvironment["owin.RequestQueryString"];
                 }
-                return string.Format("{0} {1}", arg, text);
+                return string.Format("{0} {1} Версия сервера: {2}", arg, text, Config.APPVERSION);
             };
 
             Get["/data"] = x =>
             {
-                Utils.UpdateDistrictStatuses();
+                // Utils.UpdateDistrictStatuses();
                 string query_dist = "select fullname as name, num as region_id, fias, color from regions2map reg inner join oko.ipaddresses addr on reg.num = addr.id_region where addr.listen order by reg.name";
 
                 var responseContentArray = new JArray();

@@ -47,7 +47,7 @@ namespace App3.Class.Socket
                     {
                         Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
                     }*/
-
+                    Logger.Instance.WriteToLog(string.Format("Socket sync: Передача завершена"));
                     return builder.ToString();
                 }
             }

@@ -56,9 +56,27 @@ namespace App3.Class
         }
         
         // обновление статусов регионов
-        static public void UpdateDistrictStatuses()
+        static public void UpdateDistrictStatuses(int HomeDistrict)
         {   
-            DataBase.RunCommand("select oko.update_district_statuses()");
+            if (HomeDistrict == -1)
+            {
+                DataBase.RunCommand("select oko.update_district_statuses()");
+            }
+            else
+            {
+                DataBase.RunCommand(string.Format("select oko.update_district_status({0})", HomeDistrict));
+            }
+            
+        }
+
+        public static void ArhiveEvents()
+        {
+            object o = DataBase.First("select now()::date - max(start)::date as dt from archive.journal", "dt");
+            if (o != null && o.ToInt() > 1)
+            {
+                Logger.Instance.WriteToLog("Archive event");
+                DataBase.RunCommand("select * from archive.arh_events()");
+            }
         }
 
         public static void FreezeObject(Int64 pObjectId, DateTime pFreezeOff)
@@ -716,7 +734,7 @@ namespace App3.Class
             }
             return result;
         }
-
+        
         public static string Crypt(this string text)
         {
             return Convert.ToBase64String(ProtectedData.Protect(Encoding.Unicode.GetBytes(text), Encoding.Unicode.GetBytes(Config.Get("Entropy")), DataProtectionScope.LocalMachine));
@@ -735,7 +753,7 @@ namespace App3.Class
             }
             return result;
         }
-
+        
         #endregion
     }
 }
