@@ -920,7 +920,7 @@
     <Height>1.1875in</Height>
     <Style />
   </Body>
-  <Width>9.4886in</Width>
+  <Width>10.47285in</Width>
   <Page>
     <PageHeight>29.7cm</PageHeight>
     <PageWidth>21cm</PageWidth>
@@ -980,10 +980,14 @@
           <DataField>messagetime</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
+        <Field Name="stateid">
+          <DataField>stateid</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>gisDataReports</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\user\Documents\Visual Studio 2013\Projects\OKO\App3\gisDataReports.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\USER\Source\Repos\app4\App3\gisDataReports.xsd</rd:SchemaPath>
         <rd:TableName>report_objects</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />

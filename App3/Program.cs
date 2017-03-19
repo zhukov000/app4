@@ -89,15 +89,15 @@ namespace App3
                     // если обновление БД упешно пройдено или не нужно
                     if (mutex.WaitOne(TimeSpan.FromSeconds(2)))
                     {
-                        try
+                        //try
                         {
                             Application.Run(new App3.Forms.MainForm());
                         }
-                        catch (Exception ex)
+                        /*catch (Exception ex)
                         {
                             Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
                             Logger.Instance.FlushLog();
-                        }
+                        }*/
                     }
                     else
                     {

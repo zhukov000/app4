@@ -64,7 +64,7 @@ namespace launcher
                             Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
                         }
                         firstProc.EnableRaisingEvents = true;
-
+                        Logger.Instance.WriteToLog("Запуск процесса: " + firstProc.StartInfo.FileName);
                         while (isAlive)
                         {
                             bool answer = true;
@@ -75,6 +75,7 @@ namespace launcher
                             }
                             catch(Exception ex)
                             {
+                                Logger.Instance.WriteToLog("Стек вызова: " + ex.StackTrace);
                                 Logger.Instance.WriteToLog("Не удалось запустить приложение Сполох: " + ex.Message);
                                 Thread.Sleep(pause);
                                 for (int i = 0; i < pause / 1000; i++)

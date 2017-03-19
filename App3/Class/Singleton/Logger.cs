@@ -6,6 +6,14 @@ namespace App3.Class.Singleton
 {
     public class Logger
     {
+        public enum LogLevel
+        {
+            DEBUG = 1,
+            ERROR = 3,
+            EVENTS = 7,
+            ALL = 15
+        }
+
         private static Logger instance;
 
         private static Queue<Log> logQueue;
@@ -17,6 +25,8 @@ namespace App3.Class.Singleton
         private static int maxLogAge = int.Parse(Config.Get("MaxLogAge"));
 
         private static int queueSize = int.Parse(Config.Get("MaxLogQueue"));
+
+        private static int logLevel = Config.Get("LogLevel", ((int)LogLevel.ALL).ToString()).ToInt();
 
         private static DateTime LastFlushed = DateTime.Now;
 
@@ -49,16 +59,19 @@ namespace App3.Class.Singleton
             return Logger.logDir;
         }
 
-        public void WriteToLog(string message)
+        public void WriteToLog(string message, LogLevel level = LogLevel.ALL)
         {
-            Queue<Log> obj = Logger.logQueue;
-            lock (obj)
+            if ((((int)level) & logLevel) > 0)
             {
-                Log item = new Log(message);
-                Logger.logQueue.Enqueue(item);
-                if (Logger.logQueue.Count >= Logger.queueSize || this.DoPeriodicFlush())
+                Queue<Log> obj = Logger.logQueue;
+                lock (obj)
                 {
-                    this.FlushLog();
+                    Log item = new Log(message);
+                    Logger.logQueue.Enqueue(item);
+                    if (Logger.logQueue.Count >= Logger.queueSize || this.DoPeriodicFlush())
+                    {
+                        this.FlushLog();
+                    }
                 }
             }
         }

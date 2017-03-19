@@ -27,7 +27,7 @@ namespace App3.Forms
 
         public void RefreshMaps()
         {
-            if (DBDict.Settings["RESTART_TIME"] != "")
+            /*if (DBDict.Settings["RESTART_TIME"] != "")
             {
                 int mins = DBDict.Settings["RESTART_TIME"].ToInt();
                 TimeSpan duration = DateTime.Now - DBDict.SessionStart;
@@ -37,7 +37,7 @@ namespace App3.Forms
                     Logger.Instance.WriteToLog("Плановая перезагрузка приложения");
                     Application.Exit();
                 }
-            }
+            }*/
 
             if (UPDATE_CACHE < 0)
             {
@@ -393,7 +393,7 @@ namespace App3.Forms
 
         private void OnRegionSelected(object sender, int region)
         {
-            var wd = Utils.CreateWaitThread(this);
+            var wd = Utils.CreateWaitThread(this, Config.Get("MonitorNumber", "1").ToInt());
             if (SelectedRegion != region)
             {
                 SelectRegion(region);
@@ -567,7 +567,7 @@ namespace App3.Forms
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            WaitDialog wd = Utils.CreateWaitThread(this);
+            WaitDialog wd = Utils.CreateWaitThread(this, Config.Get("MonitorNumber", "1").ToInt());
             // открыть карту района
             OpenOneDistrictForm(e.Node.Text);
 
@@ -592,7 +592,7 @@ namespace App3.Forms
 
         private void mapBox_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            WaitDialog wd = Utils.CreateWaitThread(this);
+            WaitDialog wd = Utils.CreateWaitThread(this, Config.Get("MonitorNumber", "1").ToInt());
 
             GeoAPI.Geometries.Coordinate coor = mapBox.Map.ImageToWorld(new System.Drawing.PointF(e.X, e.Y));
 

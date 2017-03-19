@@ -36,8 +36,8 @@ namespace App3.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.синхронизацияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,7 +69,9 @@ namespace App3.Forms
             this.архивацияСобытийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.обновитьСтатусыРайоновToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.очиститьКэшToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.обновитьВесьКэшToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.warnToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.soundToolStrip = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,8 +106,6 @@ namespace App3.Forms
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.обновитьВесьКэшToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.обновитьСтатусыРайоновToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -367,22 +367,36 @@ namespace App3.Forms
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.optionsToolStripMenuItem.Text = "Настройки";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
+            // 
+            // обновитьСтатусыРайоновToolStripMenuItem
+            // 
+            this.обновитьСтатусыРайоновToolStripMenuItem.Name = "обновитьСтатусыРайоновToolStripMenuItem";
+            this.обновитьСтатусыРайоновToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.обновитьСтатусыРайоновToolStripMenuItem.Text = "Обновить статусы районов";
+            this.обновитьСтатусыРайоновToolStripMenuItem.Click += new System.EventHandler(this.обновитьСтатусыРайоновToolStripMenuItem_Click);
             // 
             // очиститьКэшToolStripMenuItem
             // 
             this.очиститьКэшToolStripMenuItem.Name = "очиститьКэшToolStripMenuItem";
-            this.очиститьКэшToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.очиститьКэшToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.очиститьКэшToolStripMenuItem.Text = "Очистить кэш";
             this.очиститьКэшToolStripMenuItem.Click += new System.EventHandler(this.очиститьКэшToolStripMenuItem_Click);
+            // 
+            // обновитьВесьКэшToolStripMenuItem
+            // 
+            this.обновитьВесьКэшToolStripMenuItem.Name = "обновитьВесьКэшToolStripMenuItem";
+            this.обновитьВесьКэшToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.обновитьВесьКэшToolStripMenuItem.Text = "Обновить весь кэш";
+            this.обновитьВесьКэшToolStripMenuItem.Click += new System.EventHandler(this.обновитьВесьКэшToolStripMenuItem_Click);
             // 
             // warnToolStrip
             // 
             this.warnToolStrip.CheckOnClick = true;
             this.warnToolStrip.Name = "warnToolStrip";
-            this.warnToolStrip.Size = new System.Drawing.Size(209, 22);
+            this.warnToolStrip.Size = new System.Drawing.Size(224, 22);
             this.warnToolStrip.Text = "Отключить оповещение";
             // 
             // mapToolStrip
@@ -391,7 +405,7 @@ namespace App3.Forms
             this.mapToolStrip.CheckOnClick = true;
             this.mapToolStrip.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mapToolStrip.Name = "mapToolStrip";
-            this.mapToolStrip.Size = new System.Drawing.Size(209, 22);
+            this.mapToolStrip.Size = new System.Drawing.Size(224, 22);
             this.mapToolStrip.Text = "Карта";
             this.mapToolStrip.Click += new System.EventHandler(this.картаToolStripMenuItem_Click_1);
             // 
@@ -401,21 +415,21 @@ namespace App3.Forms
             this.soundToolStrip.CheckOnClick = true;
             this.soundToolStrip.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soundToolStrip.Name = "soundToolStrip";
-            this.soundToolStrip.Size = new System.Drawing.Size(209, 22);
+            this.soundToolStrip.Size = new System.Drawing.Size(224, 22);
             this.soundToolStrip.Text = "Звуковое оповещение";
             this.soundToolStrip.Click += new System.EventHandler(this.soundTooItem_Click);
             // 
             // тестовоеСообщениеToolStripMenuItem
             // 
             this.тестовоеСообщениеToolStripMenuItem.Name = "тестовоеСообщениеToolStripMenuItem";
-            this.тестовоеСообщениеToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.тестовоеСообщениеToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.тестовоеСообщениеToolStripMenuItem.Text = "Тестовое сообщение";
             this.тестовоеСообщениеToolStripMenuItem.Click += new System.EventHandler(this.тестовоеСообщениеToolStripMenuItem_Click);
             // 
             // мониторУзловToolStripMenuItem
             // 
             this.мониторУзловToolStripMenuItem.Name = "мониторУзловToolStripMenuItem";
-            this.мониторУзловToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.мониторУзловToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.мониторУзловToolStripMenuItem.Text = "Монитор узлов";
             this.мониторУзловToolStripMenuItem.Click += new System.EventHandler(this.мониторУзловToolStripMenuItem_Click);
             // 
@@ -603,14 +617,14 @@ namespace App3.Forms
             // 
             // chart1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chart1.Location = new System.Drawing.Point(200, 0);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.Name = "Series1";
-            this.chart1.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(432, 59);
             this.chart1.TabIndex = 2;
             this.chart1.Text = "chart1";
@@ -679,20 +693,6 @@ namespace App3.Forms
             this.timer1.Interval = 60000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // обновитьВесьКэшToolStripMenuItem
-            // 
-            this.обновитьВесьКэшToolStripMenuItem.Name = "обновитьВесьКэшToolStripMenuItem";
-            this.обновитьВесьКэшToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.обновитьВесьКэшToolStripMenuItem.Text = "Обновить весь кэш";
-            this.обновитьВесьКэшToolStripMenuItem.Click += new System.EventHandler(this.обновитьВесьКэшToolStripMenuItem_Click);
-            // 
-            // обновитьСтатусыРайоновToolStripMenuItem
-            // 
-            this.обновитьСтатусыРайоновToolStripMenuItem.Name = "обновитьСтатусыРайоновToolStripMenuItem";
-            this.обновитьСтатусыРайоновToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.обновитьСтатусыРайоновToolStripMenuItem.Text = "Обновить статусы районов";
-            this.обновитьСтатусыРайоновToolStripMenuItem.Click += new System.EventHandler(this.обновитьСтатусыРайоновToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -710,7 +710,6 @@ namespace App3.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ГМК Сполох";
             this.TransparencyKey = System.Drawing.Color.DimGray;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);

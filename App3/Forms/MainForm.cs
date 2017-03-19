@@ -398,7 +398,7 @@ namespace App3.Forms
             if (!DBDict.IsServer)
             {
                 this.Visible = false;
-                sf = Utils.CreateLoadThread();
+                sf = Utils.CreateLoadThread(Config.Get("MonitorNumber", "1").ToInt());
                 InitializeComponent();
                 Logout();
             }
@@ -470,6 +470,7 @@ namespace App3.Forms
                         //
                         oObjectList = new Objects(this);
                         this.oJournal = new Journal(this);
+                        Utils.ShowOnMonitor(this, Config.Get("MonitorNumber", "1").ToInt());
                     }
 
                     flag = /*DBDict.Settings.ContainsKey("START_XML_GUARD") &&*/ DBDict.Settings["START_XML_GUARD"].ToBool();
@@ -503,14 +504,14 @@ namespace App3.Forms
                     soundToolStrip.Checked = DBDict.Settings["ENABLE_MUSIC"].ToBool();
                 }
 
-                this.Text = this.Text + " версия " + Config.APPVERSION;
+                this.Text = Utils.GetMainTitle();
                 Logger.Instance.WriteToLog(this.Text);
 
                 Utils.ArhiveEvents();
-
+                /*
                 if (!DBDict.IsServer)
                     Utils.UpdateDistrictStatuses(Config.Get("CurrenRegion").ToInt());
-
+                */
                 // Старт web-серсиса
                 if (Config.Get("StartWeb") != "0")
                 {
@@ -1172,7 +1173,7 @@ namespace App3.Forms
 
         private void UpdInsideSize()
         {
-            this.WindowState = FormWindowState.Maximized;
+            // this.WindowState = FormWindowState.Maximized;
             oDistricts.UpdSize();
 
             SetChildFormsPosition();
@@ -1346,6 +1347,8 @@ namespace App3.Forms
                     Login();
                 }
             }
+            Utils.ShowOnMonitor(this, Config.Get("MonitorNumber", "1").ToInt());
+            UpdInsideSize();
         }
 
         private void отправитьПоследниеСообщенияToolStripMenuItem_Click(object sender, EventArgs e)

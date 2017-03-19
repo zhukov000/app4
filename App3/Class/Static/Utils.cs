@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -23,6 +24,13 @@ namespace App3.Class
 {
     public static class Utils
     {
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cx, int cy, int uFlags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr FindWindow(String lpClassName, String lpWindowName);
+
         public enum MessageGroupId {
             UNDEFINED = 0,
             NORMA,
@@ -57,7 +65,9 @@ namespace App3.Class
         
         // обновление статусов регионов
         static public void UpdateDistrictStatuses(int HomeDistrict)
-        {   
+        {
+
+            Logger.Instance.WriteToLog("Update district status started");
             if (HomeDistrict == -1)
             {
                 DataBase.RunCommand("select oko.update_district_statuses()");
@@ -66,7 +76,8 @@ namespace App3.Class
             {
                 DataBase.RunCommand(string.Format("select oko.update_district_status({0})", HomeDistrict));
             }
-            
+            Logger.Instance.WriteToLog("Update district status finished");
+
         }
 
         public static void ArhiveEvents()
@@ -513,12 +524,13 @@ namespace App3.Class
 
         #region Окошко ожидания в отдельном потоке
 
-        public static WaitDialog CreateWaitThread(Form parent)
+        public static WaitDialog CreateWaitThread(Form parent, int Monitor)
         {
             WaitDialog wd = new WaitDialog(parent);
             Thread backgroundThread = new Thread(
                 new ThreadStart(() =>
                 {
+                    ShowOnMonitor(wd, Monitor);
                     wd.ShowDialog();
                 }
             ));
@@ -548,12 +560,13 @@ namespace App3.Class
             return DateTime.ParseExact(str, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        public static StartForm CreateLoadThread()
+        public static StartForm CreateLoadThread(int Monitor)
         {
             StartForm wd = new StartForm();
             Thread backgroundThread = new Thread(
                 new ThreadStart(() =>
                 {
+                    ShowOnMonitor(wd, Monitor);
                     wd.ShowDialog();
                 }
             ));
@@ -753,7 +766,55 @@ namespace App3.Class
             }
             return result;
         }
-        
+
         #endregion
+
+
+        public static void ShowOnMonitor(Form frm, int numberMonitor)
+        {
+            // const short SWP_NOMOVE = 0X2;
+            // const short SWP_NOSIZE = 1;
+            const short SWP_NOZORDER = 0X4;
+            // const int SWP_SHOWWINDOW = 0x0040;
+
+            Screen[] sc;
+            sc = Screen.AllScreens;
+            Logger.Instance.WriteToLog("Monitor: " + numberMonitor.ToString());
+            /*Logger.Instance.WriteToLog("AllScreen: " + sc.Length);
+            for(int i=0; i<sc.Length; i++)
+            {
+                Logger.Instance.WriteToLog(string.Format("Index: {2}, Left: {0}, Top: {1}, Width: {3}, Height: {4}",
+                    sc[i].Bounds.Left,
+                    sc[i].Bounds.Top, 
+                    i,
+                    sc[i].Bounds.Width,
+                    sc[i].Bounds.Height)
+                );
+            }
+            Logger.Instance.WriteToLog(string.Format("FORM Left: {0}, Top: {1}", frm.Left, frm.Top));*/
+
+            // Rectangle monitor = Screen.AllScreens[numberMonitor - 1].WorkingArea;
+
+            IntPtr hWnd = FindWindow((string)null, GetMainTitle());
+            if (hWnd != IntPtr.Zero)
+            {
+                SetWindowPos(hWnd, 0, 
+                    sc[numberMonitor - 1].Bounds.Left, 
+                    sc[numberMonitor - 1].Bounds.Top, 
+                    sc[numberMonitor - 1].Bounds.Width, 
+                    sc[numberMonitor - 1].Bounds.Height, 
+                    SWP_NOZORDER );
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("Окно не найдено");
+            }
+        }
+
+        public static string GetMainTitle()
+        {
+            return "ГМК Сполох версия " + Config.APPVERSION;
+        }
+
     }
 }

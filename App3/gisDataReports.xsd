@@ -4,8 +4,8 @@
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="1" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
         <Connections>
-          <!--Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="gisConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="gisConnectionString (Settings)" PropertyReference="ApplicationSettings.App3.Properties.Settings.GlobalReference.Default.gisConnectionString" Provider="Npgsql" /-->
           <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="ConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="ConnectionString (Settings)" PropertyReference="ApplicationSettings.App3.Properties.Settings.GlobalReference.Default.ConnectionString" Provider="System.Data.Odbc" />
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="ConnectionString1" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="ConnectionString1 (Settings)" PropertyReference="ApplicationSettings.App3.Properties.Settings.GlobalReference.Default.ConnectionString" Provider="System.Data.Odbc" />
         </Connections>
         <Tables>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="report_all_statusTableAdapter" GeneratorDataComponentClassName="report_all_statusTableAdapter" Name="report_all_status" UserDataComponentName="report_all_statusTableAdapter">
@@ -137,6 +137,30 @@
             </Mappings>
             <Sources />
           </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="object_list_statTableAdapter" GeneratorDataComponentClassName="object_list_statTableAdapter" Name="object_list_stat" UserDataComponentName="object_list_statTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="ConnectionString1 (Settings)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>SELECT "number", "name", "tstate_id", "region_id", "region", "dogovor", "dt", "description", "address" FROM "public"."object_list_stat"</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="number" DataSetColumn="number" />
+              <Mapping SourceColumn="name" DataSetColumn="name" />
+              <Mapping SourceColumn="tstate_id" DataSetColumn="tstate_id" />
+              <Mapping SourceColumn="region_id" DataSetColumn="region_id" />
+              <Mapping SourceColumn="region" DataSetColumn="region" />
+              <Mapping SourceColumn="dogovor" DataSetColumn="dogovor" />
+              <Mapping SourceColumn="dt" DataSetColumn="dt" />
+              <Mapping SourceColumn="description" DataSetColumn="description" />
+              <Mapping SourceColumn="address" DataSetColumn="address" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
         </Tables>
         <Sources />
       </DataSource>
@@ -192,6 +216,7 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
+              <xs:element name="state_id" msprop:Generator_ColumnVarNameInTable="columnstate_id" msprop:Generator_ColumnPropNameInRow="state_id" msprop:Generator_ColumnPropNameInTable="state_idColumn" msprop:Generator_UserColumnName="state_id" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -283,6 +308,7 @@
                 </xs:simpleType>
               </xs:element>
               <xs:element name="messagetime" msprop:Generator_ColumnVarNameInTable="columnmessagetime" msprop:Generator_ColumnPropNameInRow="messagetime" msprop:Generator_ColumnPropNameInTable="messagetimeColumn" msprop:Generator_UserColumnName="messagetime" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="stateid" msprop:Generator_ColumnVarNameInTable="columnstateid" msprop:Generator_ColumnPropNameInRow="stateid" msprop:Generator_ColumnPropNameInTable="stateidColumn" msprop:Generator_UserColumnName="stateid" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -319,6 +345,51 @@
                 </xs:simpleType>
               </xs:element>
               <xs:element name="cntev" msprop:Generator_ColumnVarNameInTable="columncntev" msprop:Generator_ColumnPropNameInRow="cntev" msprop:Generator_ColumnPropNameInTable="cntevColumn" msprop:Generator_UserColumnName="cntev" type="xs:long" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="object_list_stat" msprop:Generator_TableClassName="object_list_statDataTable" msprop:Generator_TableVarName="tableobject_list_stat" msprop:Generator_TablePropName="object_list_stat" msprop:Generator_RowDeletingName="object_list_statRowDeleting" msprop:Generator_RowChangingName="object_list_statRowChanging" msprop:Generator_RowEvHandlerName="object_list_statRowChangeEventHandler" msprop:Generator_RowDeletedName="object_list_statRowDeleted" msprop:Generator_UserTableName="object_list_stat" msprop:Generator_RowChangedName="object_list_statRowChanged" msprop:Generator_RowEvArgName="object_list_statRowChangeEvent" msprop:Generator_RowClassName="object_list_statRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="number" msprop:Generator_ColumnVarNameInTable="columnnumber" msprop:Generator_ColumnPropNameInRow="number" msprop:Generator_ColumnPropNameInTable="numberColumn" msprop:Generator_UserColumnName="number" type="xs:int" minOccurs="0" />
+              <xs:element name="name" msprop:Generator_ColumnVarNameInTable="columnname" msprop:Generator_ColumnPropNameInRow="name" msprop:Generator_ColumnPropNameInTable="nameColumn" msprop:Generator_UserColumnName="name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="4095" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="tstate_id" msprop:Generator_ColumnVarNameInTable="columntstate_id" msprop:Generator_ColumnPropNameInRow="tstate_id" msprop:Generator_ColumnPropNameInTable="tstate_idColumn" msprop:Generator_UserColumnName="tstate_id" type="xs:int" minOccurs="0" />
+              <xs:element name="region_id" msprop:Generator_ColumnVarNameInTable="columnregion_id" msprop:Generator_ColumnPropNameInRow="region_id" msprop:Generator_ColumnPropNameInTable="region_idColumn" msprop:Generator_UserColumnName="region_id" type="xs:int" minOccurs="0" />
+              <xs:element name="region" msprop:Generator_ColumnVarNameInTable="columnregion" msprop:Generator_ColumnPropNameInRow="region" msprop:Generator_ColumnPropNameInTable="regionColumn" msprop:Generator_UserColumnName="region" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="4095" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="dogovor" msprop:Generator_ColumnVarNameInTable="columndogovor" msprop:Generator_ColumnPropNameInRow="dogovor" msprop:Generator_ColumnPropNameInTable="dogovorColumn" msprop:Generator_UserColumnName="dogovor" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="4095" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="dt" msprop:Generator_ColumnVarNameInTable="columndt" msprop:Generator_ColumnPropNameInRow="dt" msprop:Generator_ColumnPropNameInTable="dtColumn" msprop:Generator_UserColumnName="dt" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="description" msprop:Generator_ColumnVarNameInTable="columndescription" msprop:Generator_ColumnPropNameInRow="description" msprop:Generator_ColumnPropNameInTable="descriptionColumn" msprop:Generator_UserColumnName="description" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="4095" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="address" msprop:Generator_ColumnVarNameInTable="columnaddress" msprop:Generator_ColumnPropNameInRow="address" msprop:Generator_ColumnPropNameInTable="addressColumn" msprop:Generator_UserColumnName="address" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="4095" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
             </xs:sequence>
           </xs:complexType>
         </xs:element>

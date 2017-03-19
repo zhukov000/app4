@@ -15,10 +15,13 @@ namespace App3.Class.Map
 				LayerCache.Get(Key, pRegionId).UpdateTable();
 				return;
 			}
-			foreach (KeyValuePair<int, Layer> current in LayerCache.mapLayers[Key])
-			{
-				current.Value.UpdateTable();
-			}
+            if (LayerCache.mapLayers.ContainsKey(Key))
+            {
+                foreach (KeyValuePair<int, Layer> current in LayerCache.mapLayers[Key])
+                {
+                    current.Value.UpdateTable();
+                }
+            }
 		}
 
 		public static void UpdateLayer(Layer pLayer)

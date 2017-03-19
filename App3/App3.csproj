@@ -293,6 +293,7 @@
     <Compile Include="Class\Map\Region.cs" />
     <Compile Include="Class\Map\Road.cs" />
     <Compile Include="Class\Map\SmlPoly.cs" />
+    <Compile Include="Class\Report.cs" />
     <Compile Include="Class\Singleton\EventDispatcher.cs" />
     <Compile Include="Class\Singleton\Logger.cs" />
     <Compile Include="Class\Socket2\ClientObject.cs" />
@@ -627,6 +628,7 @@
     <EmbeddedResource Include="Forms\ViewLog.resx">
       <DependentUpon>ViewLog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\ListObjectByState.rdlc" />
     <EmbeddedResource Include="Reports\StatProcessing.rdlc" />
     <EmbeddedResource Include="Reports\ListProcessing.rdlc" />
     <EmbeddedResource Include="Reports\ListObject.rdlc" />

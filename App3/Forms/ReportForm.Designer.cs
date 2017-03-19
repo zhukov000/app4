@@ -528,6 +528,7 @@
             this.reportViewer1.Name = "reportViewer1";
             this.reportViewer1.Size = new System.Drawing.Size(175, 514);
             this.reportViewer1.TabIndex = 0;
+            this.reportViewer1.Drillthrough += new Microsoft.Reporting.WinForms.DrillthroughEventHandler(this.reportViewer1_Drillthrough);
             // 
             // splitContainer1
             // 

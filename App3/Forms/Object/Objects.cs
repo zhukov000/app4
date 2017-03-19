@@ -145,11 +145,12 @@ namespace App3.Forms.Object
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var wd = Utils.CreateWaitThread(this);
+            var wd = Utils.CreateWaitThread(this, Config.Get("MonitorNumber", "1").ToInt());
             ReportDialog frm = new ReportDialog();
             string sql = @"select number, name, makedatetime, 
                                 case when dogovor then 'Есть' else 'Нет' end as dogovor, 
-                                tstatus.status, rm.region, lm.message, lm.datetime as messagetime
+                                tstatus.status, rm.region, lm.message, lm.datetime as messagetime,
+
                             from oko.object
                             inner join oko.tstatus on tstatus.id = object.tstatus_id
                             inner join (select num as id_region, fullname as region from regions2map) rm on rm.id_region = object.region_id

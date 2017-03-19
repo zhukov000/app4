@@ -394,7 +394,7 @@ namespace App3.Forms
 
         private void button4_Click(object sender, EventArgs e)
         {
-            WaitDialog wd = Utils.CreateWaitThread(this);
+            WaitDialog wd = Utils.CreateWaitThread(this, Config.Get("MonitorNumber", "1").ToInt());
 
             PointSelect MapFrm = new PointSelect();
             MapFrm.AddClickEvents(new PointSelect.MapBoxClick(PointSelect));

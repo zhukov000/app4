@@ -1,6 +1,8 @@
-﻿namespace App3 {
-    
-    
-    public partial class gisDataReports {
+﻿namespace App3
+{
+
+
+    public partial class gisDataReports
+    {
     }
 }

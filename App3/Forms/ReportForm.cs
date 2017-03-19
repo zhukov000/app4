@@ -185,6 +185,9 @@ namespace App3.Forms
         
         private void ShowReport(string sql, string report)
         {
+            Class.Report r = new Class.Report(report, sql);
+            r.showReport(reportViewer1);
+            /*
             DataSet myDS = new DataSet();
             DataBase.RowSelect(sql, myDS);
             DataTable dt = myDS.Tables[0];
@@ -193,6 +196,7 @@ namespace App3.Forms
             reportViewer1.LocalReport.DataSources.Add(DSReport);
             reportViewer1.LocalReport.ReportEmbeddedResource = report;
             reportViewer1.RefreshReport(); 
+            */
         }
 
         private void ShowDynamicReport(string sql, string report)
@@ -321,12 +325,12 @@ namespace App3.Forms
             /// Выбор отчета
             if (totalReport.Checked)
             { // общий отчет
-                req.First = @"SELECT DISTINCT count(distinct obj.osm_id) as cnt, ost.state, ost.color
+                req.First = @"SELECT DISTINCT count(distinct obj.osm_id) as cnt, ost.state, ost.color, ost.state_id
                             FROM regions2map reg
                             JOIN oko.object obj ON obj.region_id = reg.num
                             JOIN oko.object_status ost ON ost.osm_id = obj.osm_id 
                             LEFT JOIN oko.object_properties opr ON opr.object_id = obj.osm_id {0}
-                            GROUP BY ost.state, ost.color
+                            GROUP BY ost.state, ost.color, ost.state_id
                             ORDER BY ost.state";
                 req.Second = "App3.Reports.StatAllObj.rdlc";
             } else if (statusReport.Checked)
@@ -514,6 +518,44 @@ namespace App3.Forms
         private void panel1_MouseClick(object sender, MouseEventArgs e)
         {
             splitContainer1.SplitterDistance = 650;
+        }
+
+        private void reportViewer1_Drillthrough(object sender, DrillthroughEventArgs e)
+        {
+            List<ReportParameterInfo> param = e.Report.GetParameters().ToList();
+            switch (reportViewer1.LocalReport.ReportEmbeddedResource)
+            {
+                case "App3.Reports.StatAllObj.rdlc":
+                    // show ListObjectByState
+                    Class.Report rep = new Class.Report("App3.Reports.ListObjectByState.rdlc",
+                        string.Format(@"SELECT obj.number, obj.name, obj.tstate_id, obj.region_id,
+                            reg.name, case when obj.dogovor then 'есть' else 'нет' end as dogovor, 
+                            obj.dt, obj.description, adr.address
+                          FROM oko.object obj
+                            left join oko.addresses adr on adr.id = obj.address_id
+                            inner join regions2map reg on reg.num = obj.region_id
+                          WHERE tstate_id = {0};", param[0].Values[0]));
+                    LocalReport localRep = (LocalReport)e.Report;
+                    localRep.DataSources.Add(
+                        new ReportDataSource(
+                            "DataSet1",
+                            rep.getDetailReport(localRep)
+                        )
+                    );
+                    break;
+            }
+            /*
+            List<ReportParameterInfo> param = e.Report.GetParameters().ToList();
+
+            string reportName = e.ReportPath + ".rdlc";
+            string sqlStr = "SELECT * FROM task_and_answers " +
+                            "WHERE task = '" + param[0].Values[0] + "'";
+            myReport myRep = new myReport(reportName);
+
+            LocalReport localRep = (LocalReport)e.Report;
+            localRep.DataSources.Add(new ReportDataSource("DataSet1",
+                myRep.getDetailReport(conStr, sqlStr, localRep)));
+                */
         }
     }
 }

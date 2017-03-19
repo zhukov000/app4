@@ -70,6 +70,92 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>cnt</rd:DefaultName>
+                      <ActionInfo>
+                        <Actions>
+                          <Action>
+                            <Drillthrough>
+                              <ReportName>ListObjectByState</ReportName>
+                              <Parameters>
+                                <Parameter Name="state_id">
+                                  <Value>=Fields!state_id.Value</Value>
+                                </Parameter>
+                              </Parameters>
+                            </Drillthrough>
+                          </Action>
+                        </Actions>
+                      </ActionInfo>
+                      <Style>
+                        <Border>
+                          <Color>#e5e5e5</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.6cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox3">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontFamily>Times New Roman</FontFamily>
+                                <FontSize>12pt</FontSize>
+                                <Color>#4d4d4d</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox3</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>#e5e5e5</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="state_id">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!state_id.Value</Value>
+                              <Style>
+                                <FontFamily>Tahoma</FontFamily>
+                                <Color>#4d4d4d</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>state_id</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>#e5e5e5</Color>
@@ -187,12 +273,17 @@
         <TablixRowHierarchy>
           <TablixMembers>
             <TablixMember />
+            <TablixMember>
+              <Visibility>
+                <Hidden>true</Hidden>
+              </Visibility>
+            </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
         <Top>9.0223cm</Top>
         <Left>0.3175cm</Left>
-        <Height>1.2cm</Height>
+        <Height>1.8cm</Height>
         <Width>5.60854cm</Width>
         <Style>
           <Border>
@@ -500,7 +591,7 @@
         </Style>
       </Chart>
     </ReportItems>
-    <Height>4.19792in</Height>
+    <Height>4.26075in</Height>
     <Style />
   </Body>
   <Width>6.8125in</Width>
@@ -543,10 +634,14 @@
           <DataField>color</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="state_id">
+          <DataField>state_id</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>gisDataReports</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\user\Documents\Visual Studio 2013\Projects\OKO\App3\gisDataReports.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\USER\Source\Repos\app4\App3\gisDataReports.xsd</rd:SchemaPath>
         <rd:TableName>object_status_stat</rd:TableName>
         <rd:TableAdapterFillMethod>Fill</rd:TableAdapterFillMethod>
         <rd:TableAdapterGetDataMethod>GetData</rd:TableAdapterGetDataMethod>
@@ -554,6 +649,25 @@
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="state_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>DataSet1</DataSetName>
+          <ValueField>state_id</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>ReportParameter1</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>DataSet1</DataSetName>
+          <ValueField>state_id</ValueField>
+          <LabelField>state_id</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+  </ReportParameters>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>08735162-b3c6-4759-8f18-4b3969e06628</rd:ReportID>
 </Report>

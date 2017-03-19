@@ -163,7 +163,7 @@ namespace App3.Forms
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var wd = Utils.CreateWaitThread(this);
+            var wd = Utils.CreateWaitThread(this, Config.Get("","1").ToInt() );
             DataBase.RunCommand(
                     string.Format("UPDATE oko.region_status SET color = '{0}', min_norma = {1}, max_norma = {2} WHERE id = 1",
                         ColorTranslator.ToHtml(panel3.BackColor), numericUpDown1.Value, 100
@@ -228,7 +228,7 @@ namespace App3.Forms
 
         private void button9_Click(object sender, EventArgs e)
         {
-            var wd = Utils.CreateWaitThread(this);
+            var wd = Utils.CreateWaitThread(this, Config.Get("MonitorNumber", "1").ToInt());
             dbTable2.SaveChange();
             Utils.UpdateRegionStatus();
             ((MainForm)MdiParent).DistrictMapRefresh();
