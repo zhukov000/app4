@@ -38,6 +38,7 @@ namespace App3.Forms
                     Application.Exit();
                 }
             }*/
+            ((MainForm)MdiParent).TestConnection();
 
             if (UPDATE_CACHE < 0)
             {

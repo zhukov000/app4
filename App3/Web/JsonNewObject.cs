@@ -20,6 +20,8 @@ namespace App3.Web
     class JsonNewObject
     {
         public string objectname { get; set; }
+        public string type { get; set; }
+        public string keyfield { get; set; }
         public List<List<Attr>> reversed { get; set; }
         public List<Deleted> deleted { get; set; }
     }

@@ -121,6 +121,7 @@ namespace ObjectLoader
             ShowMessage(string.Format("В файле {0} строк.", result.Tables[0].Rows.Count));
             int c_upd = 0;
             int c_ins = 0;
+            int c_err = 0;
             foreach (DataRow row in result.Tables[0].Rows)
             {
                 if (skipFirst)
@@ -251,11 +252,11 @@ namespace ObjectLoader
                         "oko.event",
                         new Dictionary<string, object>()
                         {
-                            {"code", tm_row[2]},
-                            {"class", tm_row[1]},
-                            {"oko_version", tm_row[0]},
-                            {"datetime", objLastMessTime},
-                            {"objectnumber", objNumber},
+                            {"code", tm_row[2].Q()},
+                            {"class", tm_row[1].Q()},
+                            {"oko_version", tm_row[0].Q()},
+                            {"datetime", objLastMessTime.Q()},
+                            {"objectnumber", objNumber.Q()},
                             {"region_id", regionId}
                         }
                     );
@@ -264,12 +265,20 @@ namespace ObjectLoader
                 {
                     ShowMessage(ex.Message);
                     ShowMessage(ex.StackTrace);
-                    ShowMessage("Операция загрузки остановлена из-за возникшей ошибки");
-                    break;
+                    c_err++;
+                    if (checkBox4.Checked)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        ShowMessage("Операция загрузки остановлена из-за возникшей ошибки");
+                        break;
+                    }
                 }
             }
             excelReader.Close();
-            ShowMessage(string.Format("Всего объектов: добавлено - {0}, обновлено - {1}", c_ins, c_upd));
+            ShowMessage(string.Format("Всего объектов: добавлено - {0}, обновлено - {1}, ошибок - {2}", c_ins, c_upd, c_err));
             // включить интерфейс программы
             MenuChange("true");
         }

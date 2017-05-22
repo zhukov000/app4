@@ -16,6 +16,7 @@ using App3.Class.Map;
 using System.Reflection;
 using System.Threading;
 using App3.Class.Socket2;
+using App3.Class.Socket;
 
 namespace App3.Forms
 {
@@ -61,6 +62,15 @@ namespace App3.Forms
             toolStripStatusLabel.Text = pText;
         }
 
+        public void TestConnection()
+        {
+            if (Config.Get("COMConn") == "1" && oModuleCOM != null)
+            {
+                // oModuleCOM.SendTestConnect();
+                Logger.Instance.WriteToLog("TEST CONNECTION: " + oModuleCOM.TestConnection());
+            }
+        }
+
         private void SetChildFormsPosition()
         {
             try
@@ -92,25 +102,24 @@ namespace App3.Forms
                 this.oModuleXML.GetModuleMessageEvent += new OKOGate.EventDelegate(this.ReciveMessage);
                 this.oModuleXML.StartModule();
                 this.oModuleXML.StartReceive();
-                Tracer.LogFileName = Logger.LogDirectory() + "OKOGate.log";
                 Logger.Instance.WriteToLog("XML Guard start");
             }
             if (Config.Get("COMConn") == "1")
             {
-                this.oModuleCOM = new GuardAgent2.Module();
-                this.oModuleCOM.LocalAddress = "11";
-                this.oModuleCOM.ModuleId = 11;
-                string[] arg_168_0 = SerialPort.GetPortNames();
+                oModuleCOM = new GuardAgent2.Module();
+                oModuleCOM.LocalAddress = "11";
+                oModuleCOM.ModuleId = 11;
+                oModuleCOM.CreateLog = true;
+                
                 string a = Config.Get("COMPortName").ToString();
-                string[] array = arg_168_0;
+                string[] ports = SerialPort.GetPortNames();
                 bool flag = false;
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; i < ports.Length; i++)
                 {
-                    string text = array[i];
+                    string text = ports[i];
                     Logger.Instance.WriteToLog("Check port " + text);
                     if (a == text)
                     {
-                        Logger.Instance.WriteToLog("1");
                         this.oModuleCOM.Close();
                         for (int j = 0; j < 5; j++)
                         {
@@ -118,7 +127,6 @@ namespace App3.Forms
                             Logger.Instance.WriteToLog(res.ToString());
                             if (res == OKO_Messages.Module_Started)
                             {
-                                Logger.Instance.WriteToLog("2");
                                 this.oModuleCOM.GetModuleMessageEvent += new GuardAgent2.EventDelegate(Handling.ProcessingComEvent);
                                 this.oModuleCOM.ClearRetrAddrList();
                                 this.oModuleCOM.SetRetrType(Config.Get("COMRetrType").ToByte());
@@ -126,6 +134,7 @@ namespace App3.Forms
                                 this.oModuleCOM.SetChannelsMask(Config.Get("COMChannelsMask").ToByte());
                                 this.oModuleCOM.SendAskForState(1, 0, Config.Get("RemoteAddress").ToUShort());
                                 Logger.Instance.WriteToLog("COM connector start, port: " + text);
+
                                 if (!DBDict.IsServer)
                                     this.IncConnectCnt();
                                 flag = true;
@@ -137,11 +146,14 @@ namespace App3.Forms
                             }
                         }
                         if (flag) break;
-                        Logger.Instance.WriteToLog("3");
                         this.oModuleCOM.Close();
                     }
                 }
+                Logger.Instance.WriteToLog("COM Guard start");
             }
+
+            Tracer.LogFileName = Logger.LogDirectory() + "OKOGate.log";
+            
 
             Handling.GetMessageEvent = (Handling.GetMessageHandler)Delegate.Combine(Handling.GetMessageEvent, new Handling.GetMessageHandler(this.OnGetMessage));
             Handling.onObjectCardOpen = (Handling.ObjectCardOpen)Delegate.Combine(Handling.onObjectCardOpen, new Handling.ObjectCardOpen(this.OnObjectCardOpen));
@@ -508,10 +520,10 @@ namespace App3.Forms
                 Logger.Instance.WriteToLog(this.Text);
 
                 Utils.ArhiveEvents();
-                /*
+                
                 if (!DBDict.IsServer)
                     Utils.UpdateDistrictStatuses(Config.Get("CurrenRegion").ToInt());
-                */
+
                 // Старт web-серсиса
                 if (Config.Get("StartWeb") != "0")
                 {
@@ -1259,7 +1271,7 @@ namespace App3.Forms
             }
             else
             {
-                MessageBox.Show("ВНИМАНИЕ!!! Функция синхронизации устарела!\r\nСинхроинзация отключена в настройках приложения. Измените конфигурационный файл и перезапустите программу, если желаете выполнить синхронизацию вручную.");
+                MessageBox.Show("Синхронизация отключена. Требуется конфигурация программного средства");
             }
         }
 
@@ -1353,36 +1365,24 @@ namespace App3.Forms
 
         private void отправитьПоследниеСообщенияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string sql = @"SELECT DISTINCT ON (objectnumber) objectnumber,
-                                alarmgroupid, code, channelnumber, partnumber,
-                                zoneusernumber, typenumber, class, address, 
-                                datetime, region_id, oko_version, retrnumber, 
-                                isrepeat, siglevel, id
-                           FROM   oko.event
-                           WHERE region_id = {0}
-                           ORDER BY objectnumber, datetime DESC";
+            int region_id = Config.Get("CurrenRegion", "-1").ToInt();
 
-            foreach (object[] row in DataBase.RowSelect(string.Format(sql, Config.Get("CurrenRegion").ToInt())))
+            if (region_id != -1)
             {
-                IDictionary<string, object> data = new Dictionary<string, object>
+                foreach (IDictionary<string, object> data in Utils.GetObjectsStatuses(region_id))
                 {
-                    { "objectnumber", row[0] },
-                    { "alarmgroupid", row[1] },
-                    { "code", row[2] },
-                    { "channelnumber", row[3] },
-                    { "partnumber", row[4] },
-                    { "zoneusernumber", row[5] },
-                    { "typenumber", row[6] },
-                    { "class", row[7] },
-                    { "address", row[8] },
-                    { "datetime", row[9].Q() },
-                    { "region_id", row[10] },
-                    { "oko_version", row[11] },
-                    { "retrnumber", row[12] },
-                    { "isrepeat", row[13] },
-                    { "siglevel", row[14] }
-                };
-                Handling.SendDataBySocket(data, row[15].ToInt());
+                    Handling.SendDataBySocket(data, data["id"].ToInt());
+                }
+            }
+            else if (Config.Get("RedirectAllIncommingServer") != "")
+            {
+
+                foreach (IDictionary<string, object> data in Utils.GetObjectsStatuses(region_id))
+                {
+                    SendObject obj = new SendObject(data);
+                    if (obj.Message == null) obj.Message = "";
+                    SocketClient.SendObjectFromSocket2(obj, Config.Get("RedirectAllIncommingServer"), Config.Get("RedirectAllIncommingPort").ToInt());
+                }
             }
         }
 

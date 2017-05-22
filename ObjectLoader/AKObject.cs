@@ -324,6 +324,10 @@ namespace App3.Class
         /// </summary>
         public void Save2DB()
         {
+            if (makedatetime == null || makedatetime == "")
+            {
+                makedatetime = DateTime.Now.ToString();
+            }
             // информация об объекте
             Dictionary<string, object> Data = new Dictionary<string, object>() 
             { 

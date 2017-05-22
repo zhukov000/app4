@@ -21,8 +21,10 @@ namespace App3.Class.Static
 		}
 
 		private static Synchronizer.Status_Sync status;
-
-		public static Entity[] SYNC_NEW;
+        /// <summary>
+        /// Справочник объектов синхронизации, ключ - имя
+        /// </summary>
+		public static IDictionary<string, Entity> SYNC_NEW;
 
 		private static Thread backgroundThread;
 
@@ -40,6 +42,9 @@ namespace App3.Class.Static
 			}
 		}
 
+        /// <summary>
+        /// Запуск потока синхронизации
+        /// </summary>
         static public void Start()
         {
             backgroundThread = new Thread(
@@ -65,6 +70,7 @@ namespace App3.Class.Static
                                 }));
                             }
                         }
+                        // синхронизация с узлами выполняется автоматически - пауза синхронизации
                         Thread.Sleep(Config.Get("SynchSleepMinutes").ToInt() * 60 * 1000);
                     }
                 }
@@ -72,40 +78,154 @@ namespace App3.Class.Static
             backgroundThread.Start();
         }
 
+        /// <summary>
+        /// Получить имя таблицы для объекта по его имени
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
 		public static string getTableName(string Name)
 		{
-			string result = "";
-			Entity[] sYNC_NEW = Synchronizer.SYNC_NEW;
-			for (int i = 0; i < sYNC_NEW.Length; i++)
-			{
-				Entity entity = sYNC_NEW[i];
-				if (entity.ToString() == Name)
-				{
-					result = entity.getTableName();
-					break;
-				}
-			}
-			return result;
-		}
+            Entity entity = null;
+            if (Synchronizer.SYNC_NEW.TryGetValue(Name, out entity))
+                return entity.getTableName();
+            return "";
+        }
 
-		public static List<KeyValuePair<string, object>[]> getReversed(string table, DateTime dt)
+        /// <summary>
+        /// Метод получения объектов для изменения по умолчанию
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static List<KeyValuePair<string, object>[]> getReversed(string table, DateTime dt)
 		{
 			return DataBase.RowSelect(string.Format("SELECT * FROM {0} WHERE dt > '{1}'", table, dt.ToString()), false);
 		}
 
+        /// <summary>
+        /// Метод получения объектов для удаления по умолчанию
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="dt"></param>
+        /// <returns></returns>
 		public static List<object[]> getDeleted(string table, DateTime dt)
 		{
 			return DataBase.RowSelect(string.Format("SELECT * FROM deleted WHERE tablename = '{0}' and dt > '{1}'", table, dt.ToString()));
 		}
-
+        
+        /// <summary>
+        /// Выполнение синхронизации для объекта синхронизации
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
 		private static int[] SyncObject(JsonNewObject obj)
 		{
-			int num = 0;
-			int num2 = 0;
-			string field = "id";
+            // счетчики числа измененных и числа удаленных
+			int cntdel = 0;
+			int cntrev = 0;
+            // ключевое поле
+			string field = obj.keyfield;
+            // шаблоны запросов на добавление/обновление/удаление
+			string qinsert = "INSERT INTO {2} ({0}) VALUES({1})";
+			string qdelete = "DELETE FROM {3} WHERE {1} = {2}";
+            string qupdate = "UPDATE {0} SET {1} WHERE {2} = {3}";
 
-			string format = "INSERT INTO oko." + obj.objectname + "({0}) VALUES({1})";
-			string format2 = "DELETE FROM oko." + obj.objectname + " WHERE {1} = {2}";
+            #region Шаг 1: Удаление объектов
+            foreach (Deleted current2 in obj.deleted)
+            {
+                try
+                {
+                    cntdel += DataBase.RunCommand(string.Format(qdelete, field, current2.id, getTableName(obj.objectname)));
+                }
+                catch (Exception ex2)
+                {
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex2.Message));
+                }
+            }
+            #endregion
+
+            #region Шаг 2: Изменение объектов
+            foreach (List<Attr> synobj in obj.reversed)
+            {
+                // подготовка изменений в БД
+                List<string> insnames = new List<string>(); // список имен полей добавления
+                List<string> insvals = new List<string>();  // список значений полей добавления
+                List<string> updlist = new List<string>();  // список обновления: имя = значение
+
+                #region проход по атрибутам объекта и подготовка данных для запросов
+                string keyval = "";
+                foreach (Attr current4 in synobj)
+                {
+                    if (current4.key == field) // если ключевое поле
+                    {
+                        if (keyval == "")
+                            keyval = current4.val;
+                    }
+                    else
+                    { // если неключевое поле
+                        insnames.Add(current4.key);
+                        if (current4.val != "")
+                            insvals.Add(current4.val.Q());
+                        else
+                            insvals.Add("null");
+                    }
+                    if (current4.val != "")
+                    {
+                        updlist.Add(string.Format("{0} = '{1}'", current4.key, current4.val));
+                    }
+                    else
+                    {
+                        updlist.Add(string.Format("{0} = null", current4.key));
+                    }
+                }
+                #endregion
+                
+                // количество обновленных
+                int cntupd = 0;
+                // если найдено ключевое значение и объект предназначен для обновления
+                if (keyval != "" && obj.type == ReversedType.UPDATE.ToString() && updlist.Count > 0)
+                { // пробуем обновить
+                    try
+                    {
+                        cntupd = DataBase.RunCommand(string.Format(qupdate,
+                                getTableName(obj.objectname), // имя таблицы
+                                string.Join(", ", updlist), // список полей обновления
+                                field, // ключевое поле
+                                keyval // ключевое значение
+                            ));
+                    }
+                    catch (Exception ex3)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex3.Message));
+                    }
+                }
+                // если записи не были обновлены - попробовать добавить их
+                if (cntupd == 0 && insnames.Count > 0 && insvals.Count > 0)
+                {
+                    try
+                    {
+                        string ss = string.Format(qinsert,
+                                string.Join(",", insnames),  // именя столбцов
+                                string.Join(",", insvals),   // значения полей
+                                getTableName(obj.objectname) // имя таблицы
+                            );
+                        Logger.Instance.WriteToLog(ss);
+                        cntrev += DataBase.RunCommand(ss);
+                    }
+                    catch (Exception ex4)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex4.Message));
+                    }
+                }
+                cntrev += cntupd;
+            }
+            return new int[] { cntdel, cntrev };
+
+            #endregion
+
+
+            #region DEPRECATED => MUST DELETE
+            /*
 			if (obj.objectname == "event")
 			{
 				using (List<List<Attr>>.Enumerator enumerator = obj.reversed.GetEnumerator())
@@ -123,6 +243,7 @@ namespace App3.Class.Static
 								list2.Add(current.val.Q());
 							}
 						}
+
 						if (list.Count > 0)
 						{
 							bool flag = true;
@@ -150,95 +271,26 @@ namespace App3.Class.Static
 					}
                     return new int[] { num, num2 };
                 }
-			}
-			if (obj.objectname == "object")
-			{
-				field = "osm_id";
-			}
-			foreach (Deleted current2 in obj.deleted)
-			{
-				try
-				{
-					num += DataBase.RunCommand(string.Format(format2, field, current2.id));
-				}
-				catch (Exception ex2)
-				{
-					Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex2.Message));
-				}
-			}
-			foreach (List<Attr> current3 in obj.reversed)
-			{
-				List<string> list3 = new List<string>();
-				List<string> list4 = new List<string>();
-				List<string> list5 = new List<string>();
-				string a = "";
-				foreach (Attr current4 in current3)
-				{
-					if (current4.key == field)
-					{
-						a = current4.val;
-					}
-					list3.Add(current4.key);
-					if (current4.val != "")
-					{
-						list4.Add(current4.val.Q());
-						list5.Add(string.Format("{0} = '{1}'", current4.key, current4.val));
-					}
-					else
-					{
-						list4.Add("null");
-						list5.Add(string.Format("{0} = null", current4.key));
-					}
-				}
-				int num4 = 0;
-				if (a != "")
-				{
-					try
-					{
-						string[] expr_36C = new string[8];
-						expr_36C[0] = "UPDATE oko.";
-						expr_36C[1] = obj.objectname;
-						expr_36C[2] = " SET ";
-						expr_36C[3] = string.Join(", ", list5);
-						expr_36C[4] = " WHERE ";
-						expr_36C[5] = field;
-						expr_36C[6] = " = ";
-                        expr_36C[7] = current3.Where(x => x.key == field).First().val;
-                        num4 = DataBase.RunCommand(string.Concat(expr_36C));
-					}
-					catch (Exception ex3)
-					{
-						Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex3.Message));
-					}
-				}
-				if (num4 == 0)
-				{
-					try
-					{
-						num2 += DataBase.RunCommand(string.Format(format, string.Join(",", list3), string.Join(",", list4)));
-						continue;
-					}
-					catch (Exception ex4)
-					{
-						Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex4.Message));
-						continue;
-					}
-				}
-				num2 += num4;
-			}
-			return new int[] { num, num2 };
-		}
+			} */
+            #endregion
 
+        }
+
+        /// <summary>
+        /// Выполнение синхронизации через http
+        /// </summary>
+        /// <param name="Data"></param>
+        /// <returns></returns>
 		public static List<string> Run(ref List<SyncResult> Data)
 		{
-			if (Data == null)
-			{
-				Data = new List<SyncResult>();
-			}
+			if (Data == null) Data = new List<SyncResult>();
+            // list - отчет о синхронизации
 			List<string> list = new List<string>();
 			object obj = new object();
-			lock (obj)
+            // блокировка
+            lock (obj)
 			{
+                // событие о начале синхронизации
 				if (Synchronizer.SyncStart != null)
 				{
 					try
@@ -253,23 +305,30 @@ namespace App3.Class.Static
 				Data.Clear();
 				list.Add("запуск...");
 				Synchronizer.status = Synchronizer.Status_Sync.RUN;
-				foreach (object[] current in DataBase.RowSelect("select sn.id, sn.ipv4, sn.port, ip.description from syn_nodes sn left join oko.ipaddresses ip on ipv4 = ip.ipaddress where sn.synin"))
+                // получаем список узлов, с которыми нужно выполнить синхронизацию
+                // для них в таблице syn_nodes должен быть установлен флаг в поле synin
+                foreach (object[] current in DataBase.RowSelect("select sn.id, sn.ipv4, sn.wport, ip.description from syn_nodes sn left join oko.ipaddresses ip on ipv4 = ip.ipaddress where sn.synin and sn.wsync"))
 				{
+                    // если адрес не является локальным - не совпадает с адресом компьютера, на котором запущена синхронизация
 					if (!Utils.IsLocalIpAddress(current[1].ToString()))
 					{
 						SyncResult syncResult = new SyncResult();
 						int num = 0;
 						int num2 = 0;
-						DateTime now = DateTime.Now;
+                        // засекаем время
+                        DateTime now = DateTime.Now;
 						Stopwatch stopwatch = new Stopwatch();
 						stopwatch.Start();
-						DateTime dt = DateTime.Now.AddDays(-3.0);
+                        // получаем дату синхронизации
+                        // дата синхронизации не превосходит 3х дней, если об узле нет информации в таблице синхронизации
+                        DateTime dt = DateTime.Now.AddDays(-3.0); 
 						object obj2 = DataBase.First(string.Format("select id, start from synchronize where node_id = {0} order by start desc", current[0]), "start");
 						if (obj2 != null)
 						{
 							dt = DateTime.Parse(obj2.ToString());
 						}
-						list.Add("соединяюсь с " + current[1] + "...");
+                        // получение данных с узла по протоколу HTTP, метод get_new
+                        list.Add("соединяюсь с " + current[1] + "...");
 						string text = string.Format("http://{0}:{3}/get_new/{1}/{2}", new object[]
 						{
 							current[1],
@@ -277,28 +336,37 @@ namespace App3.Class.Static
 							current[0],
 							current[2]
 						});
+
 						syncResult.IpAddress = current[1].ToString();
 						Logger.Instance.WriteToLog(string.Format("соединение с {0}: {1}", current[1], text));
 						string htmlContent = Utils.getHtmlContent(text);
 						syncResult.Description = current[3].ToString();
+                        // если контент с удаленного узла получен
 						if (htmlContent.Length > 0)
 						{
 							syncResult.Status = SyncStatus.OK;
 							list.Add("успех: " + htmlContent.Length + " байт");
 							syncResult.Bytes = htmlContent.Length;
-							JsonNewObject[] arg_212_0 = new JavaScriptSerializer
+                            // десереализация массива объектов
+							JsonNewObject[] sync_objects = new JavaScriptSerializer
 							{
 								MaxJsonLength = 2147483647
 							}.Deserialize<JsonNewObject[]>(htmlContent);
+
+                            // если адрес узла синхронизации совпадает с адресм сервера, то узел - пропускается
 							bool flag2 = current[1].ToString() == DBDict.Settings["SERVER_ADDRESS"].ToString();
-							JsonNewObject[] array = arg_212_0;
+
+							JsonNewObject[] array = sync_objects;
 							for (int i = 0; i < array.Length; i++)
 							{
 								JsonNewObject jsonNewObject = array[i];
 								list.Add(jsonNewObject.objectname);
-								if (flag2 || !(jsonNewObject.objectname != "event"))
-								{
+                                // 
+								if (!flag2) /*deprecated || !(jsonNewObject.objectname != "event") */
+                                {
+                                    // вызов метода синхронизации
 									int[] array2 = Synchronizer.SyncObject(jsonNewObject);
+                                    // метод возвращает два счетчика: число удаленных, число измененных (обновлено/добавлено)
 									num2 += array2[0];
 									num += array2[1];
 									string text2 = string.Format("{2} удалено {0}, изменено {1}", array2[0], array2[1], jsonNewObject.objectname);
@@ -309,6 +377,7 @@ namespace App3.Class.Static
 							list.Add(string.Format("Всего: удалено {0}, изменено {1}", num2, num));
 							syncResult.Reserved = num;
 							syncResult.Deleted = num2;
+                            Logger.Instance.WriteToLog(string.Format("Всего: удалено {0}, изменено {1}", num2, num));
 						}
 						else
 						{
@@ -317,6 +386,7 @@ namespace App3.Class.Static
 						}
 						stopwatch.Stop();
 						DateTime dateTime = now + stopwatch.Elapsed;
+                        // остановка таймера, запись результата в базу и журнал
 						DataBase.RunCommandInsert("synchronize", new Dictionary<string, object>
 						{
 							{
@@ -348,7 +418,9 @@ namespace App3.Class.Static
 					}
 					list.Add("... синхронизация завершена");
 				}
+                // установка статуса синхронизации - приостановлена
 				Synchronizer.status = Synchronizer.Status_Sync.SUSPEND;
+                // событие - синхронизацие остановлена
 				if (Synchronizer.SyncStop != null)
 				{
 					try
@@ -366,13 +438,13 @@ namespace App3.Class.Static
 
 		static Synchronizer()
 		{
-			// Note: this type is marked as 'beforefieldinit'.
 			Synchronizer.SyncStart = null;
 			Synchronizer.SyncStop = null;
 			Synchronizer.status = Synchronizer.Status_Sync.SUSPEND;
-			Synchronizer.SYNC_NEW = new Entity[]
+            Entity[] entities = new Entity[]
 			{
-				new EventSync(),
+				// new EventSync(),
+                new SyncObjectStatus()/*,
 				new SyncAddresses(),
 				new SyncClassifier(),
 				new SyncCompany(),
@@ -391,9 +463,16 @@ namespace App3.Class.Static
 				new SyncTNumber(),
 				new SyncTState(),
 				new SyncTStatus(),
-				new SyncZone()
+				new SyncZone()*/
 			};
-			Synchronizer.backgroundThread = null;
+
+            Synchronizer.SYNC_NEW = new Dictionary<string, Entity>();
+            foreach (var entity in entities)
+            {
+                Synchronizer.SYNC_NEW[entity.Name] = entity;
+            }
+
+            Synchronizer.backgroundThread = null;
 			Synchronizer.NeedUpdate = false;
 		}
 	}

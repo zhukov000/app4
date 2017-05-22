@@ -8,10 +8,13 @@ using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nancy.Responses.Negotiation;
+using Nancy.Authentication.Forms;
 using Nancy.Responses;
 using System.Text;
 using App3.Class.Static;
 using App3.Class;
+using Nancy.Security;
+using App3.Class.Singleton;
 
 namespace App3.Web
 {
@@ -95,8 +98,11 @@ namespace App3.Web
         public APIModule()
         {
             this.ENableCors();
+
             Get["/"] = x =>
             {
+
+                Logger.Instance.WriteToLog("Web Root");
                 IDictionary<string, object> owinEnvironment = base.Context.GetOwinEnvironment();
                 Stream arg_1C_0 = (Stream)owinEnvironment["owin.RequestBody"];
                 IDictionary<string, string[]> dictionary = (IDictionary<string, string[]>)owinEnvironment["owin.RequestHeaders"];
@@ -192,23 +198,87 @@ namespace App3.Web
                 return response;
             };
 
+            Get["/events/{regid?}"] = x =>
+            {
+                int region_id = Config.Get("CurrenRegion", "-1").ToInt();
+                if (x.regid != null)
+                {
+                    region_id = x.regid;
+                }
+                var responseContentArray = new JArray();
+                
+                foreach (IDictionary<string, object> data in Utils.GetObjectsStatuses(region_id))
+                {
+                    data.Add("message", string.Format("{0}({1})", DBDict.TMessage[data["oko_version"].ToInt(), data["class"].ToInt(), data["code"].ToInt()].Item2, DBDict.TMessage[data["oko_version"].ToInt(), data["class"].ToInt(), data["code"].ToInt()].Item3));
+                    responseContentArray.Add(JObject.FromObject(data));
+                }
+
+                var response = (Response)responseContentArray.ToString();
+                response.ContentType = "application/json";
+                return response;
+            };
+
+            Get["/objects/{regid?}"] = x =>
+            {
+                int region_id = Config.Get("CurrenRegion", "-1").ToInt();
+                if (x.regid != null)
+                {
+                    region_id = x.regid;
+                }
+                var responseContentArray = new JArray();
+
+                foreach (IDictionary<string, object> data in Utils.GetObjects(region_id))
+                {
+                    responseContentArray.Add(JObject.FromObject(data));
+                }
+
+                var response = (Response)responseContentArray.ToString();
+                response.ContentType = "application/json";
+                return response;
+            };
+
+            Get["/dicts"] = x =>
+            {
+                var array = new JArray();
+
+                var responseContentObject = new JObject();
+                foreach (var data in DBDict.TState)
+                {
+                    var obj = JObject.FromObject(data);
+                    array.Add(obj);
+                }
+                responseContentObject.Add("state", array);
+
+                array = new JArray();
+                foreach (var data in DBDict.TStatus)
+                {
+                    var obj = new JObject();
+                    obj.Add("id", data.Key);
+                    obj.Add("name", data.Value);
+                    array.Add(obj);
+                }
+                responseContentObject.Add("status", array);
+
+                array = new JArray();
+                foreach (var data in DBDict.TRegion)
+                {
+                    var obj = new JObject();
+                    obj.Add("id", data.Key);
+                    obj.Add("fullname", data.Value.Item1);
+                    obj.Add("name", data.Value.Item2);
+                    obj.Add("color", data.Value.Item3);
+                    array.Add(obj);
+                }
+                responseContentObject.Add("region", array);
+
+                var response = (Response)responseContentObject.ToString();
+                response.ContentType = "application/json";
+                return response;
+            };
+            
             Get["/test"] = _ =>
             {
-                // TODO
                 var responseContentObject = new JObject();
-                /*
-                var responseThing = new
-                {
-                    this.Request.Headers,
-                    this.Request.Query,
-                    this.Request.Form,
-                    this.Request.Session,
-                    this.Request.Method,
-                    this.Request.Url,
-                    this.Request.Path
-                };
-                */
-                // return Response.AsJson(responseThing);
                 responseContentObject.Add("test", this.Request.UserHostAddress);
                 var response = (Response)responseContentObject.ToString();
                 response.ContentType = "application/json";
@@ -219,42 +289,52 @@ namespace App3.Web
             Get["/get_new/{date}/{nid?}"] = x =>
             {
                 var responseContentArray = new JArray();
-
-                // проверить разрешено ли этому узлу получать данные
-                if (DataBase.RowSelectCount(string.Format("SELECT * FROM syn_nodes WHERE synout AND ipv4 = '{0}' and id = {1}", this.Request.UserHostAddress, x.nid)) > 0)
+                int region_id = Config.Get("CurrenRegion", "-1").ToInt();
+                // если регион не установлен в конфигурации - метод не поддерживается
+                if (region_id != -1)
                 {
-
-                    foreach (var el in Synchronizer.SYNC_NEW)
+                    Logger.Instance.WriteToLog(string.Format("Web GET_NEW: {0}", this.Request.UserHostAddress));
+                    // проверить разрешено ли этому узлу получать данные
+                    if (DataBase.RowSelectCount(string.Format("SELECT * FROM syn_nodes WHERE synout AND ipv4 = '{0}' ", this.Request.UserHostAddress/*, x.nid*/)) > 0)
                     {
-                        var responseContentObject = new JObject();
-                        string name = el.getName();
-                        responseContentObject.Add("objectname", name);
-                        // точка актуальности
-                        DateTime dt = Utils.StringToDateTime(x.date.ToString());
-
-                        var jArray = new JArray();
-                        foreach (KeyValuePair<string, object>[] pairs in el.getReversed(dt))
+                        foreach (var el in Synchronizer.SYNC_NEW)
                         {
-                            var jArray2 = new JArray();
-                            foreach (var pair in pairs)
+                            var responseContentObject = new JObject();
+                            // имя объекта синхронизации
+                            string name = el.Key;
+                            responseContentObject.Add("objectname", name);
+                            // тип синхронизации
+                            responseContentObject.Add("type", el.Value.Type.ToString());
+                            // ключевое поле
+                            responseContentObject.Add("keyfield", el.Value.KeyField);
+
+                            // точка актуальности
+                            DateTime dt = Utils.StringToDateTime(x.date.ToString());
+
+                            var jArray = new JArray();
+                            foreach (KeyValuePair<string, object>[] pairs in el.Value.getReversed(dt))
+                            {
+                                var jArray2 = new JArray();
+                                foreach (var pair in pairs)
+                                {
+                                    var jObject = new JObject();
+                                    jObject.Add("key", pair.Key);
+                                    jObject.Add("val", pair.Value.ToString());
+                                    jArray2.Add(jObject);
+                                }
+                                jArray.Add(jArray2);
+                            }
+                            responseContentObject.Add("reversed", jArray);
+                            jArray = new JArray();
+                            foreach (var pair in el.Value.getDeleted(dt))
                             {
                                 var jObject = new JObject();
-                                jObject.Add("key", pair.Key);
-                                jObject.Add("val", pair.Value.ToString());
-                                jArray2.Add(jObject);
+                                jObject.Add(pair.Key, pair.Value.ToString());
+                                jArray.Add(jObject);
                             }
-                            jArray.Add(jArray2);
+                            responseContentObject.Add("deleted", jArray);
+                            responseContentArray.Add(responseContentObject);
                         }
-                        responseContentObject.Add("reversed", jArray);
-                        jArray = new JArray();
-                        foreach (var pair in el.getDeleted(dt))
-                        {
-                            var jObject = new JObject();
-                            jObject.Add(pair.Key, pair.Value.ToString());
-                            jArray.Add(jObject);
-                        }
-                        responseContentObject.Add("deleted", jArray);
-                        responseContentArray.Add(responseContentObject);
                     }
                 }
                 var response = (Response)responseContentArray.ToString();
@@ -262,5 +342,6 @@ namespace App3.Web
                 return response;
             };
         }
+
     }
 }

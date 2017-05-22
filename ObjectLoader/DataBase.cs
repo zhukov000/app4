@@ -220,6 +220,7 @@ namespace App3
                 {
                     o = null;
                     // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    throw new Exception(ex.Message);
                 }
             }
             return o;
@@ -276,7 +277,7 @@ namespace App3
             catch (Exception ex)
             {
                 // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
-                // throw new DataBaseRunCommandExcepion(ex.Message);
+                throw new DataBaseRunCommandExcepion(ex.Message);
             }
             return ret;
         }
@@ -333,7 +334,7 @@ namespace App3
                 catch (Exception ex)
                 {
                     // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
-                    // throw new DataBaseRunCommandExcepion(ex.Message);
+                    throw new DataBaseRunCommandExcepion(ex.Message);
                 }
                 finally
                 {
@@ -369,6 +370,7 @@ namespace App3
             catch(Exception ex)
             {
                 // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                throw new Exception(ex.Message);
             }
             return request;
         }
@@ -420,6 +422,7 @@ namespace App3
                 {
                     // Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
                     // throw new DataBaseRunCommandExcepion(ex.Message);
+                    throw new Exception("Ошибка в запросе: " + pCommand);
                 }
                 finally
                 {

@@ -171,6 +171,10 @@
       <HintPath>..\packages\Nancy.1.4.1\lib\net40\Nancy.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Nancy.Authentication.Forms, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Authentication.Forms.1.4.1\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Nancy.Hosting.Self, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Hosting.Self.1.4.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
       <Private>True</Private>
@@ -319,6 +323,7 @@
     <Compile Include="Class\Synchronization\SyncObject.cs" />
     <Compile Include="Class\Synchronization\SyncObjectInContract.cs" />
     <Compile Include="Class\Synchronization\SyncObjectProperties.cs" />
+    <Compile Include="Class\Synchronization\SyncObjectStatus.cs" />
     <Compile Include="Class\Synchronization\SyncRealObject.cs" />
     <Compile Include="Class\Synchronization\SyncRegionStatus.cs" />
     <Compile Include="Class\Synchronization\SyncResult.cs" />
@@ -590,6 +595,9 @@
     <Compile Include="Tools\PopupTool.cs" />
     <Compile Include="Tools\SelectRegionTool.cs" />
     <Compile Include="Web\APIModule.cs" />
+    <Compile Include="Web\Bootstrapper.cs" />
+    <Compile Include="Web\DatabaseUser.cs" />
+    <Compile Include="Web\IUserIdentity.cs" />
     <Compile Include="Web\JsonNewObject.cs" />
     <Compile Include="Web\Startup.cs" />
     <Compile Include="Web\StartWeb.cs" />

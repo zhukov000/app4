@@ -18,7 +18,14 @@ namespace App3.Web
             backgroundThread = new Thread(
                 new ThreadStart(() =>
                 {
-
+                    /*
+                    StartOptions options = new StartOptions();
+                    options.Urls.Add("http://localhost:" + Config.Get("WebPort"));
+                    options.Urls.Add("http://127.0.0.1:" + Config.Get("WebPort"));
+                    options.Urls.Add(string.Format("http://{0}:" + Config.Get("WebPort"), Environment.MachineName));
+                    options.Urls.Add("http://+:" + Config.Get("WebPort"));
+                    options.ServerFactory = "Microsoft.Owin.Host.HttpListener";
+                    */
                     StartOptions options = new StartOptions("http://+:" + Config.Get("WebPort"))
                     {
                         ServerFactory = "Microsoft.Owin.Host.HttpListener"
@@ -36,8 +43,9 @@ namespace App3.Web
                             }
                         }
                     }
-                    catch (ThreadAbortException)
+                    catch (ThreadAbortException ex)
                     {
+                        Logger.Instance.WriteToLog("Остановлена web-синхронизация: " + ex.Message);
                     }
                     catch (Exception ex)
                     {

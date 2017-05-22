@@ -14,6 +14,7 @@ namespace App3.Web
             module.After.AddItemToEndOfPipeline(x =>
             {
                 x.Response.WithHeader("Access-Control-Allow-Origin", "*");
+                x.Response.ContentType = "text/html; charset=utf-8";
             });
         }
     }

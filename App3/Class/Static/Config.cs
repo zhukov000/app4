@@ -12,7 +12,7 @@ namespace App3.Class
 {
     public static class Config
     {
-        public static string APPVERSION = "1.13";
+        public static string APPVERSION = "1.14";
 
         private static Dictionary<string, string> DAliases = new Dictionary<string, string>();
 
@@ -47,8 +47,9 @@ namespace App3.Class
             } catch
             {
                 // 
+                s = defaultval;
             }
-            return s;
+            return s ?? defaultval;
         }
 
         public static string Get(string key, string defaultval = "")

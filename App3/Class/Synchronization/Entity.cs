@@ -10,6 +10,20 @@ namespace App3.Class.Synchronization
 {
     class Entity : IEntitySynchronization
     {
+        virtual public string Name
+        {
+            get { return getName(); }
+        }
+
+        virtual public string KeyField
+        {
+            get { return "id"; }
+        }
+
+        virtual public ReversedType Type
+        {
+            get { return ReversedType.UPDATE; }
+        }
 
         virtual public List<KeyValuePair<string, object>[]> getReversed(DateTime ActualyPoint)
         {
@@ -38,5 +52,14 @@ namespace App3.Class.Synchronization
             return getName();
         }
 
+    }
+
+    /// <summary>
+    /// Тип изменения: обновление или добалвние
+    /// </summary>
+    public enum ReversedType
+    {
+        UPDATE,
+        INSERT
     }
 }

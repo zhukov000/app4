@@ -176,6 +176,10 @@ namespace App3
                     }
                 }
             }
+            else
+            {
+                return;
+            }
             Environment.Exit(0);
         }
     }

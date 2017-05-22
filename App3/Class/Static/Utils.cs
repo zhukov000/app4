@@ -693,7 +693,8 @@ namespace App3.Class
         /// <returns></returns>
         public static string Q(this object S)
         {
-            return string.Format("'{0}'", S);
+            string str = S.ToString().Trim('\'');
+            return string.Format("'{0}'", str);
         }
 
         public static Int32 ToInt(this object S)
@@ -798,12 +799,16 @@ namespace App3.Class
             IntPtr hWnd = FindWindow((string)null, GetMainTitle());
             if (hWnd != IntPtr.Zero)
             {
-                SetWindowPos(hWnd, 0, 
-                    sc[numberMonitor - 1].Bounds.Left, 
-                    sc[numberMonitor - 1].Bounds.Top, 
-                    sc[numberMonitor - 1].Bounds.Width, 
-                    sc[numberMonitor - 1].Bounds.Height, 
-                    SWP_NOZORDER );
+                if (numberMonitor < 1 || numberMonitor > sc.Count())
+                {
+                    numberMonitor = 1;
+                }
+                SetWindowPos(hWnd, 0,
+                        sc[numberMonitor - 1].Bounds.Left,
+                        sc[numberMonitor - 1].Bounds.Top,
+                        sc[numberMonitor - 1].Bounds.Width,
+                        sc[numberMonitor - 1].Bounds.Height,
+                        SWP_NOZORDER);
             }
             else
             {
@@ -814,6 +819,90 @@ namespace App3.Class
         public static string GetMainTitle()
         {
             return "ГМК Сполох версия " + Config.APPVERSION;
+        }
+
+        public static List<IDictionary<string, object>> GetObjects(int region_id = -1)
+        {
+            List<IDictionary<string, object>> result = new List<IDictionary<string, object>>();
+            string sql = @"select ST_AsText(ST_Transform(way, 4326)) as point, 
+	                        obj.number, obj.name, obj.osm_id, obj.tstate_id, obj.tstatus_id,
+                            obj.region_id, obj.makedatetime, obj.dogovor, obj.dt, obj.description,
+                            adr.code, adr.locality, adr.street, adr.house, adr.region,
+                            adr.address, adr.lat, adr.lon
+                        from oko.object obj
+                        left join oko.addresses adr on obj.address_id = adr.id ";
+            if (region_id != -1)
+            {
+                sql += @" where region_id = {0} ";
+            }
+            sql += "order by obj.number";
+
+            foreach (object[] row in DataBase.RowSelect(string.Format(sql, region_id)))
+            {
+                result.Add(new Dictionary<string, object>
+                {
+                    { "point", row[0] },
+                    { "number", row[1] },
+                    { "name", row[2] },
+                    { "osm_id", row[3] },
+                    { "tstate_id", row[4] },
+                    { "tstatus_id", row[5] },
+                    { "region_id", row[6] },
+                    { "makedatetime", row[7] },
+                    { "dogovor", row[8] },
+                    { "datetime", row[9].Q() },
+                    { "description", row[10] },
+                    { "code", row[11] },
+                    { "locality", row[12] },
+                    { "street", row[13] },
+                    { "house", row[14] },
+                    { "region", row[15] },
+                    { "address", row[16] },
+                    { "lat", row[17] },
+                    { "lon", row[18] }
+                });
+            }
+
+            return result;
+        }
+
+        public static List<IDictionary<string, object>> GetObjectsStatuses(int region_id = -1)
+        {
+            List<IDictionary<string, object>> result = new List<IDictionary<string, object>>();
+            string sql = @"SELECT DISTINCT ON (objectnumber) objectnumber,
+                                alarmgroupid, code, channelnumber, partnumber,
+                                zoneusernumber, typenumber, class, address, 
+                                datetime, region_id, oko_version, retrnumber, 
+                                isrepeat, siglevel, id
+                           FROM   oko.event ";
+            if (region_id != -1)
+            {
+                sql += @" WHERE region_id = {0} ";
+            }
+            sql += " ORDER BY objectnumber, datetime DESC";
+            foreach (object[] row in DataBase.RowSelect(string.Format(sql, region_id)))
+            {
+                result.Add( new Dictionary<string, object>
+                {
+                    { "objectnumber", row[0] },
+                    { "alarmgroupid", row[1] },
+                    { "code", row[2] },
+                    { "channelnumber", row[3] },
+                    { "partnumber", row[4] },
+                    { "zoneusernumber", row[5] },
+                    { "typenumber", row[6] },
+                    { "class", row[7] },
+                    { "address", row[8] },
+                    { "datetime", row[9].Q() },
+                    { "region_id", row[10] },
+                    { "oko_version", row[11] },
+                    { "retrnumber", row[12] },
+                    { "isrepeat", row[13] },
+                    { "siglevel", row[14] },
+                    { "id", row[15] }
+                });
+            }
+            return result;
         }
 
     }

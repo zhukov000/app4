@@ -53,7 +53,7 @@ namespace App3.Class.Socket2
                             if (obj.Message == null) obj.Message = "";
                             // вызов делегата (если он есть)
                             onProcess?.Invoke(obj);
-                            if (Config.Get("RedirectAllIncomming") != "")
+                            if (Config.Get("RedirectAllIncommingServer") != "")
                             { // пересылка
                                 SocketClient.SendObjectFromSocket2(obj, Config.Get("RedirectAllIncommingServer"), Config.Get("RedirectAllIncommingPort").ToInt());
                             }
