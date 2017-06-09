@@ -10,6 +10,7 @@ using App3.Forms.Dialog;
 using System.Windows.Forms.DataVisualization.Charting;
 using App3.Class.Singleton;
 using App3.Class.Map;
+using App3.Forms.Map;
 
 namespace App3.Forms
 {
@@ -18,9 +19,11 @@ namespace App3.Forms
     {
         private double MinScale = 1250000;
         private OneDistrictForm map = null;
+        private DistrictMapWeb map2 = null;
+
         private int SelectedRegion = 0;
         private int positionRow = 0;
-        private static int UPDATE_CACHE = 10;
+        // private static int UPDATE_CACHE = 10;
 
         private Mapper oMapper = new Mapper();
         private IDictionary<int, bool> Regions = new Dictionary<int, bool>();
@@ -40,22 +43,21 @@ namespace App3.Forms
             }*/
             ((MainForm)MdiParent).TestConnection();
 
-            if (UPDATE_CACHE < 0)
+            // if (UPDATE_CACHE < 0)
             {
                 Utils.UpdateDistrictStatuses(Config.Get("CurrenRegion").ToInt());
                 LayerCache.UpdateLayer(LayerType.AllRegion, -1);
                 LayerCache.UpdateLayer(LayerType.Object, -1);
-                UPDATE_CACHE = 10;
+            //    UPDATE_CACHE = 10;
             }
-            else
-                UPDATE_CACHE--;
+            /*else
+                UPDATE_CACHE--;*/
 
             if (map != null)
             {
                 map.Refresh();
             }
             mapBox.Refresh();
-            
 
         }
 
@@ -146,7 +148,7 @@ namespace App3.Forms
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: Неизвестный адрес '{3}'. Для предотвращения появления этой ошибки добавьте этот адрес в справочник в БД: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, sAddress));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: Неизвестный адрес '{3}'. Для предотвращения появления этой ошибки добавьте этот адрес в справочник в БД: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, sAddress), Logger.LogLevel.ERROR);
             }
             return i;
         }
@@ -371,23 +373,46 @@ namespace App3.Forms
 
         public void OpenOneDistrictForm(string DistrictName)
         {
-            if (map != null && map.Visible)
+            if (Config.Get("MapProvider", "None") == "None")
             {
-                map.Close();
+
+                if (map != null && map.Visible)
+                {
+                    map.Close();
+                }
+                if (DistrictName != "")
+                {
+                    try
+                    {
+                        map = new OneDistrictForm(this.MdiParent, DistrictName);
+                        map.Top = 0;
+                        map.Left = 0;
+                        map.Size = this.Size;
+                        map.Show();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    }
+                }
             }
-            if (DistrictName != "")
+            else
             {
+                if (map2 != null && map2.Visible)
+                {
+                    map2.Close();
+                }
                 try
                 {
-                    map = new OneDistrictForm(this.MdiParent, DistrictName);
-                    map.Top = 0;
-                    map.Left = 0;
-                    map.Size = this.Size;
-                    map.Show();
+                    map2 = new DistrictMapWeb(this.MdiParent, DistrictName);
+                    map2.Size = this.Size;
+                    map2.Top = 0;
+                    map2.Left = 0;
+                    map2.Show();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 }
             }
         }
@@ -664,7 +689,7 @@ namespace App3.Forms
                     filter = "not dogovor and " + filter;
                 }
             }
-            Logger.Instance.WriteToLog("Фильтр объектов: " + string.Format(filter, state_id, this.SelectedRegion));
+            Logger.Instance.WriteToLog("Фильтр объектов: " + string.Format(filter, state_id, this.SelectedRegion), Logger.LogLevel.DEBUG);
             Handling.onObjectListOpen(string.Format(filter, state_id, SelectedRegion));
         }
 

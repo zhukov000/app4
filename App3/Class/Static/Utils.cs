@@ -64,19 +64,36 @@ namespace App3.Class
         }
         
         // обновление статусов регионов
-        static public void UpdateDistrictStatuses(int HomeDistrict)
+        static public void UpdateDistrictStatuses(int HomeDistrict = -1)
         {
 
-            Logger.Instance.WriteToLog("Update district status started");
+            Logger.Instance.WriteToLog("Update district status started", Logger.LogLevel.EVENTS);
             if (HomeDistrict == -1)
             {
-                DataBase.RunCommand("select oko.update_district_statuses()");
+                DataBase.RunCommand(@"  update regions2map
+                                        set persent = res.pers, color = res.color, rstatus = res.name
+                                        FROM 
+                                        (SELECT tmp3.region_id, rs.color, rs.name, tmp3.pers
+                                        FROM (SELECT region_id, 
+	                                        round(100 * sum1 / ( sum1 + sum2 + 0.000001 )) as pers
+                                        FROM (
+                                        SELECT tmp.region_id, sum(tmp.sum1) sum1, sum(tmp.sum2) sum2 
+                                        FROM (select o.region_id, state_id, 
+	                                        CASE state_id WHEN 1 THEN count(os.osm_id) ELSE 0 END as sum1,  
+                                            CASE WHEN state_id <> 1 THEN count(os.osm_id) ELSE 0 END as sum2
+                                        from oko.object_status os
+                                            inner join oko.object o on o.osm_id = os.osm_id
+                                        where instat
+                                        group by o.region_id, state_id) tmp
+                                        group by tmp.region_id ) tmp2 ) tmp3, oko.region_status rs
+                                        where tmp3.pers between rs.min_norma and rs.max_norma ) AS res
+                                        where num = res.region_id;");
             }
             else
             {
                 DataBase.RunCommand(string.Format("select oko.update_district_status({0})", HomeDistrict));
             }
-            Logger.Instance.WriteToLog("Update district status finished");
+            Logger.Instance.WriteToLog("Update district status finished", Logger.LogLevel.EVENTS);
 
         }
 
@@ -85,7 +102,7 @@ namespace App3.Class
             object o = DataBase.First("select now()::date - max(start)::date as dt from archive.journal", "dt");
             if (o != null && o.ToInt() > 1)
             {
-                Logger.Instance.WriteToLog("Archive event");
+                Logger.Instance.WriteToLog("Archive event", Logger.LogLevel.EVENTS);
                 DataBase.RunCommand("select * from archive.arh_events()");
             }
         }
@@ -609,7 +626,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             return false;
         }
@@ -625,7 +642,7 @@ namespace App3.Class
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 return "";
             }
 
@@ -709,7 +726,8 @@ namespace App3.Class
         {
             Double i = 0;
             if (S != null)
-                Double.TryParse(S.ToString(), out i);
+                if (!Double.TryParse(S.ToString(), out i))
+                    Double.TryParse(S.ToString().Replace('.', ','), out i);
             return i;
         }
 
@@ -780,7 +798,7 @@ namespace App3.Class
 
             Screen[] sc;
             sc = Screen.AllScreens;
-            Logger.Instance.WriteToLog("Monitor: " + numberMonitor.ToString());
+            Logger.Instance.WriteToLog("Monitor: " + numberMonitor.ToString(), Logger.LogLevel.DEBUG);
             /*Logger.Instance.WriteToLog("AllScreen: " + sc.Length);
             for(int i=0; i<sc.Length; i++)
             {
@@ -812,7 +830,7 @@ namespace App3.Class
             }
             else
             {
-                Logger.Instance.WriteToLog("Окно не найдено");
+                Logger.Instance.WriteToLog("Окно не найдено", Logger.LogLevel.DEBUG);
             }
         }
 

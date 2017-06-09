@@ -420,8 +420,9 @@ namespace ObjectLoader
                 ComboboxItem item = (ComboboxItem)comboBox2.SelectedItem;
                 return Convert.ToInt32(item.Value);
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 return -1;
             }
         }

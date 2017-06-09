@@ -12,7 +12,7 @@ namespace App3.Class
 {
     public static class Config
     {
-        public static string APPVERSION = "1.14";
+        public static string APPVERSION = "1.16";
 
         private static Dictionary<string, string> DAliases = new Dictionary<string, string>();
 
@@ -92,7 +92,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("Config.Set: Не получилось изменить значение параметра конфигурации: {0} - {1} ", key, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("Config.Set: Не получилось изменить значение параметра конфигурации: {0} - {1} ", key, ex.Message), Logger.LogLevel.ERROR);
             }
         }
 

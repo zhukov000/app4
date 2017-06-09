@@ -1,0 +1,830 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AFBC41A4-D709-4A9C-AF8B-659915E3085F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>App3</RootNamespace>
+    <AssemblyName>App3</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BruTile, Version=0.7.4.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BruTile.0.7.4.4\lib\net40\BruTile.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BruTile.Desktop, Version=0.7.4.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BruTile.0.7.4.4\lib\net40\BruTile.Desktop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BruTile.MbTiles, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BruTile.0.7.4.4\lib\net40\BruTile.MbTiles.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BruTile.Serialization, Version=0.7.4.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BruTile.0.7.4.4\lib\net40\BruTile.Serialization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="gdalconst_csharp, Version=1.0.4704.32537, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <HintPath>..\packages\GDAL.1.9.2\lib\net40\gdalconst_csharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="gdal_csharp, Version=1.0.4704.32537, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <HintPath>..\packages\GDAL.1.9.2\lib\net40\gdal_csharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GeoAPI, Version=1.7.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GeoAPI.1.7.2\lib\net40-client\GeoAPI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GuardAgent2">
+      <HintPath>..\..\..\..\..\..\..\OKO\GuardAgent\GuardAgent2.dll</HintPath>
+    </Reference>
+    <Reference Include="Json, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c6752e45808247c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\JSON.1.0.1\lib\net40\Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.2.1.0\lib\net40\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.1.0\lib\net40\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.2.1.0\lib\net40\Microsoft.Owin.Hosting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.DataVisualization, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.ReportViewer.DataVisualization\11.0.0.0__89845dcd8080cc91\Microsoft.ReportViewer.DataVisualization.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.ReportViewer.ProcessingObjectModel\11.0.0.0__89845dcd8080cc91\Microsoft.ReportViewer.ProcessingObjectModel.DLL</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.SqlServer.Types\11.0.0.0__89845dcd8080cc91\Microsoft.SqlServer.Types.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.0.14.3\lib\net40\Mono.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nancy, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.1.4.1\lib\net40\Nancy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nancy.Authentication.Forms, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Authentication.Forms.1.4.1\lib\net40\Nancy.Authentication.Forms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nancy.Hosting.Self, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Hosting.Self.1.4.1\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nancy.Owin, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Owin.1.4.1\lib\net40\Nancy.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NetTopologySuite, Version=1.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.1.13.2\lib\net40-client\NetTopologySuite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NetTopologySuite.IO.GeoTools, Version=1.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.IO.1.13.2\lib\net40-client\NetTopologySuite.IO.GeoTools.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NetTopologySuite.IO.MsSqlSpatial, Version=1.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.IO.1.13.2\lib\net40-client\NetTopologySuite.IO.MsSqlSpatial.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NetTopologySuite.IO.PostGis, Version=1.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.IO.PostGis.1.13.2\lib\net40-client\NetTopologySuite.IO.PostGis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NetTopologySuite.IO.SpatiaLite, Version=1.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.IO.SpatiaLite.1.13.2\lib\net40-client\NetTopologySuite.IO.SpatiaLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Npgsql, Version=2.0.14.3, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.2.0.14.3\lib\net40\Npgsql.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ogr_csharp, Version=1.0.4704.32537, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <HintPath>..\packages\GDAL.1.9.2\lib\net40\ogr_csharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OKOGate, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\OKOGate.dll</HintPath>
+    </Reference>
+    <Reference Include="osr_csharp, Version=1.0.4704.32536, Culture=neutral, PublicKeyToken=db5a52b08dc5b321, processorArchitecture=MSIL">
+      <HintPath>..\packages\GDAL.1.9.2\lib\net40\osr_csharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PowerCollections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.1.13.2\lib\net40-client\PowerCollections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpMap, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpMap.1.1.0\lib\net40-client\SharpMap.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpMap.Extensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpMap.Extensions.1.1.0\lib\net40-client\SharpMap.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpMap.UI, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpMap.UI.1.1.0\lib\net40-client\SharpMap.UI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpMap.Web, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpMap.Web.1.1.0\lib\net40\SharpMap.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.86.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.MSIL.1.0.86.0\lib\net40\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.86.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.MSIL.1.0.86.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Design" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class\Controls\BarInformation.cs" />
+    <Compile Include="Class\Controls\ChartBarDate.cs" />
+    <Compile Include="Class\Controls\DataClasses.cs" />
+    <Compile Include="Class\Controls\GanttChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Class\Controls\Header.cs" />
+    <Compile Include="Class\Map\BigPoly.cs" />
+    <Compile Include="Class\Map\Build.cs" />
+    <Compile Include="Class\Map\BuildBorder.cs" />
+    <Compile Include="Class\Map\HighWay.cs" />
+    <Compile Include="Class\Map\Layer.cs" />
+    <Compile Include="Class\Map\LayerCache.cs" />
+    <Compile Include="Class\Map\LayerType.cs" />
+    <Compile Include="Class\Map\MidPoly.cs" />
+    <Compile Include="Class\Map\Object.cs" />
+    <Compile Include="Class\Map\Place.cs" />
+    <Compile Include="Class\Map\Point.cs" />
+    <Compile Include="Class\Map\Polygon.cs" />
+    <Compile Include="Class\Map\Region.cs" />
+    <Compile Include="Class\Map\Road.cs" />
+    <Compile Include="Class\Map\SmlPoly.cs" />
+    <Compile Include="Class\Report.cs" />
+    <Compile Include="Class\Singleton\EventDispatcher.cs" />
+    <Compile Include="Class\Singleton\Logger.cs" />
+    <Compile Include="Class\Socket2\ClientObject.cs" />
+    <Compile Include="Class\Socket2\PortListner.cs" />
+    <Compile Include="Class\Socket\SendObject.cs" />
+    <Compile Include="Class\Socket\SocketClient.cs" />
+    <Compile Include="Class\Socket\SocketServer.cs" />
+    <Compile Include="Class\Socket\SocketUtils.cs" />
+    <Compile Include="Class\Static\OKO_Messages.cs" />
+    <Compile Include="Class\Static\PermissionControl.cs" />
+    <Compile Include="Class\Static\ReportsRequest.cs" />
+    <Compile Include="Class\Static\SyncronizerViaSocket.cs" />
+    <Compile Include="Class\Static\TMessageDict.cs" />
+    <Compile Include="Class\Synchronization\SyncAddresses.cs" />
+    <Compile Include="Class\Synchronization\SyncClassifier.cs" />
+    <Compile Include="Class\Synchronization\SyncCompany.cs" />
+    <Compile Include="Class\Synchronization\SyncContact.cs" />
+    <Compile Include="Class\Synchronization\SyncContract.cs" />
+    <Compile Include="Class\Synchronization\Entity.cs" />
+    <Compile Include="Class\Synchronization\SyncCustomer.cs" />
+    <Compile Include="Class\Synchronization\SyncIPAddresses.cs" />
+    <Compile Include="Class\Synchronization\SyncMessageText.cs" />
+    <Compile Include="Class\Synchronization\SyncObject.cs" />
+    <Compile Include="Class\Synchronization\SyncObjectInContract.cs" />
+    <Compile Include="Class\Synchronization\SyncObjectProperties.cs" />
+    <Compile Include="Class\Synchronization\SyncObjectStatus.cs" />
+    <Compile Include="Class\Synchronization\SyncRealObject.cs" />
+    <Compile Include="Class\Synchronization\SyncRegionStatus.cs" />
+    <Compile Include="Class\Synchronization\SyncResult.cs" />
+    <Compile Include="Class\Synchronization\SyncStatus.cs" />
+    <Compile Include="Class\Synchronization\SyncTContact.cs" />
+    <Compile Include="Class\Synchronization\SyncTMessages.cs" />
+    <Compile Include="Class\Synchronization\SyncTNumber.cs" />
+    <Compile Include="Class\Synchronization\SyncTState.cs" />
+    <Compile Include="Class\Synchronization\SyncTStatus.cs" />
+    <Compile Include="Class\Synchronization\SyncZone.cs" />
+    <Compile Include="Forms\Dialog\AutoClosingMessageBox.cs" />
+    <Compile Include="Class\ClassifierObject.cs" />
+    <Compile Include="Class\Handling.cs" />
+    <Compile Include="Class\Mapper.cs" />
+    <Compile Include="Class\DBObjects\ObjectState.cs" />
+    <Compile Include="Class\Static\Archivator.cs" />
+    <Compile Include="Class\Static\GeoDataCache.cs" />
+    <Compile Include="Class\Object\Address.cs" />
+    <Compile Include="Class\Static\DBDict.cs" />
+    <Compile Include="Class\Static\GeoStyles.cs" />
+    <Compile Include="Class\NTree.cs" />
+    <Compile Include="Class\Static\OkoConnection.cs" />
+    <Compile Include="Class\Static\Synchronizer.cs" />
+    <Compile Include="Class\Static\Updater.cs" />
+    <Compile Include="Class\Synchronization\EventSync.cs" />
+    <Compile Include="Class\Synchronization\IEntitySynchronization.cs" />
+    <Compile Include="Class\WebcamEventArgs.cs" />
+    <Compile Include="Class\Controls\WebCamCapture.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Class\Controls\AutoCompleteTextbox .cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Class\ComboboxItem.cs" />
+    <Compile Include="Class\Static\Config.cs" />
+    <Compile Include="Class\Controls\exListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Class\Controls\exListBox.Designer.cs">
+      <DependentUpon>exListBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\ClassifierForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\ClassifierForm.Designer.cs">
+      <DependentUpon>ClassifierForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\ComboDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\ComboDialog.Designer.cs">
+      <DependentUpon>ComboDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\ContactDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\ContactDialog.Designer.cs">
+      <DependentUpon>ContactDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\LoginDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\LoginDialog.Designer.cs">
+      <DependentUpon>LoginDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\ReportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\ReportDialog.Designer.cs">
+      <DependentUpon>ReportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\WaitDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\WaitDialog.Designer.cs">
+      <DependentUpon>WaitDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GlobalStat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GlobalStat.Designer.cs">
+      <DependentUpon>GlobalStat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Journal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Journal.Designer.cs">
+      <DependentUpon>Journal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LogForm.Designer.cs">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Map\PointSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Map\PointSelect.Designer.cs">
+      <DependentUpon>PointSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MonitorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MonitorForm.Designer.cs">
+      <DependentUpon>MonitorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Object\Objects.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Object\Objects.Designer.cs">
+      <DependentUpon>Objects.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ReportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ReportForm.Designer.cs">
+      <DependentUpon>ReportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ServerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ServerForm.Designer.cs">
+      <DependentUpon>ServerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SocketTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SocketTest.Designer.cs">
+      <DependentUpon>SocketTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StartForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StartForm.Designer.cs">
+      <DependentUpon>StartForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StartupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\StartupForm.Designer.cs">
+      <DependentUpon>StartupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SynchronizeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SynchronizeForm.Designer.cs">
+      <DependentUpon>SynchronizeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ViewLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ViewLog.Designer.cs">
+      <DependentUpon>ViewLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GdalConfiguration.cs" />
+    <Compile Include="GdalNativeConfiguration.cs" />
+    <Compile Include="gisDataReports.cs">
+      <DependentUpon>gisDataReports.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="gisDataReports.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>gisDataReports.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="gisDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>gisDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="gisDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>gisDataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\CustomMapTool.cs" />
+    <Compile Include="Class\DataBase.cs" />
+    <Compile Include="Class\Object\AKObject.cs" />
+    <Compile Include="Class\ForeignKey.cs" />
+    <Compile Include="Class\Static\Geocoder.cs" />
+    <Compile Include="Class\Object\OSMObjectInfo.cs" />
+    <Compile Include="Class\Static\Utils.cs" />
+    <Compile Include="Class\Static\XMLReader.cs" />
+    <Compile Include="Class\Controls\DBTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Class\Controls\DBTable.Designer.cs">
+      <DependentUpon>DBTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\TableDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\TableDialog.Designer.cs">
+      <DependentUpon>TableDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Dialog\AddressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Dialog\AddressDialog.Designer.cs">
+      <DependentUpon>AddressDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ConfigForm.Designer.cs">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Table\DBEvents.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Table\DBEvents.Designer.cs">
+      <DependentUpon>DBEvents.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Map\DistrictMap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Map\DistrictMap.Designer.cs">
+      <DependentUpon>DistrictMap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Table\EventsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Table\EventsForm.Designer.cs">
+      <DependentUpon>EventsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Object\ObjectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Object\ObjectForm.Designer.cs">
+      <DependentUpon>ObjectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Map\OneDistrictForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Map\OneDistrictForm.Designer.cs">
+      <DependentUpon>OneDistrictForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Object\SearchObject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Object\SearchObject.Designer.cs">
+      <DependentUpon>SearchObject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Table\TableEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Table\TableEditForm.Designer.cs">
+      <DependentUpon>TableEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Table\WarningForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Table\WarningForm.Designer.cs">
+      <DependentUpon>WarningForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\PopupTool.cs" />
+    <Compile Include="Tools\SelectRegionTool.cs" />
+    <Compile Include="Web\APIModule.cs" />
+    <Compile Include="Web\Bootstrapper.cs" />
+    <Compile Include="Web\DatabaseUser.cs" />
+    <Compile Include="Web\IUserIdentity.cs" />
+    <Compile Include="Web\JsonNewObject.cs" />
+    <Compile Include="Web\Startup.cs" />
+    <Compile Include="Web\StartWeb.cs" />
+    <Compile Include="Web\WebUtils.cs" />
+    <EmbeddedResource Include="Class\Controls\DBTable.resx">
+      <DependentUpon>DBTable.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Dialog\ClassifierForm.resx">
+      <DependentUpon>ClassifierForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Dialog\ComboDialog.resx">
+      <DependentUpon>ComboDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Dialog\ContactDialog.resx">
+      <DependentUpon>ContactDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Dialog\LoginDialog.resx">
+      <DependentUpon>LoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MonitorForm.resx">
+      <DependentUpon>MonitorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ServerForm.resx">
+      <DependentUpon>ServerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SocketTest.resx">
+      <DependentUpon>SocketTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StartupForm.resx">
+      <DependentUpon>StartupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SynchronizeForm.resx">
+      <DependentUpon>SynchronizeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ViewLog.resx">
+      <DependentUpon>ViewLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\ListObjectByState.rdlc" />
+    <EmbeddedResource Include="Reports\StatProcessing.rdlc" />
+    <EmbeddedResource Include="Reports\ListProcessing.rdlc" />
+    <EmbeddedResource Include="Reports\ListObject.rdlc" />
+    <EmbeddedResource Include="Forms\Dialog\ReportDialog.resx">
+      <DependentUpon>ReportDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Dialog\TableDialog.resx">
+      <DependentUpon>TableDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Dialog\AddressDialog.resx">
+      <DependentUpon>AddressDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ConfigForm.resx">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Dialog\WaitDialog.resx">
+      <DependentUpon>WaitDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GlobalStat.resx">
+      <DependentUpon>GlobalStat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Map\PointSelect.resx">
+      <DependentUpon>PointSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Object\Objects.resx">
+      <DependentUpon>Objects.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StartForm.resx">
+      <DependentUpon>StartForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\StatEvents.rdlc" />
+    <EmbeddedResource Include="Reports\StatClassifier.rdlc" />
+    <EmbeddedResource Include="Reports\StatClasses.rdlc" />
+    <EmbeddedResource Include="Reports\StatStatus.rdlc" />
+    <EmbeddedResource Include="Reports\StatAllObj.rdlc" />
+    <EmbeddedResource Include="Forms\ReportForm.resx">
+      <DependentUpon>ReportForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Table\DBEvents.resx">
+      <DependentUpon>DBEvents.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Map\DistrictMap.resx">
+      <DependentUpon>DistrictMap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Table\EventsForm.resx">
+      <DependentUpon>EventsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Object\ObjectForm.resx">
+      <DependentUpon>ObjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Map\OneDistrictForm.resx">
+      <DependentUpon>OneDistrictForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Object\SearchObject.resx">
+      <DependentUpon>SearchObject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Table\TableEditForm.resx">
+      <DependentUpon>TableEditForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Table\WarningForm.resx">
+      <DependentUpon>WarningForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="gisDataReports.xsc">
+      <DependentUpon>gisDataReports.xsd</DependentUpon>
+    </None>
+    <None Include="gisDataReports.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>gisDataReports.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="gisDataReports.xss">
+      <DependentUpon>gisDataReports.xsd</DependentUpon>
+    </None>
+    <None Include="gisDataSet.xsc">
+      <DependentUpon>gisDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="gisDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>gisDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="gisDataSet.xss">
+      <DependentUpon>gisDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="gisDataSet1.xsc">
+      <DependentUpon>gisDataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="gisDataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>gisDataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="gisDataSet1.xss">
+      <DependentUpon>gisDataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GdalConfiguration.vb" />
+    <Content Include="GdalNativeConfiguration.vb" />
+    <Content Include="icon.ico" />
+    <Content Include="Resources\server.ico" />
+    <None Include="server.ico" />
+    <None Include="Resources\Data-List-icon.png" />
+    <None Include="Resources\w512h5121390849392combo512.png" />
+    <None Include="Resources\455695-200.png" />
+    <None Include="Resources\kte1386967435034_en-us.png" />
+    <None Include="app3.snippet" />
+    <None Include="Resources\asset_gridSplitter_24.png" />
+    <None Include="Resources\GridSplitterElement_10711_32.bmp" />
+    <None Include="Resources\minimize.png" />
+    <None Include="Resources\maximize.png" />
+    <None Include="Resources\close.png" />
+    <None Include="Resources\Логотип.jpg" />
+    <None Include="Resources\ThresholdRulenode_8715_24.bmp" />
+    <None Include="Resources\asset_pie-series-chart_on_24X24.png" />
+    <None Include="Resources\asset_pie-series-chart_on_12X12.png" />
+    <None Include="Resources\2%28two%29rows_9707.png" />
+    <None Include="Resources\Restart_6322.png" />
+    <None Include="Resources\w20.png" />
+    <None Include="Resources\w32.png" />
+    <None Include="Resources\w128.ico" />
+    <None Include="Resources\w128h1281338911315alarm.png" />
+    <None Include="Resources\Clearallrequests_8816.png" />
+    <None Include="Resources\no-photo.jpg" />
+    <None Include="Resources\loading.gif" />
+    <None Include="Resources\MasterPage_6478_32x.png" />
+    <None Include="Resources\FilteredObject_13400_32x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 и x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\launcher\launcher.csproj">
+      <Project>{2859003E-3CEE-4949-B18B-8ED9A3584A61}</Project>
+      <Name>launcher</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)gdal" md "$(TargetDir)gdal"
+    xcopy /s /y "$(SolutionDir)packages\GDAL.Native.1.9.2\gdal\*.*" "$(TargetDir)gdal"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

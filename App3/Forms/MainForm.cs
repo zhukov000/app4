@@ -67,7 +67,7 @@ namespace App3.Forms
             if (Config.Get("COMConn") == "1" && oModuleCOM != null)
             {
                 // oModuleCOM.SendTestConnect();
-                Logger.Instance.WriteToLog("TEST CONNECTION: " + oModuleCOM.TestConnection());
+                Logger.Instance.WriteToLog("TEST CONNECTION: " + oModuleCOM.TestConnection(), Logger.LogLevel.EVENTS);
             }
         }
 
@@ -80,7 +80,7 @@ namespace App3.Forms
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
         }
 
@@ -102,7 +102,7 @@ namespace App3.Forms
                 this.oModuleXML.GetModuleMessageEvent += new OKOGate.EventDelegate(this.ReciveMessage);
                 this.oModuleXML.StartModule();
                 this.oModuleXML.StartReceive();
-                Logger.Instance.WriteToLog("XML Guard start");
+                Logger.Instance.WriteToLog("XML Guard start", Logger.LogLevel.EVENTS);
             }
             if (Config.Get("COMConn") == "1")
             {
@@ -117,14 +117,14 @@ namespace App3.Forms
                 for (int i = 0; i < ports.Length; i++)
                 {
                     string text = ports[i];
-                    Logger.Instance.WriteToLog("Check port " + text);
+                    Logger.Instance.WriteToLog("Check port " + text, Logger.LogLevel.DEBUG);
                     if (a == text)
                     {
                         this.oModuleCOM.Close();
                         for (int j = 0; j < 5; j++)
                         {
                             uint res = this.oModuleCOM.Init(text, Config.Get("COMBaudrate").ToInt());
-                            Logger.Instance.WriteToLog(res.ToString());
+                            Logger.Instance.WriteToLog(res.ToString(), Logger.LogLevel.DEBUG);
                             if (res == OKO_Messages.Module_Started)
                             {
                                 this.oModuleCOM.GetModuleMessageEvent += new GuardAgent2.EventDelegate(Handling.ProcessingComEvent);
@@ -133,7 +133,7 @@ namespace App3.Forms
                                 this.oModuleCOM.AddRetrAddr(Config.Get("COMRetrAddr").ToUShort());
                                 this.oModuleCOM.SetChannelsMask(Config.Get("COMChannelsMask").ToByte());
                                 this.oModuleCOM.SendAskForState(1, 0, Config.Get("RemoteAddress").ToUShort());
-                                Logger.Instance.WriteToLog("COM connector start, port: " + text);
+                                Logger.Instance.WriteToLog("COM connector start, port: " + text, Logger.LogLevel.EVENTS);
 
                                 if (!DBDict.IsServer)
                                     this.IncConnectCnt();
@@ -149,7 +149,7 @@ namespace App3.Forms
                         this.oModuleCOM.Close();
                     }
                 }
-                Logger.Instance.WriteToLog("COM Guard start");
+                Logger.Instance.WriteToLog("COM Guard start", Logger.LogLevel.DEBUG);
             }
 
             Tracer.LogFileName = Logger.LogDirectory() + "OKOGate.log";
@@ -229,7 +229,7 @@ namespace App3.Forms
                     }
                     catch (Exception ex)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex.Message));
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: Прослушка ОКО не остановлена: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.DEBUG);
                     }
                 }
                 if (Config.Get("COMConn") == "1")
@@ -239,7 +239,7 @@ namespace App3.Forms
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
 
         }
@@ -418,6 +418,7 @@ namespace App3.Forms
             // открыть соединение с БД
             try
             {
+                /*
                 DataBase.OpenConnection(
                     string.Format(
                         "Server={0};Port={1};User Id={2};Password={3};Database={4};MaxPoolSize=40;Timeout=250;CommandTimeout=0;",
@@ -426,7 +427,18 @@ namespace App3.Forms
                         Config.Get("DBUser"),
                         Config.Get("DBPassword"),
                         Config.Get("DBName")
-                    ));
+                    ));*/
+                DataBase.OpenConnection(
+                            string.Format(
+                                // "Server={0};Port={1};User Id={2};Password={3};Database={4};MaxPoolSize={5};Timeout=250;CommandTimeout=0;",
+                                "Server={0};Port={1};User Id={2};Password={3};Database={4};Timeout=50;CommandTimeout=0;",
+                                Config.Get("DBServerHost"),
+                                Config.Get("DBServerPort"),
+                                Config.Get("DBUser"),
+                                Config.Get("DBPassword"),
+                                Config.Get("DBName"),
+                                Config.Get("MaxPoolSize", "10")
+                            ));
                 if (!DBDict.IsServer) SetStatusText("Система запущена");
                 f = true;
             }
@@ -434,23 +446,23 @@ namespace App3.Forms
             {
                 // MessageBox.Show("DataBasse: " + ex.Message);
                 // SetStatusText("Соединение с БД не было установлено. Причина: " + ex.Message);
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: Соединение с БД не было установлено. Причина: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: Соединение с БД не было установлено. Причина: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             catch(Exception ex)
             {
                 // MessageBox.Show("Error: " + ex.Message);
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: При открытии соединения с базой произошла ошибка: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: При открытии соединения с базой произошла ошибка: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
 
             if (!f)
             {
                 // Close();
-                Logger.Instance.WriteToLog("Соединение с БД не было установлено");
+                Logger.Instance.WriteToLog("Соединение с БД не было установлено", Logger.LogLevel.ERROR);
                 NotStartedNormal = true;
             }
             else
             {
-                Logger.Instance.WriteToLog("Соединение с БД было установлено");
+                Logger.Instance.WriteToLog("Соединение с БД было установлено", Logger.LogLevel.EVENTS);
                 // справочники
                 try
                 {
@@ -458,7 +470,7 @@ namespace App3.Forms
                 }
                 catch (Exception ex2)
                 {
-                    Logger.Instance.WriteToLog("При обновлении справочников произошла ошибка: " + ex2.Message);
+                    Logger.Instance.WriteToLog("При обновлении справочников произошла ошибка: " + ex2.Message, Logger.LogLevel.ERROR);
                     Logger.Instance.FlushLog();
                     return;
                 }
@@ -489,7 +501,7 @@ namespace App3.Forms
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                     Logger.Instance.FlushLog();
                     NotStartedNormal = true;
                     return;
@@ -497,14 +509,14 @@ namespace App3.Forms
 
                 if (flag)
                 {
-                    Logger.Instance.WriteToLog("START Listen");
+                    Logger.Instance.WriteToLog("START Listen", Logger.LogLevel.DEBUG);
                     try
                     {
                         this.StartOkoGate();
                     }
                     catch (Exception ex3)
                     {
-                        Logger.Instance.WriteToLog("Проблемы: " + ex3.Message);
+                        Logger.Instance.WriteToLog("Проблемы: " + ex3.Message, Logger.LogLevel.ERROR);
                     }
                     Logger.Instance.FlushLog();
                 }
@@ -517,7 +529,7 @@ namespace App3.Forms
                 }
 
                 this.Text = Utils.GetMainTitle();
-                Logger.Instance.WriteToLog(this.Text);
+                Logger.Instance.WriteToLog(this.Text, Logger.LogLevel.EVENTS);
 
                 Utils.ArhiveEvents();
                 
@@ -539,7 +551,7 @@ namespace App3.Forms
                 {
                     Synchronizer.SyncStart += new Action(this.SynchroneStart);
                     Synchronizer.SyncStop += new Action(this.SynchroneStop);
-                    Synchronizer.Start();
+                    // Synchronizer.Start();
                 }
                 // Старт сервера для получения сообщений
                 if (Config.Get("SocketEnableSync") == "1")
@@ -610,11 +622,13 @@ namespace App3.Forms
             {
                 this.toolStrip.Invoke(new Action(delegate
                 {
-                    this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = true);
+                    this.toolStripProgressBar1.Visible = true;
+                    this.toolStripStatusLabel1.Text = "Синхронизация начата ";
                 }));
                 return;
             }
-            this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = true);
+            this.toolStripProgressBar1.Visible = true;
+            this.toolStripStatusLabel1.Text = "Синхронизация начата ";
         }
 
         private void SynchroneStop()
@@ -623,11 +637,25 @@ namespace App3.Forms
             {
                 this.toolStrip.Invoke(new Action(delegate
                 {
-                    this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = false);
+                    this.toolStripProgressBar1.Visible = false;
+                    this.toolStripStatusLabel1.Text = "Синхронизация закончена " + DateTime.Now.ToString();
+                    SyncResult();
                 }));
                 return;
             }
-            this.toolStripProgressBar1.Visible = (this.toolStripStatusLabel1.Visible = false);
+            this.toolStripProgressBar1.Visible = false;
+            this.toolStripStatusLabel1.Text = "Синхронизация закончена " + DateTime.Now.ToString();
+            SyncResult();
+        }
+
+        private void SyncResult()
+        {
+            if (oSynchronizeForm.InvokeRequired)
+            {
+                oSynchronizeForm.WriteSyncStatus(Synchronizer.ListData);
+                return;
+            }
+            oSynchronizeForm.WriteSyncStatus(Synchronizer.ListData);
         }
 
         public void LoadStat()
@@ -725,7 +753,7 @@ namespace App3.Forms
                     }
                     catch(Exception ex)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                         break;
                     }
                     if (res.Length != 0)
@@ -734,7 +762,7 @@ namespace App3.Forms
                         DBDict.SessionStart = dt;
                         break;
                     }
-                    Logger.Instance.WriteToLog("При запуске не удалось получить ID сессии");
+                    Logger.Instance.WriteToLog("При запуске не удалось получить ID сессии", Logger.LogLevel.DEBUG);
                     Thread.Sleep(1000);
                 }
                 // установка цвета формы
@@ -769,6 +797,10 @@ namespace App3.Forms
             {
                 this.WindowState = FormWindowState.Minimized;
             }
+            else
+            {
+                this.WindowState = FormWindowState.Maximized;
+            }
         }
 
         private void MainForm_SizeChanged(object sender, EventArgs e)
@@ -802,7 +834,7 @@ namespace App3.Forms
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
         }
 
@@ -1365,23 +1397,26 @@ namespace App3.Forms
 
         private void отправитьПоследниеСообщенияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int region_id = Config.Get("CurrenRegion", "-1").ToInt();
-
-            if (region_id != -1)
+            if (MessageBox.Show("Нужно выполнить синхронизацию?","Вы уверены?",MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                foreach (IDictionary<string, object> data in Utils.GetObjectsStatuses(region_id))
+                int region_id = Config.Get("CurrenRegion", "-1").ToInt();
+
+                if (region_id != -1)
                 {
-                    Handling.SendDataBySocket(data, data["id"].ToInt());
+                    foreach (IDictionary<string, object> data in Utils.GetObjectsStatuses(region_id))
+                    {
+                        Handling.SendDataBySocket(data, data["id"].ToInt());
+                    }
                 }
-            }
-            else if (Config.Get("RedirectAllIncommingServer") != "")
-            {
-
-                foreach (IDictionary<string, object> data in Utils.GetObjectsStatuses(region_id))
+                else if (Config.Get("RedirectAllIncommingServer") != "")
                 {
-                    SendObject obj = new SendObject(data);
-                    if (obj.Message == null) obj.Message = "";
-                    SocketClient.SendObjectFromSocket2(obj, Config.Get("RedirectAllIncommingServer"), Config.Get("RedirectAllIncommingPort").ToInt());
+
+                    foreach (IDictionary<string, object> data in Utils.GetObjectsStatuses(region_id))
+                    {
+                        SendObject obj = new SendObject(data);
+                        if (obj.Message == null) obj.Message = "";
+                        SocketClient.SendObjectFromSocket2(obj, Config.Get("RedirectAllIncommingServer"), Config.Get("RedirectAllIncommingPort").ToInt());
+                    }
                 }
             }
         }
