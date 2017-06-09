@@ -66,7 +66,7 @@ namespace App3.Forms.Map
             //Скрываем внешнюю сетку карты с заголовками.
             gMapControl1.ShowTileGridLines = false;
             //Указываем, что при загрузке карты будет использоваться 5ти кратное приближение.
-            gMapControl1.Zoom = 12;
+            gMapControl1.Zoom = 11;
             //Указываем Провайдера.
             switch (Config.Get("MapProvider"))
             {
@@ -85,6 +85,7 @@ namespace App3.Forms.Map
                 default:
                     throw new Exception("Выбранный в конфигурации провайдер карт не поддерживается");
             }
+            
             GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerAndCache;
             // установка позиции
             gMapControl1.SetPositionByKeywords("Ростовская область, " + this.Text);
@@ -105,6 +106,7 @@ namespace App3.Forms.Map
                         try
                         {
                             var coors = coor.Split(' ');
+                            if (coors[1].ToDouble() < 10) continue;
                             points.Add(new PointLatLng(coors[1].ToDouble(), coors[0].ToDouble()));
                         }
                         catch(Exception ex)
@@ -119,6 +121,7 @@ namespace App3.Forms.Map
                     polygon.Stroke = new Pen(Color.Blue, 1);
                 }
                 gMapControl1.Overlays.Add(polygons);
+                gMapControl1.ZoomAndCenterRoutes(polygons.Id);
             }
 
         }
@@ -177,8 +180,22 @@ namespace App3.Forms.Map
                     var coor = obj2[7].ToString().Substring(6).TrimEnd(')').Split(' ');
 
                     // рисуем маркер по координатам
-                    GMap.NET.WindowsForms.Markers.GMarkerGoogleType type = GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green;
-
+                    GMap.NET.WindowsForms.Markers.GMarkerGoogleType type = GMap.NET.WindowsForms.Markers.GMarkerGoogleType.gray_small;
+                    switch (obj2[6].ToInt())
+                    {
+                        case 1:
+                            type = GMap.NET.WindowsForms.Markers.GMarkerGoogleType.green;
+                            break;
+                        case 2:
+                            type = GMap.NET.WindowsForms.Markers.GMarkerGoogleType.blue;
+                            break;
+                        case 6:
+                            type = GMap.NET.WindowsForms.Markers.GMarkerGoogleType.blue;
+                            break;
+                        case 4:
+                            type = GMap.NET.WindowsForms.Markers.GMarkerGoogleType.red;
+                            break;
+                    }
                     GMap.NET.WindowsForms.GMapMarker marker = new GMap.NET.WindowsForms.Markers.GMarkerGoogle(
                             new GMap.NET.PointLatLng(coor[1].ToDouble(), coor[0].ToDouble()),
                             type

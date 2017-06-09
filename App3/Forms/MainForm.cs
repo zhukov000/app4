@@ -551,7 +551,7 @@ namespace App3.Forms
                 {
                     Synchronizer.SyncStart += new Action(this.SynchroneStart);
                     Synchronizer.SyncStop += new Action(this.SynchroneStop);
-                    // Synchronizer.Start();
+                    Synchronizer.Start();
                 }
                 // Старт сервера для получения сообщений
                 if (Config.Get("SocketEnableSync") == "1")
