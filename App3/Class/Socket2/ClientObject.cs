@@ -47,7 +47,7 @@ namespace App3.Class.Socket2
                         while (stream.DataAvailable);
                         if (data.Count > 0)
                         {
-                            Logger.Instance.WriteToLog(string.Format("Socket sync: {0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Получено байт " + data.Count), Logger.LogLevel.DEBUG);
+                            Logger.Log(string.Format("Socket sync: {0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Получено байт " + data.Count), Logger.LogLevel.DEBUG);
                             // десереализация объекта
                             SendObject obj = (SendObject)SocketUtils.ByteArrayToObject(data.ToArray());
                             if (obj.Message == null) obj.Message = "";
@@ -68,7 +68,7 @@ namespace App3.Class.Socket2
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             finally
             {

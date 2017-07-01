@@ -49,7 +49,7 @@ namespace App3.Class.Static
                         }
                         catch (Exception ex)
                         {
-                            Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                            Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                         }
                         Thread.Sleep(Config.Get("SynchSleepMinutes").ToInt() * 60 * 1000);
                     }

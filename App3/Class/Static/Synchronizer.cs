@@ -57,10 +57,10 @@ namespace App3.Class.Static
                         Synchronizer.Run(ref ListData);
                         if (ListData.Count > 0)
                         {
-                            Logger.Instance.WriteToLog("Произведена автоматическая синхронизация с узлами", Logger.LogLevel.EVENTS);
+                            Logger.Log("Произведена автоматическая синхронизация с узлами", Logger.LogLevel.EVENTS);
                             foreach (SyncResult current in ListData)
                             {
-                                Logger.Instance.WriteToLog(string.Format("IP-адрес: {0} Район: {5} Статус: {1} Получено байт: {2} Изменено: {3} Удалено: {4}", new object[]
+                                Logger.Log(string.Format("IP-адрес: {0} Район: {5} Статус: {1} Получено байт: {2} Изменено: {3} Удалено: {4}", new object[]
                                 {
                                     current.IpAddress,
                                     current.Status,
@@ -132,6 +132,7 @@ namespace App3.Class.Static
             string qupdate = "UPDATE {0} SET {1} WHERE {2} = {3}";
 
             #region Шаг 1: Удаление объектов
+            Logger.Log("Удаление объектов: " + obj.deleted.Count.ToString(), Logger.LogLevel.DEBUG);
             foreach (Deleted current2 in obj.deleted)
             {
                 try
@@ -140,12 +141,13 @@ namespace App3.Class.Static
                 }
                 catch (Exception ex2)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex2.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex2.Message), Logger.LogLevel.ERROR);
                 }
             }
             #endregion
 
             #region Шаг 2: Изменение объектов
+            Logger.Log("Изменение объектов: " + obj.deleted.Count.ToString(), Logger.LogLevel.DEBUG);
             foreach (List<Attr> synobj in obj.reversed)
             {
                 // подготовка изменений в БД
@@ -194,10 +196,12 @@ namespace App3.Class.Static
                                 field, // ключевое поле
                                 keyval // ключевое значение
                             ));
+                        if (cntupd > 0)
+                            Logger.Log("Объект обновлен " + keyval.ToString(), Logger.LogLevel.DEBUG);
                     }
                     catch (Exception ex3)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex3.Message),Logger.LogLevel.ERROR);
+                        Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex3.Message),Logger.LogLevel.ERROR);
                     }
                 }
                 // если записи не были обновлены - попробовать добавить их
@@ -210,12 +214,16 @@ namespace App3.Class.Static
                                 string.Join(",", insvals),   // значения полей
                                 getTableName(obj.objectname) // имя таблицы
                             );
-                        Logger.Instance.WriteToLog(ss, Logger.LogLevel.DEBUG);
-                        cntrev += DataBase.RunCommand(ss);
+                        Logger.Log(ss, Logger.LogLevel.DEBUG);
+                        cntupd += DataBase.RunCommand(ss);
+                        if (cntupd > 0)
+                            Logger.Log("Объект добавлен", Logger.LogLevel.DEBUG);
+                        else
+                            Logger.Log("Объект не добавлен", Logger.LogLevel.DEBUG);
                     }
                     catch (Exception ex4)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex4.Message),Logger.LogLevel.ERROR);
+                        Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex4.Message),Logger.LogLevel.ERROR);
                     }
                 }
                 cntrev += cntupd;
@@ -224,57 +232,60 @@ namespace App3.Class.Static
 
             #endregion
 
+        }
 
-            #region DEPRECATED => MUST DELETE
-            /*
-			if (obj.objectname == "event")
-			{
-				using (List<List<Attr>>.Enumerator enumerator = obj.reversed.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						List<Attr> arg_7E_0 = enumerator.Current;
-						List<string> list = new List<string>();
-						List<string> list2 = new List<string>();
-						foreach (Attr current in arg_7E_0)
-						{
-							if (!(current.key == "id") && current.val != "")
-							{
-								list.Add(current.key);
-								list2.Add(current.val.Q());
-							}
-						}
+        public static SyncResult SyncObjectWithIP(string IpAddress, string Port, int RegionId)
+        {
+            SyncResult syncResult = new SyncResult();
+            // засекаем время
+            DateTime now = DateTime.Now;
+            // получение данных с узла по протоколу HTTP, метод get_new
+            string text = string.Format("http://{0}:{1}/objects/{2}/", IpAddress, Port, RegionId);
 
-						if (list.Count > 0)
-						{
-							bool flag = true;
-							int num3 = 0;
-							while (flag)
-							{
-								string text = string.Format(format, string.Join(",", list), string.Join(",", list2));
-								try
-								{
-									num2 += DataBase.RunCommand(text);
-									flag = false;
-								}
-								catch (Exception ex)
-								{
-									num3++;
-									Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message));
-									Logger.Instance.WriteToLog(text);
-									if (num3 > 3)
-									{
-										break;
-									}
-								}
-							}
-						}
-					}
-                    return new int[] { num, num2 };
+            syncResult.IpAddress = IpAddress;
+            Logger.Log(string.Format("соединение с {0}: {1}, код района {2}", IpAddress, Port, RegionId), Logger.LogLevel.EVENTS);
+            string htmlContent = Utils.getHtmlContent(text);
+            if (RegionId == -1)
+                syncResult.Description = "Сервер";
+            else
+                syncResult.Description = DBDict.TRegion[RegionId].Item1;
+            // если контент с удаленного узла получен
+            if (htmlContent.Length > 0)
+            {
+                syncResult.Status = SyncStatus.OK;
+                syncResult.Bytes = htmlContent.Length;
+                // десереализация массива объектов
+                JsonAKObject[] sync_objects = new JavaScriptSerializer
+                {
+                    MaxJsonLength = 2147483647
+                }.Deserialize<JsonAKObject[]>(htmlContent);
+                syncResult.Reserved = 0;
+                Logger.Log("Сообщение десериализовано, объектов - " + sync_objects.Length.ToString(), Logger.LogLevel.DEBUG);
+
+                for (int i = 0; i < sync_objects.Length; i++)
+                {
+                    JsonAKObject jsonObj = sync_objects[i];
+                    try
+                    {
+                        syncResult.Reserved += AKObject.UpdateObjectFromJson(jsonObj);
+                        Logger.Log("Обновлен объект osm_id=" + jsonObj.osm_id.ToString(), Logger.LogLevel.DEBUG);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(string.Format("{0}.{1}: {2} (не удалось сохранить объект в БД)", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                        Logger.Log(ex.StackTrace,Logger.LogLevel.DEBUG);
+                        Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
+                    }
                 }
-			} */
-            #endregion
-
+                Logger.Log(string.Format("Всего: изменено {0}", syncResult.Reserved), Logger.LogLevel.EVENTS);
+            }
+            else
+            {
+                syncResult.Status = SyncStatus.EMPTY;
+                Logger.Log(("получен пустой ответ"), Logger.LogLevel.EVENTS);
+            }
+            syncResult.Timestamp = now;
+            return syncResult;
         }
 
         /// <summary>
@@ -291,16 +302,17 @@ namespace App3.Class.Static
             // блокировка
             lock (obj)
 			{
+                Logger.Log("Начало синронизации с узлами", Logger.LogLevel.EVENTS);
                 // событие о начале синхронизации
-				if (Synchronizer.SyncStart != null)
+                if (Synchronizer.SyncStart != null)
 				{
 					try
 					{
 						Synchronizer.SyncStart();
-					}
+                    }
 					catch (Exception ex)
 					{
-						Logger.Instance.WriteToLog("Событие SyncStart вызвало исключение: " + ex.Message, Logger.LogLevel.ERROR);
+						Logger.Log("Событие SyncStart вызвало исключение: " + ex.Message, Logger.LogLevel.ERROR);
 					}
 				}
 				Data.Clear();
@@ -339,7 +351,7 @@ namespace App3.Class.Static
 						});
 
 						syncResult.IpAddress = current[1].ToString();
-						Logger.Instance.WriteToLog(string.Format("соединение с {0}: {1}", current[1], text), Logger.LogLevel.EVENTS);
+						Logger.Log(string.Format("соединение с {0}: {1}", current[1], text), Logger.LogLevel.EVENTS);
 						string htmlContent = Utils.getHtmlContent(text);
 						syncResult.Description = current[3].ToString();
                         // если контент с удаленного узла получен
@@ -353,7 +365,7 @@ namespace App3.Class.Static
 							{
 								MaxJsonLength = 2147483647
 							}.Deserialize<JsonNewObject[]>(htmlContent);
-
+                            Logger.Log("Данные получены, объектов для синхронизации: " + sync_objects.Length.ToInt(), Logger.LogLevel.DEBUG);
                             // если адрес узла синхронизации совпадает с адресм сервера, то узел - пропускается
 							bool flag2 = current[1].ToString() == DBDict.Settings["SERVER_ADDRESS"].ToString();
 
@@ -362,6 +374,7 @@ namespace App3.Class.Static
 							{
 								JsonNewObject jsonNewObject = array[i];
 								list.Add(jsonNewObject.objectname);
+                                Logger.Log("Синхронизация "+ jsonNewObject.objectname, Logger.LogLevel.DEBUG);
                                 // 
 								if (!flag2) /*deprecated || !(jsonNewObject.objectname != "event") */
                                 {
@@ -370,15 +383,15 @@ namespace App3.Class.Static
                                     // метод возвращает два счетчика: число удаленных, число измененных (обновлено/добавлено)
 									num2 += array2[0];
 									num += array2[1];
-									string text2 = string.Format("{2} удалено {0}, изменено {1}", array2[0], array2[1], jsonNewObject.objectname);
+									string text2 = string.Format("{2}: удалено {0}, изменено {1}", array2[0], array2[1], jsonNewObject.objectname);
 									list.Add(text2);
-									Logger.Instance.WriteToLog(text2, Logger.LogLevel.DEBUG);
+									Logger.Log(text2, Logger.LogLevel.DEBUG);
 								}
 							}
 							list.Add(string.Format("Всего: удалено {0}, изменено {1}", num2, num));
 							syncResult.Reserved = num;
 							syncResult.Deleted = num2;
-                            Logger.Instance.WriteToLog(string.Format("Всего: удалено {0}, изменено {1}", num2, num), Logger.LogLevel.EVENTS);
+                            Logger.Log(string.Format("Всего: удалено {0}, изменено {1}", num2, num), Logger.LogLevel.EVENTS);
 						}
 						else
 						{
@@ -431,7 +444,7 @@ namespace App3.Class.Static
 					}
 					catch (Exception ex2)
 					{
-						Logger.Instance.WriteToLog("Событие SyncStop вызвало исключение: " + ex2.Message, Logger.LogLevel.ERROR);
+						Logger.Log("Событие SyncStop вызвало исключение: " + ex2.Message, Logger.LogLevel.ERROR);
 					}
 				}
 			}
@@ -447,8 +460,9 @@ namespace App3.Class.Static
 			{
 				// new EventSync(),
                 new SyncObjectStatus()/*,
+                new SyncClassifier(),
+                new SyncObjectProperties(),
 				new SyncAddresses(),
-				new SyncClassifier(),
 				new SyncCompany(),
 				new SyncContact(),
 				new SyncContract(),
@@ -457,7 +471,6 @@ namespace App3.Class.Static
 				new SyncMessageText(),
 				new SyncObject(),
 				new SyncObjectInContract(),
-				new SyncObjectProperties(),
 				new SyncRealObject(),
 				new SyncRegionStatus(),
 				new SyncTContact(),

@@ -2946,6 +2946,8 @@ namespace App3 {
             
             private global::System.Data.DataColumn columnstateid;
             
+            private global::System.Data.DataColumn columnaddress;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public report_objectsDataTable() {
@@ -3053,6 +3055,14 @@ namespace App3 {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn addressColumn {
+                get {
+                    return this.columnaddress;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3088,7 +3098,7 @@ namespace App3 {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public report_objectsRow Addreport_objectsRow(string number, string name, System.DateTime makedatetime, string dogovor, string status, string region, string message, System.DateTime messagetime, string stateid) {
+            public report_objectsRow Addreport_objectsRow(string number, string name, System.DateTime makedatetime, string dogovor, string status, string region, string message, System.DateTime messagetime, string stateid, string address) {
                 report_objectsRow rowreport_objectsRow = ((report_objectsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         number,
@@ -3099,7 +3109,8 @@ namespace App3 {
                         region,
                         message,
                         messagetime,
-                        stateid};
+                        stateid,
+                        address};
                 rowreport_objectsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowreport_objectsRow);
                 return rowreport_objectsRow;
@@ -3131,6 +3142,7 @@ namespace App3 {
                 this.columnmessage = base.Columns["message"];
                 this.columnmessagetime = base.Columns["messagetime"];
                 this.columnstateid = base.Columns["stateid"];
+                this.columnaddress = base.Columns["address"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3154,6 +3166,8 @@ namespace App3 {
                 base.Columns.Add(this.columnmessagetime);
                 this.columnstateid = new global::System.Data.DataColumn("stateid", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnstateid);
+                this.columnaddress = new global::System.Data.DataColumn("address", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnaddress);
                 this.columnnumber.MaxLength = 4095;
                 this.columnname.MaxLength = 4095;
                 this.columndogovor.MaxLength = 5;
@@ -4546,6 +4560,22 @@ namespace App3 {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string address {
+                get {
+                    try {
+                        return ((string)(this[this.tablereport_objects.addressColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("Значение для столбца \'address\' в таблице \'report_objects\' равно DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablereport_objects.addressColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsnumberNull() {
                 return this.IsNull(this.tablereport_objects.numberColumn);
             }
@@ -4650,6 +4680,18 @@ namespace App3 {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetstateidNull() {
                 this[this.tablereport_objects.stateidColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsaddressNull() {
+                return this.IsNull(this.tablereport_objects.addressColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetaddressNull() {
+                this[this.tablereport_objects.addressColumn] = global::System.Convert.DBNull;
             }
         }
         

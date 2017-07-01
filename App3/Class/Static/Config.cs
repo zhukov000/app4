@@ -92,7 +92,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("Config.Set: Не получилось изменить значение параметра конфигурации: {0} - {1} ", key, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("Config.Set: Не получилось изменить значение параметра конфигурации: {0} - {1} ", key, ex.Message), Logger.LogLevel.ERROR);
             }
         }
 

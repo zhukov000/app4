@@ -103,7 +103,7 @@ namespace App3.Class.Static
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog("Ошибка в справочнике районов:  " + ex.Message, Logger.LogLevel.ERROR);
+                Logger.Log("Ошибка в справочнике районов:  " + ex.Message, Logger.LogLevel.ERROR);
                 Logger.Instance.FlushLog();
                 // IEnumerable<object[]> arg_348_0 = DataBase.RowSelect("select id_region, max(ipaddress) as ipaddress from oko.ipaddresses where listen group by id_region");
                 IPAddress = DataBase.RowSelect("select id_region, max(ipaddress) as ipaddress from oko.ipaddresses where listen group by id_region")
@@ -160,7 +160,7 @@ namespace App3.Class.Static
                     catch (Exception ex)
                     {
                         MessageBox.Show("Ошибка в классификаторе");
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                        Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                     }
                 }
             }

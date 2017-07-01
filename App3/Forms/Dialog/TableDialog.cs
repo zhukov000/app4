@@ -57,7 +57,7 @@ namespace App3.Dialog
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 MessageBox.Show(ex.Message);
             }
         }

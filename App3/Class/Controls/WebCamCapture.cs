@@ -229,7 +229,7 @@ namespace WebCam_Capture
 
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: : {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: : {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 this.Stop();
             }
         }
@@ -252,7 +252,7 @@ namespace WebCam_Capture
 
             catch (Exception ex)
             { // don't raise an error here.
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: : {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message),Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: : {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message),Logger.LogLevel.ERROR);
             }
 
         }
@@ -304,7 +304,7 @@ namespace WebCam_Capture
 
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: : {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: : {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 this.Stop(); // stop the process
             }
         }

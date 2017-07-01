@@ -67,7 +67,7 @@ namespace App3.Class
         static public void UpdateDistrictStatuses(int HomeDistrict = -1)
         {
 
-            Logger.Instance.WriteToLog("Update district status started", Logger.LogLevel.EVENTS);
+            Logger.Log("Update district status started", Logger.LogLevel.EVENTS);
             if (HomeDistrict == -1)
             {
                 DataBase.RunCommand(@"  update regions2map
@@ -93,7 +93,7 @@ namespace App3.Class
             {
                 DataBase.RunCommand(string.Format("select oko.update_district_status({0})", HomeDistrict));
             }
-            Logger.Instance.WriteToLog("Update district status finished", Logger.LogLevel.EVENTS);
+            Logger.Log("Update district status finished", Logger.LogLevel.DEBUG);
 
         }
 
@@ -102,7 +102,7 @@ namespace App3.Class
             object o = DataBase.First("select now()::date - max(start)::date as dt from archive.journal", "dt");
             if (o != null && o.ToInt() > 1)
             {
-                Logger.Instance.WriteToLog("Archive event", Logger.LogLevel.EVENTS);
+                Logger.Log("Archive event", Logger.LogLevel.DEBUG);
                 DataBase.RunCommand("select * from archive.arh_events()");
             }
         }
@@ -626,7 +626,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             return false;
         }
@@ -642,30 +642,38 @@ namespace App3.Class
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 return "";
             }
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                Stream receiveStream = response.GetResponseStream();
-                StreamReader readStream = null;
-
-                if (response.CharacterSet == null || response.CharacterSet == "")
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    readStream = new StreamReader(receiveStream);
+                    Stream receiveStream = response.GetResponseStream();
+                    StreamReader readStream = null;
+
+                    if (response.CharacterSet == null || response.CharacterSet == "")
+                    {
+                        readStream = new StreamReader(receiveStream);
+                    }
+                    else
+                    {
+                        readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
+                    }
+
+                    string data = readStream.ReadToEnd();
+
+                    response.Close();
+                    readStream.Close();
+
+                    return data;
                 }
-                else
-                {
-                    readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
-                }
-
-                string data = readStream.ReadToEnd();
-
-                response.Close();
-                readStream.Close();
-
-                return data;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
             }
             return "";
         }
@@ -798,11 +806,11 @@ namespace App3.Class
 
             Screen[] sc;
             sc = Screen.AllScreens;
-            Logger.Instance.WriteToLog("Monitor: " + numberMonitor.ToString(), Logger.LogLevel.DEBUG);
-            /*Logger.Instance.WriteToLog("AllScreen: " + sc.Length);
+            Logger.Log("Monitor: " + numberMonitor.ToString(), Logger.LogLevel.DEBUG);
+            /*Logger.Log("AllScreen: " + sc.Length);
             for(int i=0; i<sc.Length; i++)
             {
-                Logger.Instance.WriteToLog(string.Format("Index: {2}, Left: {0}, Top: {1}, Width: {3}, Height: {4}",
+                Logger.Log(string.Format("Index: {2}, Left: {0}, Top: {1}, Width: {3}, Height: {4}",
                     sc[i].Bounds.Left,
                     sc[i].Bounds.Top, 
                     i,
@@ -810,7 +818,7 @@ namespace App3.Class
                     sc[i].Bounds.Height)
                 );
             }
-            Logger.Instance.WriteToLog(string.Format("FORM Left: {0}, Top: {1}", frm.Left, frm.Top));*/
+            Logger.Log(string.Format("FORM Left: {0}, Top: {1}", frm.Left, frm.Top));*/
 
             // Rectangle monitor = Screen.AllScreens[numberMonitor - 1].WorkingArea;
 
@@ -830,7 +838,7 @@ namespace App3.Class
             }
             else
             {
-                Logger.Instance.WriteToLog("Окно не найдено", Logger.LogLevel.DEBUG);
+                Logger.Log("Окно не найдено", Logger.LogLevel.DEBUG);
             }
         }
 
@@ -846,7 +854,7 @@ namespace App3.Class
 	                        obj.number, obj.name, obj.osm_id, obj.tstate_id, obj.tstatus_id,
                             obj.region_id, obj.makedatetime, obj.dogovor, obj.dt, obj.description,
                             adr.code, adr.locality, adr.street, adr.house, adr.region,
-                            adr.address, adr.lat, adr.lon
+                            adr.address, adr.lat, adr.lon, obj.address_id
                         from oko.object obj
                         left join oko.addresses adr on obj.address_id = adr.id ";
             if (region_id != -1)
@@ -877,7 +885,8 @@ namespace App3.Class
                     { "region", row[15] },
                     { "address", row[16] },
                     { "lat", row[17] },
-                    { "lon", row[18] }
+                    { "lon", row[18] },
+                    { "address_id", row[19] }
                 });
             }
 
@@ -887,7 +896,7 @@ namespace App3.Class
         public static List<IDictionary<string, object>> GetObjectsStatuses(int region_id = -1)
         {
             List<IDictionary<string, object>> result = new List<IDictionary<string, object>>();
-            string sql = @"SELECT DISTINCT ON (objectnumber) objectnumber,
+            string sql = @"SELECT DISTINCT ON (objectnumber, region_id) objectnumber,
                                 alarmgroupid, code, channelnumber, partnumber,
                                 zoneusernumber, typenumber, class, address, 
                                 datetime, region_id, oko_version, retrnumber, 
@@ -897,7 +906,7 @@ namespace App3.Class
             {
                 sql += @" WHERE region_id = {0} ";
             }
-            sql += " ORDER BY objectnumber, datetime DESC";
+            sql += " ORDER BY objectnumber, region_id, datetime DESC";
             foreach (object[] row in DataBase.RowSelect(string.Format(sql, region_id)))
             {
                 result.Add( new Dictionary<string, object>

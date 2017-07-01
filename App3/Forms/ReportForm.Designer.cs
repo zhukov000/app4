@@ -500,6 +500,7 @@
             this.dynamicReport.TabIndex = 0;
             this.dynamicReport.Text = "Состояние объектов (за период)";
             this.dynamicReport.UseVisualStyleBackColor = true;
+            this.dynamicReport.Visible = false;
             // 
             // classifytyReport
             // 

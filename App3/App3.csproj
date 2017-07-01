@@ -495,6 +495,12 @@
     <Compile Include="Forms\SynchronizeForm.Designer.cs">
       <DependentUpon>SynchronizeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SyncObjects.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SyncObjects.Designer.cs">
+      <DependentUpon>SyncObjects.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ViewLog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -620,6 +626,7 @@
     <Compile Include="Web\Bootstrapper.cs" />
     <Compile Include="Web\DatabaseUser.cs" />
     <Compile Include="Web\IUserIdentity.cs" />
+    <Compile Include="Web\JsonAKObject.cs" />
     <Compile Include="Web\JsonNewObject.cs" />
     <Compile Include="Web\Startup.cs" />
     <Compile Include="Web\StartWeb.cs" />
@@ -657,6 +664,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SynchronizeForm.resx">
       <DependentUpon>SynchronizeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SyncObjects.resx">
+      <DependentUpon>SyncObjects.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ViewLog.resx">
       <DependentUpon>ViewLog.cs</DependentUpon>

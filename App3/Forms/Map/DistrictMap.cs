@@ -37,7 +37,7 @@ namespace App3.Forms
                 if (duration.TotalMinutes > mins)
                 {
                     AutoClosingMessageBox.Show("Происходит плановая перезагрузка приложения...", "Предупреждение", 2000);
-                    Logger.Instance.WriteToLog("Плановая перезагрузка приложения");
+                    Logger.Log("Плановая перезагрузка приложения");
                     Application.Exit();
                 }
             }*/
@@ -126,7 +126,7 @@ namespace App3.Forms
 
         public int UpdateTime
         {
-            get { return label3.Text.Substring(0, 2).Trim().ToInt(); }
+            get { return (label3.Text.Split(' ')[0]).ToInt(); }
             set { label3.Text = value.ToString() + " сек."; }
         }
         //private int SelectedRegionId = 0;
@@ -148,7 +148,7 @@ namespace App3.Forms
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: Неизвестный адрес '{3}'. Для предотвращения появления этой ошибки добавьте этот адрес в справочник в БД: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, sAddress), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: Неизвестный адрес '{3}'. Для предотвращения появления этой ошибки добавьте этот адрес в справочник в БД: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, sAddress), Logger.LogLevel.ERROR);
             }
             return i;
         }
@@ -371,6 +371,18 @@ namespace App3.Forms
             // OpenOneDistrictForm(addr.District);
         }
 
+        public void MaximizeChild()
+        {
+            if (Config.Get("MapProvider", "None") == "None")
+            {
+                if (map != null) map.WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                if (map2 != null) map2.WindowState = FormWindowState.Maximized;
+            }
+        }
+
         public void OpenOneDistrictForm(string DistrictName)
         {
             if (Config.Get("MapProvider", "None") == "None")
@@ -392,7 +404,7 @@ namespace App3.Forms
                     }
                     catch (Exception ex)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                        Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                     }
                 }
             }
@@ -412,7 +424,7 @@ namespace App3.Forms
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 }
             }
         }
@@ -612,7 +624,7 @@ namespace App3.Forms
                 LoadStat(SelectedRegion);
                 needUpdate = false;
             }*/
-            UpdateTime = 60;
+            UpdateTime = 120;
             timer1.Start();
         }
 
@@ -689,7 +701,7 @@ namespace App3.Forms
                     filter = "not dogovor and " + filter;
                 }
             }
-            Logger.Instance.WriteToLog("Фильтр объектов: " + string.Format(filter, state_id, this.SelectedRegion), Logger.LogLevel.DEBUG);
+            Logger.Log("Фильтр объектов: " + string.Format(filter, state_id, this.SelectedRegion), Logger.LogLevel.DEBUG);
             Handling.onObjectListOpen(string.Format(filter, state_id, SelectedRegion));
         }
 

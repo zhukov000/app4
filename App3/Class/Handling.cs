@@ -37,13 +37,13 @@ namespace App3.Class
             object[] array = new object[0];
             try
             {
-                Logger.Instance.WriteToLog("SocketSync: Handle calling " + data.Message, Logger.LogLevel.DEBUG);
+                Logger.Log("SocketSync: Handle calling " + data.Message, Logger.LogLevel.DEBUG);
                 if (data != null)
                     DataBase.RunCommandInsert("oko.event", data.GetInfo(), "id", out array);
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
         }
 
@@ -67,7 +67,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
         }
 
@@ -104,7 +104,7 @@ namespace App3.Class
                     { "isrepeat", !flag },
                     { "siglevel", SignalLevel }
                 };
-                DataBase.RunCommandInsert("oko.event", data, "id", out array);
+                int row_aff = DataBase.RunCommandInsert("oko.event", data, "id", out array);
                 if (Config.Get("SocketEnableSync") == "1")
                 {
                     SendDataBySocket(data, aKObject.Id);
@@ -113,11 +113,21 @@ namespace App3.Class
                 {
                     pEventId = array[0].ToInt();
                 }
+                if (row_aff > 0)
+                {
+                    Logger.Log("Событие записано в БД: " + pEventId.ToString(), Logger.LogLevel.DEBUG);
+                }
+                else
+                {
+                    Logger.Log("Событие не было записано в БД", Logger.LogLevel.ERROR);
+                }
             }
             catch (Exception ex)
             {
                 flag = false;
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
             }
             if (flag && aKObject.IsExists())
             {
@@ -126,14 +136,15 @@ namespace App3.Class
                 text = string.Format("Объект расположенный по адресу:{0}, \r\nсообщает:{1}", aKObject.AddressStr, text);
                 if (Handling.GetMessageEvent != null)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, text), Logger.LogLevel.DEBUG);
+                    Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, text), Logger.LogLevel.DEBUG);
                     Handling.GetMessageEvent(pEventId, item, aKObject, text, string.Join(", ", aKObject.GetContacts()), TimeStamp.ToString());
                 }
                 flag = true;
             }
             else
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, "Сообщение не было сохранено в БД и/или АК объекта не создана: " + ObjectNumber), Logger.LogLevel.ERROR);
+                if (!aKObject.IsExists())
+                    Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, "Сообщение не было сохранено в БД и/или АК объекта не создана: " + ObjectNumber), Logger.LogLevel.ERROR);
             }
             return flag;
         }
@@ -225,18 +236,18 @@ namespace App3.Class
             });
             if (!flag)
             {
-                Logger.Instance.WriteToLog("Объект: " + message.Get("Object").ToInt() + ", type = " + message.Type +
+                Logger.Log("Объект: " + message.Get("Object").ToInt() + ", type = " + message.Type +
                         ", code = " + message.Get("Code").ToString() +
                         ", text = " + message.Get("Text").ToString(), Logger.LogLevel.DEBUG);
                 Handling.ProcessingEvent(okoVersion, regionId, objectNumber, retrNumber, _class, code, part, zone, chnlMask, idx, DateTime.Now, signalLevel, 0, message.Address);
             }
             else
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
                     "Сообщение не было обработано" ), Logger.LogLevel.DEBUG);
                 try
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
+                    Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
                         "Объект: " + message.Get("Object").ToInt() + ", type = " + message.Type +
                         ", code = " + message.Get("Code").ToString() + 
                         ", text = " + message.Get("Text").ToString()), Logger.LogLevel.DEBUG);

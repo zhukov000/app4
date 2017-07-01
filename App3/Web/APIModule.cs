@@ -102,7 +102,7 @@ namespace App3.Web
             Get["/"] = x =>
             {
 
-                Logger.Instance.WriteToLog("Web Root", Logger.LogLevel.DEBUG);
+                Logger.Log("Web Root", Logger.LogLevel.DEBUG);
                 IDictionary<string, object> owinEnvironment = base.Context.GetOwinEnvironment();
                 Stream arg_1C_0 = (Stream)owinEnvironment["owin.RequestBody"];
                 IDictionary<string, string[]> dictionary = (IDictionary<string, string[]>)owinEnvironment["owin.RequestHeaders"];
@@ -295,6 +295,18 @@ namespace App3.Web
                 return response;
             };
 
+            /* Get["/classifier/"] = x =>
+            {
+                var responseContentArray = new JArray();
+                if (DataBase.RowSelectCount("SELECT * FROM oko.classifier") > 0)
+                {
+
+                }
+                var response = (Response)responseContentArray.ToString();
+                response.ContentType = "application/json";
+                return response;
+            }; */
+
             // получение объектов для синхронизации
             Get["/get_new/{date}/{nid?}"] = x =>
             {
@@ -303,7 +315,7 @@ namespace App3.Web
                 // 
                 // if (region_id != -1)
                 {
-                    Logger.Instance.WriteToLog(string.Format("Web GET_NEW: {0}", this.Request.UserHostAddress), Logger.LogLevel.DEBUG);
+                    Logger.Log(string.Format("Web GET_NEW: {0}", this.Request.UserHostAddress), Logger.LogLevel.DEBUG);
                     // проверить разрешено ли этому узлу получать данные
                     if (DataBase.RowSelectCount(string.Format("SELECT * FROM syn_nodes WHERE synout AND ipv4 = '{0}' ", this.Request.UserHostAddress/*, x.nid*/)) > 0)
                     {

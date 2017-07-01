@@ -117,7 +117,7 @@ namespace App3.Forms
             }
             catch (Exception ex)
             {
-                Class.Singleton.Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Class.Singleton.Logger.LogLevel.ERROR);
+                Class.Singleton.Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Class.Singleton.Logger.LogLevel.ERROR);
             }
             dtStart.Value = DateTime.Now.AddMonths(-1);
             treeView1.Nodes[0].Checked = true;

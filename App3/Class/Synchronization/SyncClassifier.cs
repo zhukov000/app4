@@ -7,6 +7,12 @@ namespace App3.Class.Synchronization
 {
     class SyncClassifier : Entity
     {
+
+        override public string KeyField
+        {
+            get { return ""; }
+        }
+
         override public string getName()
         {
             return "classifier";

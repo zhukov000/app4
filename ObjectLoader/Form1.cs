@@ -237,6 +237,7 @@ namespace ObjectLoader
                         ShowMessage(string.Format("Объект {0} обновлен", objNumber));
                         c_upd++;
                     }
+                    /*
                     // 3. Добавить сообщение
                     // 3.1 Получить код сообщения
                     object[] tm_row = DataBase.FirstRow(
@@ -260,6 +261,7 @@ namespace ObjectLoader
                             {"region_id", regionId}
                         }
                     );
+                    */
                 }
                 catch (Exception ex)
                 {

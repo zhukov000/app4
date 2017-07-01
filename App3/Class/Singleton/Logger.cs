@@ -45,6 +45,11 @@ namespace App3.Class.Singleton
             }
         }
 
+        public static void Log(string message, LogLevel level /*= LogLevel.ALL*/)
+        {
+            Instance.WriteToLog(message, level);
+        }
+
         private Logger()
         {
         }

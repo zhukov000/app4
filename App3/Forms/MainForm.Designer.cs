@@ -106,6 +106,7 @@ namespace App3.Forms
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.синхронизацияОбъектовССервераToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -134,6 +135,7 @@ namespace App3.Forms
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.синхронизацияToolStripMenuItem,
+            this.синхронизацияОбъектовССервераToolStripMenuItem,
             this.отправитьПоследниеСообщенияToolStripMenuItem,
             this.logToolStripMenuItem,
             this.journalToolStripMenuItem,
@@ -694,6 +696,13 @@ namespace App3.Forms
             this.timer1.Interval = 60000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // синхронизацияОбъектовССервераToolStripMenuItem
+            // 
+            this.синхронизацияОбъектовССервераToolStripMenuItem.Name = "синхронизацияОбъектовССервераToolStripMenuItem";
+            this.синхронизацияОбъектовССервераToolStripMenuItem.Size = new System.Drawing.Size(288, 22);
+            this.синхронизацияОбъектовССервераToolStripMenuItem.Text = "Синхронизация объектов с сервера";
+            this.синхронизацияОбъектовССервераToolStripMenuItem.Click += new System.EventHandler(this.синхронизацияОбъектовССервераToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -803,6 +812,7 @@ namespace App3.Forms
         private ToolStripMenuItem отправитьПоследниеСообщенияToolStripMenuItem;
         private ToolStripMenuItem обновитьВесьКэшToolStripMenuItem;
         private ToolStripMenuItem обновитьСтатусыРайоновToolStripMenuItem;
+        private ToolStripMenuItem синхронизацияОбъектовССервераToolStripMenuItem;
     }
 }
 

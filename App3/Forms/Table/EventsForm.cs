@@ -92,7 +92,7 @@ namespace App3
                 catch(Exception ex)
                 {
                     // SetStatusText(ex.Message);
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                 }
                 if (isAdded)
                 {
@@ -118,7 +118,7 @@ namespace App3
             catch(Exception ex)
             {
                 // SetStatusText(ex.Message);
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             if (isOpen)
             {
@@ -136,11 +136,11 @@ namespace App3
                     }
                     catch (Exception ex2)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex2.Message), Logger.LogLevel.ERROR);
+                        Logger.Log(string.Format("{0}.{1}: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex2.Message), Logger.LogLevel.ERROR);
                         return;
                     }
                 }
-                Logger.Instance.WriteToLog("Инициализация из справочника", Logger.LogLevel.DEBUG);
+                Logger.Log("Инициализация из справочника", Logger.LogLevel.DEBUG);
                 try
                 {
                     foreach (KeyValuePair<int, Tuple<string, bool>> current in DBDict.TMessages)
@@ -151,7 +151,7 @@ namespace App3
                 }
                 catch (Exception ex3)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex3.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}", base.GetType().Name, MethodBase.GetCurrentMethod().Name, ex3.Message), Logger.LogLevel.ERROR);
                 }
             }
         }

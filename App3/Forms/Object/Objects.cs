@@ -77,7 +77,7 @@ namespace App3.Forms.Object
             }
             catch(Exception ex)
             {
-                Class.Singleton.Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Class.Singleton.Logger.LogLevel.ERROR);
+                Class.Singleton.Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Class.Singleton.Logger.LogLevel.ERROR);
             }
             this.MdiParent = pParent;
         }
@@ -147,13 +147,14 @@ namespace App3.Forms.Object
         {
             var wd = Utils.CreateWaitThread(this, Config.Get("MonitorNumber", "1").ToInt());
             ReportDialog frm = new ReportDialog();
-            string sql = @"select number, name, makedatetime, 
+            string sql = @"select distinct number, name, makedatetime, 
                                 case when dogovor then 'Есть' else 'Нет' end as dogovor, 
-                                tstatus.status, rm.region, lm.message, lm.datetime as messagetime,
-
+                                tstatus.status, rm.region, object.description as message, lm.datetime as messagetime,
+                                addr.address
                             from oko.object
                             inner join oko.tstatus on tstatus.id = object.tstatus_id
                             inner join (select num as id_region, fullname as region from regions2map) rm on rm.id_region = object.region_id
+                            left join oko.addresses addr on addr.id = object.address_id
                             left join (
 	                            select a.objectnumber, a.datetime, a.message, a.region_id as reid
 	                            from oko.event_messages as a 
@@ -166,6 +167,7 @@ namespace App3.Forms.Object
                 sql += " WHERE " + objectTable.Filter;
             }
             frm.ShowReport(sql, "App3.Reports.ListObject.rdlc");
+            frm.Text = "Список объектов";
             Utils.DestroyWaitThread(wd);
             frm.ShowDialog();
         }

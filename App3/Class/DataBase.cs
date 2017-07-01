@@ -118,7 +118,7 @@ namespace App3
                     }
                     if (deadlock == 0)
                     {
-                        Logger.Instance.WriteToLog("ALL DB Connections using", Logger.LogLevel.ERROR);
+                        Logger.Log("ALL DB Connections using", Logger.LogLevel.ERROR);
                     }
                     if (deadlock < 5)
                     {
@@ -227,7 +227,9 @@ namespace App3
                 catch (Exception ex)
                 {
                     o = null;
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                    Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
                 }
             }
             return o;
@@ -283,7 +285,9 @@ namespace App3
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
                 // throw new DataBaseRunCommandExcepion(ex.Message);
             }
             return ret;
@@ -340,7 +344,9 @@ namespace App3
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                    Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
                     // throw new DataBaseRunCommandExcepion(e.Message);
                 }
                 finally
@@ -376,7 +382,9 @@ namespace App3
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
             }
             return request;
         }
@@ -426,7 +434,10 @@ namespace App3
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                    Logger.Log("Запрос: " + pCommand, Logger.LogLevel.DEBUG);
+                    Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                    Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
                     // throw new DataBaseRunCommandExcepion(ex.Message);
                 }
                 finally
@@ -528,7 +539,9 @@ namespace App3
             }
             catch(Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(ex.StackTrace, Logger.LogLevel.DEBUG);
+                Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.DEBUG);
                 isOpen = false;
                 throw new DataBaseConnectionErrorExcepion(ex.Message);
             }

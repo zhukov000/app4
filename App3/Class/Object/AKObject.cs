@@ -1,5 +1,6 @@
 ﻿using App3.Class.Singleton;
 using App3.Class.Static;
+using App3.Web;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -42,6 +43,7 @@ namespace App3.Class
         public string devicetypename = "";
         public bool autocontrol = true;
         public int autointerval = 0;
+        public string description = "";
         
         public List<int> ClassCodes = new List<int>();
         
@@ -244,6 +246,97 @@ namespace App3.Class
                 LoadFromDB(RowFromDB);
             }
         }
+
+        static public int UpdateObjectFromJson(JsonAKObject obj)
+        {
+            int addrid = obj.address_id;
+            if (obj.address_id != 0)
+            {
+                try
+                {
+                    Address pAddress = new Address(addrid);
+                }
+                catch
+                {
+                    Logger.Log(string.Format("Адрес не был найден: {0}", obj.address_id), Logger.LogLevel.DEBUG);
+                    addrid = 0;
+                }
+                if (addrid == 0)
+                {
+                    Logger.Log("address_id = " + obj.address_id.ToString(), Logger.LogLevel.DEBUG);
+                    try
+                    {
+                        Address pAddress = new Address(obj.region, DBDict.TRegion[obj.region_id].Item1, obj.locality, obj.street, obj.house);
+                        pAddress.Save2DB();
+                        addrid = pAddress.Id;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(string.Format("Адрес не был создан: {0}, {1}, {2}, {3}, {4}, ошибка: {5} ", obj.region, DBDict.TRegion[obj.region_id].Item1, obj.locality, obj.street, obj.house, ex.Message), Logger.LogLevel.DEBUG);
+                    }
+                }
+            }
+            
+            // информация об объекте
+            Dictionary<string, object> Data = new Dictionary<string, object>()
+            {
+                {"makedatetime", (obj.makedatetime != null) ? obj.makedatetime.Q() : "null"},
+                {"tstatus_id",obj.tstatus_id},
+                {"tstate_id",obj.tstate_id },
+                {"name",(obj.name ?? "").Q()},
+                {"number",obj.number.ToInt()},
+                {"region_id", obj.region_id},
+                {"dogovor",obj.dogovor},
+                {"description",(obj.description ?? "").Q()},
+            };
+            if (obj.lon != null && obj.lat != null && obj.lon != "" && obj.lat != "")
+            {
+                Data.Add("way", string.Format("ST_Transform(ST_GeomFromText('POINT({0} {1})', 4326), 900913)", obj.lon, obj.lat));
+            }
+            if (addrid != 0)
+            {
+                Data.Add("address_id" ,addrid);
+            }
+            // select 
+            object osm_id = DataBase.First(string.Format("SELECT osm_id FROM oko.object WHERE number = {0} AND region_id = {1}", obj.number, obj.region_id), "osm_id");
+            if (osm_id != null && osm_id.ToInt64() != obj.osm_id)
+                DataBase.RunCommand("DELETE FROM oko.object WHERE osm_id = " + osm_id.ToString());
+            
+            // обновить информацию об объекте
+            int row_aff = 0;
+            row_aff = DataBase.RunCommandUpdate(
+                        OTable,
+                        Data,
+                        new Dictionary<string, object>()
+                        {
+                            {"osm_id",obj.osm_id}
+                        }
+                    );
+            Logger.Log(string.Format("Изменено {1} строк при обновлении объекта {0}", obj.osm_id, row_aff),Logger.LogLevel.DEBUG);
+            if (row_aff > 0)
+            {
+                Logger.Log("Объект " + obj.osm_id.ToString() + " обновлен", Logger.LogLevel.DEBUG);
+                return 1;
+            }
+            else
+            {
+
+                object[] res;
+                Data.Add("osm_id", obj.osm_id);
+                row_aff = DataBase.RunCommandInsert(OTable, Data, "osm_id", out res);
+                if (row_aff > 0)
+                {
+                    Logger.Log("Объект " + obj.osm_id.ToString() + " создан", Logger.LogLevel.DEBUG);
+                    return row_aff;
+                }
+                else
+                {
+                    Logger.Log("не удалось добавить объект: " + obj.osm_id.ToString() + " причина в предыдущем сообщении ", Logger.LogLevel.DEBUG);
+                }
+                return 0;
+            }
+        }
+
         /// <summary>
         /// Создать экземпляр для объекта по номеру и коду региона
         /// </summary>
@@ -260,7 +353,7 @@ namespace App3.Class
                 try { id = Convert.ToInt64(RowFromDB["osm_id"]); }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}, id = {3}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, id), Logger.LogLevel.ERROR);
+                    Logger.Log(string.Format("{0}.{1}: {2}, id = {3}", this.GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message, id), Logger.LogLevel.ERROR);
                     id = Convert.ToInt64(RowFromDB["id"]); 
                 }
                 LoadFromDB(RowFromDB);
@@ -404,6 +497,7 @@ namespace App3.Class
                 {"real_object", real_object}, 
                 {"customer_id", customer_id}, 
                 {"dogovor",dogovor},
+                {"description",description.Q()},
                 {"way",string.Format("ST_Transform(ST_GeomFromText('POINT({0} {1})', 4326), 900913)",latitude.C2S(), longitude.C2S())}
             };
             if (id != 0)
@@ -476,6 +570,7 @@ namespace App3.Class
                 dogovor = RowFromDB["dogovor"].ToBool();
                 real_object = RowFromDB["real_object"].ToInt();
                 customer_id = RowFromDB["customer_id"].ToInt();
+                description = RowFromDB["description"].ToString();
                 ObjectProperties();
             }
             UpdateStatus();

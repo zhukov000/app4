@@ -16,7 +16,7 @@ namespace App3.Class.Socket
             try
             {
                 client = new TcpClient(server, port);
-                Logger.Instance.WriteToLog("Socket sync: send object " + data.ObjectNum, Logger.LogLevel.DEBUG);
+                Logger.Log("Socket sync: send object " + data.ObjectNum, Logger.LogLevel.DEBUG);
 
                 using (NetworkStream stream = client.GetStream())
                 {
@@ -25,7 +25,7 @@ namespace App3.Class.Socket
                     // отправка сообщения
                     stream.Write(data_arr, 0, data_arr.Length);
 
-                    Logger.Instance.WriteToLog(string.Format("Socket sync: {0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name,
+                    Logger.Log(string.Format("Socket sync: {0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name,
                             string.Format("Отправлено байт: {0} на сервер {1}, по порту {2}", data_arr.Length, server, port)), Logger.LogLevel.DEBUG);
                     // получаем ответ в виде слова
                     StringBuilder builder = new StringBuilder();
@@ -45,15 +45,15 @@ namespace App3.Class.Socket
                     }
                     catch(Exception ex)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
+                        Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message));
                     }*/
-                    Logger.Instance.WriteToLog(string.Format("Socket sync: Передача завершена"), Logger.LogLevel.DEBUG);
+                    Logger.Log(string.Format("Socket sync: Передача завершена"), Logger.LogLevel.DEBUG);
                     return builder.ToString();
                 }
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             finally
             {
@@ -74,7 +74,7 @@ namespace App3.Class.Socket
                     // Соединяемся с удаленным устройством
                     // Устанавливаем удаленную точку для сокета
                     IPHostEntry ipHost = Dns.GetHostEntry(server);
-                    Logger.Instance.WriteToLog("SOCKET ADDRESS CNT: " + ipHost.AddressList.Count().ToString() + ", SERVER = " + server, Logger.LogLevel.EVENTS);
+                    Logger.Log("SOCKET ADDRESS CNT: " + ipHost.AddressList.Count().ToString() + ", SERVER = " + server, Logger.LogLevel.EVENTS);
                     IPAddress ipAddr = ipHost.AddressList[0];
                     IPEndPoint ipEndPoint = new IPEndPoint(ipAddr, port);
                     System.Net.Sockets.Socket sender = new System.Net.Sockets.Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -97,7 +97,7 @@ namespace App3.Class.Socket
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             return res;
         }

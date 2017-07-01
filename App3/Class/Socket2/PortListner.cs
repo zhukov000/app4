@@ -31,13 +31,13 @@ namespace App3.Class.Socket2
             {
                 _server = new TcpListener(IPAddress.Any, _port);
                 _server.Start();
-                Logger.Instance.WriteToLog("Start listner at port: " + _port.ToString(), Logger.LogLevel.EVENTS);
+                Logger.Log("Start listner at port: " + _port.ToString(), Logger.LogLevel.EVENTS);
                 listnerThread = new Thread(new ThreadStart(ClientAccept));
                 listnerThread.Start();
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
         }
 
@@ -66,11 +66,11 @@ namespace App3.Class.Socket2
             }
             catch (SocketException e)
             {
-                Logger.Instance.WriteToLog(string.Format("SOCKET {0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, e.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("SOCKET {0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, e.Message), Logger.LogLevel.ERROR);
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             finally
             {

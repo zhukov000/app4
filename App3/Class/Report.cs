@@ -49,8 +49,8 @@ namespace App3.Class
             }
             else
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Результаты запроса не позволяют построить отчет, так как данные не выбраны"), Logger.LogLevel.ERROR);
-                Logger.Instance.WriteToLog(sourceSql, Logger.LogLevel.DEBUG);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Результаты запроса не позволяют построить отчет, так как данные не выбраны"), Logger.LogLevel.ERROR);
+                Logger.Log(sourceSql, Logger.LogLevel.DEBUG);
             }
         }
 
@@ -70,7 +70,7 @@ namespace App3.Class
             }
             else
             {
-                Logger.Instance.WriteToLog(sourceSql, Logger.LogLevel.DEBUG);
+                Logger.Log(sourceSql, Logger.LogLevel.DEBUG);
                 throw new Exception("Детализированный отчет не был построен: " + sourceSql);
             }
         }

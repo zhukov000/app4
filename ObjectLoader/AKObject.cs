@@ -333,7 +333,7 @@ namespace App3.Class
             { 
                 {"makedatetime",makedatetime.Q()},
                 // {"tclass_id",TClass},
-                {"tstatus_id",TStatus},
+                // {"tstatus_id",TStatus},
                 {"name",name.Q()},
                 {"number",number},
                 {"region_id", RegionId},

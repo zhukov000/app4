@@ -24,8 +24,8 @@ namespace App3.Class
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
-                Logger.Instance.WriteToLog(string.Format("Не удалось получить информацию об объекте: {0} - {1} ", s, ex.Message), Logger.LogLevel.DEBUG);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("Не удалось получить информацию об объекте: {0} - {1} ", s, ex.Message), Logger.LogLevel.DEBUG);
             }
             if (row != null && double.Parse(row["dist"].ToString().Replace('.', ',')) < 10 )
             {
@@ -162,7 +162,7 @@ namespace App3.Class
             }
             catch (Exception ex)
             { 
-                Logger.Instance.WriteToLog(string.Format("Geocoder.Address: Не удалось декодировать координаты: {0} ", ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("Geocoder.Address: Не удалось декодировать координаты: {0} ", ex.Message), Logger.LogLevel.ERROR);
             }
             if (row != null)
             {
@@ -250,7 +250,7 @@ namespace App3.Class
             }
             catch (Exception ex) 
             {
-                Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodInfo.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
             }
             return res;
         }

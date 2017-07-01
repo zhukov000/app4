@@ -36,7 +36,7 @@ namespace App3.Web
                     {
                         using (WebApp.Start<Startup>(options))
                         {
-                            Logger.Instance.WriteToLog(string.Format("Web-service start at local and {0} on port {1} ", arg, Config.Get("WebPort")), Logger.LogLevel.EVENTS);
+                            Logger.Log(string.Format("Web-service start at local and {0} on port {1} ", arg, Config.Get("WebPort")), Logger.LogLevel.EVENTS);
                             while (true)
                             {
                                 // Do Nothing
@@ -45,12 +45,12 @@ namespace App3.Web
                     }
                     catch (ThreadAbortException ex)
                     {
-                        Logger.Instance.WriteToLog("Остановлена web-синхронизация: " + ex.Message, Logger.LogLevel.EVENTS);
+                        Logger.Log("Остановлена web-синхронизация: " + ex.Message, Logger.LogLevel.EVENTS);
                     }
                     catch (Exception ex)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: Ошибка при запуске web-сервиса: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
-                        Logger.Instance.WriteToLog(ex.GetaAllMessages(), Logger.LogLevel.ERROR);
+                        Logger.Log(string.Format("{0}.{1}: Ошибка при запуске web-сервиса: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                        Logger.Log(ex.GetaAllMessages(), Logger.LogLevel.ERROR);
                     }
                 }
             ));

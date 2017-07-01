@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App3.Class.Singleton;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -272,7 +273,8 @@ namespace App3.Class
         /// <param name="pIdAddress"></param>
         public Address(int pIdAddress)
         {
-            Load4DB(pIdAddress);
+            if (Load4DB(pIdAddress))
+                Logger.Log("Адрес загружен: " + pIdAddress.ToString(), Logger.LogLevel.DEBUG);
             /*
             DataRow row = DataBase.FirstRow(
                 string.Format("select * from oko.addresses where id = {0}", pIdAddress)
@@ -356,12 +358,14 @@ namespace App3.Class
             if (id != 0)
             {
                 DataBase.RunCommandUpdate("oko.addresses", fields, new Dictionary<string, object>() { { "id", id } });
+                Logger.Log(string.Format("Адрес {0} обновлен", id), Logger.LogLevel.DEBUG);
             }
             else
             {
                 object[] res;
                 DataBase.RunCommandInsert("oko.addresses", fields, "id", out res);
                 id = res[0].ToInt();
+                Logger.Log(string.Format("Адрес {0} создан", id), Logger.LogLevel.DEBUG);
             }
         }
 
@@ -381,7 +385,7 @@ namespace App3.Class
             }
         }
 
-        internal void Load4DB(int address_id)
+        internal bool Load4DB(int address_id)
         {
             id = address_id;
             DataRow row = DataBase.FirstRow(
@@ -389,7 +393,9 @@ namespace App3.Class
                     "SELECT * FROM oko.addresses WHERE id = {0}", id
                 )
             );
+            if (row == null) return false;
             Load4DB(row);
+            return true;
         }
 
         /// <summary>

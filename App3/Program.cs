@@ -67,7 +67,7 @@ namespace App3
                         }
                         catch (Exception ex)
                         {
-                            Logger.Instance.WriteToLog(string.Format("При открытии соединения с базой произошла ошибка: {0}", ex.Message), Logger.LogLevel.ERROR);
+                            Logger.Log(string.Format("При открытии соединения с базой произошла ошибка: {0}", ex.Message), Logger.LogLevel.ERROR);
                         }
                         
                         if (DataBase.IsOpen())
@@ -78,7 +78,7 @@ namespace App3
                         if (!f)
                         {
                             string mess = "Ошибка обновления";
-                            Logger.Instance.WriteToLog(mess, Logger.LogLevel.DEBUG);
+                            Logger.Log(mess, Logger.LogLevel.DEBUG);
                             // MessageBox.Show(mess);
                         }
                         else
@@ -97,14 +97,14 @@ namespace App3
                         }
                         /*catch (Exception ex)
                         {
-                            Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages());
+                            Logger.Log("Необработанное исключение: " + ex.GetaAllMessages());
                             Logger.Instance.FlushLog();
                         }*/
                     }
                     else
                     {
                         string mess = "Сбой запуска: другая копия процесса уже запущена";
-                        Logger.Instance.WriteToLog(mess, Logger.LogLevel.DEBUG);
+                        Logger.Log(mess, Logger.LogLevel.DEBUG);
                         MessageBox.Show(mess);
                     }                    
                 }
@@ -119,7 +119,7 @@ namespace App3
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
+                    Logger.Log("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
                     Logger.Instance.FlushLog();
                 }
             }
@@ -132,7 +132,7 @@ namespace App3
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
+                    Logger.Log("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
                     Logger.Instance.FlushLog();
                 }
             }
@@ -155,7 +155,7 @@ namespace App3
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
+                    Logger.Log("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
                     Logger.Instance.FlushLog();
                 }
             }
@@ -172,7 +172,7 @@ namespace App3
                         }
                         catch (Exception ex)
                         {
-                            Logger.Instance.WriteToLog("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
+                            Logger.Log("Необработанное исключение: " + ex.GetaAllMessages(), Logger.LogLevel.ERROR);
                             Logger.Instance.FlushLog();
                         }
                     }

@@ -120,12 +120,12 @@ namespace App3.Forms
                     while (stream.DataAvailable);
 
                     if (builder.ToString() != "ACCEPTED")
-                        Class.Singleton.Logger.Instance.WriteToLog(string.Format("Testing {0}.{1}: {2}"), Class.Singleton.Logger.LogLevel.DEBUG);
+                        Class.Singleton.Logger.Log(string.Format("Testing {0}.{1}: {2}"), Class.Singleton.Logger.LogLevel.DEBUG);
                     ShowProgress(string.Format("{0} ({1}:{2}) получен ответ {3}", desc, server, port, builder.ToString()), DateTime.Now, cnt, ++i);
                 }
                 catch (Exception ex)
                 {
-                    Class.Singleton.Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Class.Singleton.Logger.LogLevel.ERROR);
+                    Class.Singleton.Logger.Log(string.Format("{0}.{1}: {2}", System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message), Class.Singleton.Logger.LogLevel.ERROR);
                 }
             }
             enable(0);

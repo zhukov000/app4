@@ -82,7 +82,7 @@ namespace App3.Class.Socket
                             }
                             else
                             {
-                                Logger.Instance.WriteToLog("SOCKET Recived: " + data.Message, Logger.LogLevel.DEBUG);
+                                Logger.Log("SOCKET Recived: " + data.Message, Logger.LogLevel.DEBUG);
                             }
                             // посылаем сообщение о том, что данные получены
                             data = new SendObject("ACCEPTED");
@@ -97,7 +97,7 @@ namespace App3.Class.Socket
                     }
                     catch (Exception ex)
                     {
-                        Logger.Instance.WriteToLog(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
+                        Logger.Log(string.Format("{0}.{1}: {2}", MethodBase.GetCurrentMethod().DeclaringType.Name, MethodBase.GetCurrentMethod().Name, ex.Message), Logger.LogLevel.ERROR);
                     }
                 })
             );
